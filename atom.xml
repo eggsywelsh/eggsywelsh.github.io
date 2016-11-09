@@ -140,9 +140,9 @@
       <category term="ButterKnife" scheme="http://yoursite.com/categories/ButterKnife/"/>
     
     
-      <category term="android" scheme="http://yoursite.com/tags/android/"/>
-    
       <category term="ButterKnife详解" scheme="http://yoursite.com/tags/ButterKnife%E8%AF%A6%E8%A7%A3/"/>
+    
+      <category term="android" scheme="http://yoursite.com/tags/android/"/>
     
   </entry>
   
