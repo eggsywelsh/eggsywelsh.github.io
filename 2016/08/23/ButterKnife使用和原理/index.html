@@ -92,7 +92,7 @@
 <meta property="og:description" content="&amp;#x4FD7;&amp;#x8BDD;&amp;#x8BF4;&amp;#x7684;&amp;#x597D;&amp;#x201C;&amp;#x4E0D;&amp;#x60F3;&amp;#x5077;&amp;#x61D2;&amp;#x7684;&amp;#x7A0B;&amp;#x5E8F;&amp;#x5458;&amp;#xFF0C;&amp;#x4E0D;&amp;#x662F;&amp;#x597D;&amp;#x7A0B;&amp;#x5E8F;&amp;#x5458;&amp;#x201D;&amp;#xFF0C;&amp;#x6211;&amp;#x4EEC">
 <meta property="og:image" content="http://yoursite.com/images/android/ButterKnife/java_compiler.png">
 <meta property="og:image" content="http://yoursite.com/images/android/ButterKnife/release_bind_class.png">
-<meta property="og:updated_time" content="2016-11-05T11:53:38.113Z">
+<meta property="og:updated_time" content="2016-11-10T10:08:03.803Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ButterKnife使用和原理">
 <meta name="twitter:description" content="&amp;#x4FD7;&amp;#x8BDD;&amp;#x8BF4;&amp;#x7684;&amp;#x597D;&amp;#x201C;&amp;#x4E0D;&amp;#x60F3;&amp;#x5077;&amp;#x61D2;&amp;#x7684;&amp;#x7A0B;&amp;#x5E8F;&amp;#x5458;&amp;#xFF0C;&amp;#x4E0D;&amp;#x662F;&amp;#x597D;&amp;#x7A0B;&amp;#x5E8F;&amp;#x5458;&amp;#x201D;&amp;#xFF0C;&amp;#x6211;&amp;#x4EEC">
@@ -429,9 +429,12 @@ InjectFinder.injectView(this);  // this&#x4EE3;&#x8868;Fragment&#x6216;&#x8005;A
                             Class&lt;?&gt; targetType = field.getType();
                             Class&lt;?&gt; viewType = view.getClass();
                             if (!targetType.isAssignableFrom(viewType)) {
-                                String err = &quot;Type mismatch! \n&quot; +
-                                        &quot;  The view is   (&quot; + viewType.getName() + &quot;) R.id.&quot; + view.getContext().getResources().getResourceEntryName(viewId) + &quot;#&quot; + String.format(&quot;0x%08x&quot;, viewId) + &quot;\n&quot; +
-                                        &quot;  Cannot set to (&quot; + targetType.getName() + &quot;) &quot; + o.getClass().getName() + &quot;.&quot; + field.getName();
+                                String err = &quot;Type mismatch! \n&quot; 
+                                        + &quot;  The view is   (&quot; + viewType.getName() + &quot;) R.id.&quot; 
+                                        + view.getContext().getResources().getResourceEntryName(viewId) 
+                                        + &quot;#&quot; + String.format(&quot;0x%08x&quot;, viewId) + &quot;\n&quot; 
+                                        +&quot;  Cannot set to (&quot; + targetType.getName() + &quot;) &quot; 
+                                        + o.getClass().getName() + &quot;.&quot; + field.getName();
                                 Log.e(TAG, err);
                                 continue;
                             }

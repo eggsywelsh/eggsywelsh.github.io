@@ -226,7 +226,7 @@ public @interface Deprecated {
     <link href="http://yoursite.com/2016/08/23/ButterKnife%E4%BD%BF%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86/"/>
     <id>http://yoursite.com/2016/08/23/ButterKnife使用和原理/</id>
     <published>2016-08-23T09:15:55.000Z</published>
-    <updated>2016-11-05T11:53:38.113Z</updated>
+    <updated>2016-11-10T10:08:03.803Z</updated>
     
     <content type="html"><![CDATA[<blockquote>
 <p>&#x4FD7;&#x8BDD;&#x8BF4;&#x7684;&#x597D;&#x201C;&#x4E0D;&#x60F3;&#x5077;&#x61D2;&#x7684;&#x7A0B;&#x5E8F;&#x5458;&#xFF0C;&#x4E0D;&#x662F;&#x597D;&#x7A0B;&#x5E8F;&#x5458;&#x201D;&#xFF0C;&#x6211;&#x4EEC;&#x5728;&#x65E5;&#x5E38;&#x5F00;&#x53D1;android&#x7684;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x5728;&#x524D;&#x7AEF;activity&#x6216;&#x8005;fragment&#x65F6;&#xFF0C;&#x65E0;&#x6CD5;&#x907F;&#x514D;&#x7684;&#x4F1A;&#x7528;&#x5230;<code>findViewById</code>&#x8FD9;&#x7C7B;&#x7684;&#x4EE3;&#x7801;&#xFF0C;&#x7136;&#x540E;&#x5F3A;&#x5236;&#x7C7B;&#x578B;&#x8F6C;&#x6362;&#x51FA;&#x6211;&#x4EEC;&#x6240;&#x9700;&#x8981;&#x7684;&#x63A7;&#x4EF6;&#x7C7B;&#x578B;&#xFF0C;&#x8BF4;&#x5B9E;&#x8BDD;&#xFF0C;&#x5BF9;&#x4E8E;&#x8FFD;&#x6C42;&#x4EE3;&#x7801;&#x7B80;&#x6D01;&#xFF0C;&#x9AD8;&#x53EF;&#x8BFB;&#xFF0C;&#x5E76;&#x4E14;&#x60F3;&#x5077;&#x61D2;&#x7684;&#x7A0B;&#x5E8F;&#x5458;&#x6765;&#x8BF4;&#xFF0C;&#x5199;&#x8FD9;&#x6837;&#x7684;&#x91CD;&#x590D;&#x4EE3;&#x7801;&#xFF0C;&#x7B80;&#x76F4;&#x5C31;&#x662F;&#x707E;&#x96BE;&#x3002;&#x5F53;&#x7136;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x4E00;&#x4E9B;&#x6280;&#x672F;&#x624B;&#x6BB5;&#x6765;&#x89C4;&#x907F;&#x8FD9;&#x4E9B;&#x91CD;&#x590D;&#x52B3;&#x52A8;&#x5E76;&#x4E14;&#x201C;&#x96BE;&#x770B;&#x201D;&#x7684;&#x4EE3;&#x7801;&#x51FA;&#x73B0;</p>
@@ -289,9 +289,12 @@ InjectFinder.injectView(this);  // this&#x4EE3;&#x8868;Fragment&#x6216;&#x8005;A
                             Class&lt;?&gt; targetType = field.getType();
                             Class&lt;?&gt; viewType = view.getClass();
                             if (!targetType.isAssignableFrom(viewType)) {
-                                String err = &quot;Type mismatch! \n&quot; +
-                                        &quot;  The view is   (&quot; + viewType.getName() + &quot;) R.id.&quot; + view.getContext().getResources().getResourceEntryName(viewId) + &quot;#&quot; + String.format(&quot;0x%08x&quot;, viewId) + &quot;\n&quot; +
-                                        &quot;  Cannot set to (&quot; + targetType.getName() + &quot;) &quot; + o.getClass().getName() + &quot;.&quot; + field.getName();
+                                String err = &quot;Type mismatch! \n&quot; 
+                                        + &quot;  The view is   (&quot; + viewType.getName() + &quot;) R.id.&quot; 
+                                        + view.getContext().getResources().getResourceEntryName(viewId) 
+                                        + &quot;#&quot; + String.format(&quot;0x%08x&quot;, viewId) + &quot;\n&quot; 
+                                        +&quot;  Cannot set to (&quot; + targetType.getName() + &quot;) &quot; 
+                                        + o.getClass().getName() + &quot;.&quot; + field.getName();
                                 Log.e(TAG, err);
                                 continue;
                             }

@@ -844,9 +844,12 @@ InjectFinder.injectView(this);  // this&#x4EE3;&#x8868;Fragment&#x6216;&#x8005;A
                             Class&lt;?&gt; targetType = field.getType();
                             Class&lt;?&gt; viewType = view.getClass();
                             if (!targetType.isAssignableFrom(viewType)) {
-                                String err = &quot;Type mismatch! \n&quot; +
-                                        &quot;  The view is   (&quot; + viewType.getName() + &quot;) R.id.&quot; + view.getContext().getResources().getResourceEntryName(viewId) + &quot;#&quot; + String.format(&quot;0x%08x&quot;, viewId) + &quot;\n&quot; +
-                                        &quot;  Cannot set to (&quot; + targetType.getName() + &quot;) &quot; + o.getClass().getName() + &quot;.&quot; + field.getName();
+                                String err = &quot;Type mismatch! \n&quot; 
+                                        + &quot;  The view is   (&quot; + viewType.getName() + &quot;) R.id.&quot; 
+                                        + view.getContext().getResources().getResourceEntryName(viewId) 
+                                        + &quot;#&quot; + String.format(&quot;0x%08x&quot;, viewId) + &quot;\n&quot; 
+                                        +&quot;  Cannot set to (&quot; + targetType.getName() + &quot;) &quot; 
+                                        + o.getClass().getName() + &quot;.&quot; + field.getName();
                                 Log.e(TAG, err);
                                 continue;
                             }
