@@ -4,9 +4,9 @@
   
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://yoursite.com/"/>
+  <link href="http://blog.eggsychan.com/"/>
   <updated>2016-12-21T08:29:03.954Z</updated>
-  <id>http://yoursite.com/</id>
+  <id>http://blog.eggsychan.com/</id>
   
   <author>
     <name>蛋西</name>
@@ -17,8 +17,8 @@
   
   <entry>
     <title>搭建私有git服务</title>
-    <link href="http://yoursite.com/2016/12/21/%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89git%E6%9C%8D%E5%8A%A1/"/>
-    <id>http://yoursite.com/2016/12/21/搭建私有git服务/</id>
+    <link href="http://blog.eggsychan.com/2016/12/21/%E6%90%AD%E5%BB%BA%E7%A7%81%E6%9C%89git%E6%9C%8D%E5%8A%A1/"/>
+    <id>http://blog.eggsychan.com/2016/12/21/搭建私有git服务/</id>
     <published>2016-12-21T04:46:40.000Z</published>
     <updated>2016-12-21T08:29:03.954Z</updated>
     
@@ -110,19 +110,19 @@ Connection to 54.13.87.93 closed.
     
     </summary>
     
-      <category term="git" scheme="http://yoursite.com/categories/git/"/>
+      <category term="git" scheme="http://blog.eggsychan.com/categories/git/"/>
     
     
-      <category term="git" scheme="http://yoursite.com/tags/git/"/>
+      <category term="git" scheme="http://blog.eggsychan.com/tags/git/"/>
     
-      <category term="服务搭建" scheme="http://yoursite.com/tags/%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/"/>
+      <category term="服务搭建" scheme="http://blog.eggsychan.com/tags/%E6%9C%8D%E5%8A%A1%E6%90%AD%E5%BB%BA/"/>
     
   </entry>
   
   <entry>
     <title>hexo代码高亮</title>
-    <link href="http://yoursite.com/2016/11/10/hexo%E4%BB%A3%E7%A0%81%E9%AB%98%E4%BA%AE/"/>
-    <id>http://yoursite.com/2016/11/10/hexo代码高亮/</id>
+    <link href="http://blog.eggsychan.com/2016/11/10/hexo%E4%BB%A3%E7%A0%81%E9%AB%98%E4%BA%AE/"/>
+    <id>http://blog.eggsychan.com/2016/11/10/hexo代码高亮/</id>
     <published>2016-11-10T11:12:00.000Z</published>
     <updated>2016-12-21T08:23:22.282Z</updated>
     
@@ -196,19 +196,19 @@ $(window).load(function(){
     
     </summary>
     
-      <category term="hexo" scheme="http://yoursite.com/categories/hexo/"/>
+      <category term="hexo" scheme="http://blog.eggsychan.com/categories/hexo/"/>
     
     
-      <category term="hexo配置" scheme="http://yoursite.com/tags/hexo%E9%85%8D%E7%BD%AE/"/>
+      <category term="hexo配置" scheme="http://blog.eggsychan.com/tags/hexo%E9%85%8D%E7%BD%AE/"/>
     
-      <category term="代码高亮" scheme="http://yoursite.com/tags/%E4%BB%A3%E7%A0%81%E9%AB%98%E4%BA%AE/"/>
+      <category term="代码高亮" scheme="http://blog.eggsychan.com/tags/%E4%BB%A3%E7%A0%81%E9%AB%98%E4%BA%AE/"/>
     
   </entry>
   
   <entry>
     <title>java annotation 详解</title>
-    <link href="http://yoursite.com/2016/09/16/java-annotation-%E8%AF%A6%E8%A7%A3/"/>
-    <id>http://yoursite.com/2016/09/16/java-annotation-详解/</id>
+    <link href="http://blog.eggsychan.com/2016/09/16/java-annotation-%E8%AF%A6%E8%A7%A3/"/>
+    <id>http://blog.eggsychan.com/2016/09/16/java-annotation-详解/</id>
     <published>2016-09-16T09:24:28.000Z</published>
     <updated>2016-12-21T08:21:03.392Z</updated>
     
@@ -316,19 +316,19 @@ public @interface Deprecated {
     
     </summary>
     
-      <category term="java" scheme="http://yoursite.com/categories/java/"/>
+      <category term="java" scheme="http://blog.eggsychan.com/categories/java/"/>
     
     
-      <category term="java annotation详解" scheme="http://yoursite.com/tags/java-annotation%E8%AF%A6%E8%A7%A3/"/>
+      <category term="java annotation详解" scheme="http://blog.eggsychan.com/tags/java-annotation%E8%AF%A6%E8%A7%A3/"/>
     
-      <category term="java" scheme="http://yoursite.com/tags/java/"/>
+      <category term="java" scheme="http://blog.eggsychan.com/tags/java/"/>
     
   </entry>
   
   <entry>
     <title>ButterKnife使用和原理</title>
-    <link href="http://yoursite.com/2016/08/23/ButterKnife%E4%BD%BF%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86/"/>
-    <id>http://yoursite.com/2016/08/23/ButterKnife使用和原理/</id>
+    <link href="http://blog.eggsychan.com/2016/08/23/ButterKnife%E4%BD%BF%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86/"/>
+    <id>http://blog.eggsychan.com/2016/08/23/ButterKnife使用和原理/</id>
     <published>2016-08-23T09:15:55.000Z</published>
     <updated>2016-11-10T10:08:03.803Z</updated>
     
@@ -615,19 +615,19 @@ protected void onCreate(Bundle savedInstanceState) {
     
     </summary>
     
-      <category term="ButterKnife" scheme="http://yoursite.com/categories/ButterKnife/"/>
+      <category term="ButterKnife" scheme="http://blog.eggsychan.com/categories/ButterKnife/"/>
     
     
-      <category term="ButterKnife详解" scheme="http://yoursite.com/tags/ButterKnife%E8%AF%A6%E8%A7%A3/"/>
+      <category term="ButterKnife详解" scheme="http://blog.eggsychan.com/tags/ButterKnife%E8%AF%A6%E8%A7%A3/"/>
     
-      <category term="android" scheme="http://yoursite.com/tags/android/"/>
+      <category term="android" scheme="http://blog.eggsychan.com/tags/android/"/>
     
   </entry>
   
   <entry>
     <title>android技术成长之图谱</title>
-    <link href="http://yoursite.com/2016/08/23/android-tech-Graph/"/>
-    <id>http://yoursite.com/2016/08/23/android-tech-Graph/</id>
+    <link href="http://blog.eggsychan.com/2016/08/23/android-tech-Graph/"/>
+    <id>http://blog.eggsychan.com/2016/08/23/android-tech-Graph/</id>
     <published>2016-08-23T07:29:56.000Z</published>
     <updated>2016-08-23T08:27:08.557Z</updated>
     
@@ -683,19 +683,19 @@ protected void onCreate(Bundle savedInstanceState) {
     
     </summary>
     
-      <category term="android" scheme="http://yoursite.com/categories/android/"/>
+      <category term="android" scheme="http://blog.eggsychan.com/categories/android/"/>
     
     
-      <category term="android" scheme="http://yoursite.com/tags/android/"/>
+      <category term="android" scheme="http://blog.eggsychan.com/tags/android/"/>
     
-      <category term="技术图谱" scheme="http://yoursite.com/tags/%E6%8A%80%E6%9C%AF%E5%9B%BE%E8%B0%B1/"/>
+      <category term="技术图谱" scheme="http://blog.eggsychan.com/tags/%E6%8A%80%E6%9C%AF%E5%9B%BE%E8%B0%B1/"/>
     
   </entry>
   
   <entry>
     <title>hexo配置详解(nextT主题)</title>
-    <link href="http://yoursite.com/2016/08/21/hexo%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3-nextT%E4%B8%BB%E9%A2%98/"/>
-    <id>http://yoursite.com/2016/08/21/hexo配置详解-nextT主题/</id>
+    <link href="http://blog.eggsychan.com/2016/08/21/hexo%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3-nextT%E4%B8%BB%E9%A2%98/"/>
+    <id>http://blog.eggsychan.com/2016/08/21/hexo配置详解-nextT主题/</id>
     <published>2016-08-20T16:19:14.000Z</published>
     <updated>2016-12-21T08:22:30.911Z</updated>
     
@@ -864,19 +864,19 @@ hexo generate  #&#x91CD;&#x65B0;&#x751F;&#x6210;&#x6587;&#x4EF6;
     
     </summary>
     
-      <category term="hexo" scheme="http://yoursite.com/categories/hexo/"/>
+      <category term="hexo" scheme="http://blog.eggsychan.com/categories/hexo/"/>
     
     
-      <category term="hexo配置" scheme="http://yoursite.com/tags/hexo%E9%85%8D%E7%BD%AE/"/>
+      <category term="hexo配置" scheme="http://blog.eggsychan.com/tags/hexo%E9%85%8D%E7%BD%AE/"/>
     
-      <category term="nextT配置" scheme="http://yoursite.com/tags/nextT%E9%85%8D%E7%BD%AE/"/>
+      <category term="nextT配置" scheme="http://blog.eggsychan.com/tags/nextT%E9%85%8D%E7%BD%AE/"/>
     
   </entry>
   
   <entry>
     <title>android studio 快捷键(本文持续更新)</title>
-    <link href="http://yoursite.com/2016/08/17/android-studio-shortcut/"/>
-    <id>http://yoursite.com/2016/08/17/android-studio-shortcut/</id>
+    <link href="http://blog.eggsychan.com/2016/08/17/android-studio-shortcut/"/>
+    <id>http://blog.eggsychan.com/2016/08/17/android-studio-shortcut/</id>
     <published>2016-08-17T02:43:53.000Z</published>
     <updated>2016-12-21T08:29:25.054Z</updated>
     
@@ -1098,21 +1098,21 @@ hexo generate  #&#x91CD;&#x65B0;&#x751F;&#x6210;&#x6587;&#x4EF6;
     
     </summary>
     
-      <category term="android" scheme="http://yoursite.com/categories/android/"/>
+      <category term="android" scheme="http://blog.eggsychan.com/categories/android/"/>
     
     
-      <category term="android studio" scheme="http://yoursite.com/tags/android-studio/"/>
+      <category term="android studio" scheme="http://blog.eggsychan.com/tags/android-studio/"/>
     
-      <category term="shortcut" scheme="http://yoursite.com/tags/shortcut/"/>
+      <category term="shortcut" scheme="http://blog.eggsychan.com/tags/shortcut/"/>
     
-      <category term="ubuntu" scheme="http://yoursite.com/tags/ubuntu/"/>
+      <category term="ubuntu" scheme="http://blog.eggsychan.com/tags/ubuntu/"/>
     
   </entry>
   
   <entry>
     <title>ubuntu下hexo搭建教程</title>
-    <link href="http://yoursite.com/2016/08/16/hexo-install/"/>
-    <id>http://yoursite.com/2016/08/16/hexo-install/</id>
+    <link href="http://blog.eggsychan.com/2016/08/16/hexo-install/"/>
+    <id>http://blog.eggsychan.com/2016/08/16/hexo-install/</id>
     <published>2016-08-16T12:44:06.000Z</published>
     <updated>2016-12-21T08:24:03.678Z</updated>
     
@@ -1208,12 +1208,12 @@ hexo d == hexo deploy
     
     </summary>
     
-      <category term="hexo" scheme="http://yoursite.com/categories/hexo/"/>
+      <category term="hexo" scheme="http://blog.eggsychan.com/categories/hexo/"/>
     
     
-      <category term="ubuntu" scheme="http://yoursite.com/tags/ubuntu/"/>
+      <category term="ubuntu" scheme="http://blog.eggsychan.com/tags/ubuntu/"/>
     
-      <category term="hexo搭建" scheme="http://yoursite.com/tags/hexo%E6%90%AD%E5%BB%BA/"/>
+      <category term="hexo搭建" scheme="http://blog.eggsychan.com/tags/hexo%E6%90%AD%E5%BB%BA/"/>
     
   </entry>
   
