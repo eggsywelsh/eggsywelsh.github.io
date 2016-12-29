@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://blog.eggsychan.com/"/>
-  <updated>2016-12-22T10:12:33.439Z</updated>
+  <updated>2016-12-29T08:55:09.801Z</updated>
   <id>http://blog.eggsychan.com/</id>
   
   <author>
@@ -16,11 +16,333 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>封装android运行时权限(EPermission)</title>
+    <link href="http://blog.eggsychan.com/2016/12/29/%E5%B0%81%E8%A3%85android%E8%BF%90%E8%A1%8C%E6%97%B6%E6%9D%83%E9%99%90-EPermission/"/>
+    <id>http://blog.eggsychan.com/2016/12/29/封装android运行时权限-EPermission/</id>
+    <published>2016-12-29T07:00:24.000Z</published>
+    <updated>2016-12-29T08:55:09.801Z</updated>
+    
+    <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;&#x81EA;&#x5DF1;&#x5199;&#x7684;&#x4E00;&#x4E2A;&#x5173;&#x4E8E;android6.0&#x8FD0;&#x884C;&#x65F6;&#x6743;&#x9650;&#x5C01;&#x88C5;&#x5E93;<br><a id="more"></a></p>
+<blockquote>
+<p>&#x5728;&#x6211;&#x7684;&#x4E0A;&#x4E00;&#x7BC7;&#x6587;&#x7AE0;<a href="/2016/12/21/&#x8BE6;&#x89E3;android6-0&#x6743;&#x9650;/">&#x8BE6;&#x89E3;android6-0&#x6743;&#x9650;</a> &#x4E2D;&#x89E3;&#x91CA;&#x4E86;&#x5173;&#x4E8E;android 6.0&#x540E;&#x5173;&#x4E8E;&#x8FD0;&#x884C;&#x65F6;&#x6743;&#x9650;&#x7684;&#x5224;&#x65AD;&#xFF0C;&#x7533;&#x8BF7;&#xFF0C;&#x56DE;&#x8C03;&#xFF0C;&#x6211;&#x4EEC;&#x91C7;&#x7528;&#x7684;&#x662F;&#x5E38;&#x89C4;&#x7684;&#x7533;&#x8BF7;&#x6D41;&#x7A0B;&#xFF0C;&#x8FD9;&#x7BC7;&#x6587;&#x7AE0;&#x6211;&#x4EEC;&#x5C06;&#x8981;&#x6839;&#x636E;&#x7533;&#x8BF7;&#x7684;&#x6D41;&#x7A0B;&#xFF0C;&#x57FA;&#x4E8E;Annotation Processing Tool&#x6280;&#x672F;&#xFF0C;&#x5C01;&#x88C5;&#x4E00;&#x4E2A;EPermission&#x7684;&#x5E93;&#xFF0C;&#x65B9;&#x4FBF;&#x5927;&#x5BB6;&#x4F7F;&#x7528;</p>
+</blockquote>
+<h3 id="&#x4F7F;&#x7528;"><a href="#&#x4F7F;&#x7528;" class="headerlink" title="&#x4F7F;&#x7528;"></a>&#x4F7F;&#x7528;</h3><p>&#x4E0B;&#x9762;&#x4ECB;&#x7ECD;&#x4E00;&#x4E0B;EPermission&#x7684;&#x4F7F;&#x7528;</p>
+<p><strong>&#x4F7F;&#x7528;&#x5230;&#x6CE8;&#x89E3;</strong></p>
+<ul>
+<li>@PermissionGrant  &#x6807;&#x8BC6;&#x67D0;&#x4E2A;&#x6743;&#x9650;&#x88AB;&#x540C;&#x610F;&#x6388;&#x6743;&#x540E;&#xFF0C;&#x56DE;&#x8C03;&#x7684;&#x65B9;&#x6CD5;</li>
+<li>@PermissionDeny  &#x6807;&#x8BC6;&#x67D0;&#x4E2A;&#x6743;&#x9650;&#x88AB;&#x62D2;&#x7EDD;&#x6388;&#x6743;&#x540E;&#xFF0C;&#x56DE;&#x8C03;&#x7684;&#x65B9;&#x6CD5;</li>
+<li>@PermissionRationale  &#x6807;&#x8BC6;&#x67D0;&#x4E2A;&#x6743;&#x9650;&#x521D;&#x6B21;&#x88AB;&#x62D2;&#x7EDD;&#x540E;&#xFF0C;&#x4E0B;&#x6B21;&#x518D;&#x7533;&#x8BF7;&#xFF0C;&#x5982;&#x679C;&#x9700;&#x8981;&#x5BF9;&#x7528;&#x6237;&#x663E;&#x793A;&#x6743;&#x9650;&#x89E3;&#x91CA;&#xFF0C;&#x56DE;&#x8C03;&#x7684;&#x65B9;&#x6CD5;</li>
+</ul>
+<p><strong>&#x57FA;&#x672C;&#x539F;&#x7406;</strong><br>&#x6839;&#x636E;&#x8BF7;&#x6C42;&#x6743;&#x9650;&#x65F6;&#x7684;requestCode&#x548C;requestPermission&#x4EE5;&#x53CA;&#x5904;&#x7406;&#x7ED3;&#x679C;grantResult&#xFF0C;&#x5BFB;&#x627E;&#x5BF9;&#x5E94;&#x7684;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#x8FDB;&#x884C;&#x56DE;&#x8C03;</p>
+<h4 id="&#x5F15;&#x5165;"><a href="#&#x5F15;&#x5165;" class="headerlink" title="&#x5F15;&#x5165;"></a>&#x5F15;&#x5165;</h4><pre><code>dependencies {
+    annotationProcessor &apos;com.eggsy:epermission-processor:1.0.4&apos;
+    compile &apos;com.eggsy:epermission:1.0.4&apos;
+    compile &apos;com.eggsy:epermission-annotations:1.0.4&apos;
+}
+</code></pre><h4 id="&#x6743;&#x9650;&#x5224;&#x65AD;"><a href="#&#x6743;&#x9650;&#x5224;&#x65AD;" class="headerlink" title="&#x6743;&#x9650;&#x5224;&#x65AD;"></a>&#x6743;&#x9650;&#x5224;&#x65AD;</h4><p>&#x5224;&#x65AD;&#x4F60;&#x662F;&#x5426;&#x5DF2;&#x7ECF;&#x6709;&#x67D0;&#x4E2A;&#x6743;&#x9650;</p>
+<pre><code>ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+</code></pre><p>&#x5224;&#x65AD;&#x662F;&#x5426;&#x9700;&#x8981;&#x8C03;&#x7528;&#x6743;&#x9650;&#x89E3;&#x91CA;&#xFF0C;true&#x4EE3;&#x8868;&#x9700;&#x8981;&#x663E;&#x793A;&#xFF0C;&#x4F1A;&#x56DE;&#x8C03;&#x5177;&#x6709;&#x5BF9;&#x5E94;REQUEST_SINGLE_PERMISSON&#x548C;Manifest.permission.READ_EXTERNAL_STORAGE)&#x7684;@PermissionRationale&#x6807;&#x8BC6;&#x7684;&#x65B9;&#x6CD5;</p>
+<pre><code>EPermission.shouldShowRequestPermissionRationale(context, REQUEST_SINGLE_PERMISSON, Manifest.permission.READ_EXTERNAL_STORAGE)
+</code></pre><p>&#x7533;&#x8BF7;&#x5355;&#x4E2A;&#x6743;&#x9650;&#xFF0C;&#x5982;&#x679C;&#x5DF2;&#x7ECF;&#x6388;&#x6743;&#xFF0C;&#x76F4;&#x63A5;&#x56DE;&#x8C03;&#xFF0C;@PermissionGrant&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#xFF0C;&#x5982;&#x679C;&#x7528;&#x6237;&#x5DF2;&#x7ECF;&#x6C38;&#x4E45;&#x62D2;&#x7EDD;&#x6388;&#x4E88;&#x8BE5;&#x6743;&#x9650;&#xFF0C;&#x76F4;&#x63A5;&#x56DE;&#x8C03;@PermissionDeny&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#xFF0C;&#x5982;&#x679C;&#x90FD;&#x4E0D;&#x662F;&#x4EE5;&#x4E0A;&#x60C5;&#x51B5;&#x6700;&#x540E;&#x4F1A;&#x5F39;&#x51FA;&#x6743;&#x9650;&#x7533;&#x8BF7;&#x6846;&#x63D0;&#x793A;&#x7528;&#x6237;&#x6388;&#x6743;</p>
+<pre><code>EPermission.requestPermissions(context, REQUEST_SINGLE_PERMISSON, Manifest.permission.READ_EXTERNAL_STORAGE);
+</code></pre><p>&#x4E00;&#x6B21;&#x6027;&#x7533;&#x8BF7;&#x591A;&#x4E2A;&#x6743;&#x9650;&#xFF0C;&#x5982;&#x679C;&#x591A;&#x4E2A;&#x6743;&#x9650;&#x4E2D;&#x67D0;&#x4E9B;&#x5DF2;&#x7ECF;&#x6388;&#x6743;&#xFF0C;&#x4F1A;&#x4F9D;&#x6B21;&#x56DE;&#x8C03;@PermissionGrant&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#xFF0C;&#x5982;&#x679C;&#x6C38;&#x4E45;&#x62D2;&#x7EDD;&#xFF0C;&#x4F1A;&#x4F9D;&#x6B21;&#x8C03;&#x7528;@PermissionDeny&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#xFF0C;&#x5176;&#x4F59;&#x7684;&#x4F1A;&#x4F9D;&#x6B21;&#x5F39;&#x51FA;&#x63D0;&#x793A;&#x6846;&#x7533;&#x8BF7;&#x6743;&#x9650;&#xFF0C;&#x7136;&#x540E;&#x5728;&#x6240;&#x6709;&#x7ED3;&#x679C;&#x90FD;&#x5904;&#x7406;&#x5B8C;&#x4E4B;&#x540E;&#xFF0C;&#x56DE;&#x8C03;&#x5BF9;&#x5E94;&#x7684;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;</p>
+<pre><code>EPermission.requestPermissions(context, REQUEST_MULTI_PERMISSON, Manifest.permission.CAMERA, Manifest.permission.READ_CONTACTS);
+</code></pre><h4 id="&#x56DE;&#x8C03;&#x6743;&#x9650;&#x5904;&#x7406;&#x7ED3;&#x679C;"><a href="#&#x56DE;&#x8C03;&#x6743;&#x9650;&#x5904;&#x7406;&#x7ED3;&#x679C;" class="headerlink" title="&#x56DE;&#x8C03;&#x6743;&#x9650;&#x5904;&#x7406;&#x7ED3;&#x679C;"></a>&#x56DE;&#x8C03;&#x6743;&#x9650;&#x5904;&#x7406;&#x7ED3;&#x679C;</h4><p>&#x56DE;&#x8C03;&#x7528;&#x6237;&#x7684;&#x6743;&#x9650;&#x5904;&#x7406;&#x7ED3;&#x679C;</p>
+<pre><code>    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+</code></pre><p><strong>&#x6CE8;&#x610F;&#xFF1A;</strong><br>&#x8FD9;&#x91CC;&#x4E3B;&#x8981;&#x539F;&#x7406;&#x662F;&#x4F9D;&#x6B21;&#x6839;&#x636E;requestCode&#xFF0C;permission&#x548C;&#x5BF9;&#x5E94;&#x7684;grantResult&#x5BFB;&#x627E;&#x5BF9;&#x5E94;&#x7684;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#xFF0C;&#x56DE;&#x8C03;&#x65B9;&#x6CD5;&#x7684;&#x786E;&#x5B9A;&#x89C4;&#x5219;&#xFF1A;</p>
+<ol>
+<li>&#x6839;&#x636E;requestCode&#x548C;permission&#x786E;&#x5B9A;&#x56DE;&#x8C03;&#x54EA;&#x4E9B;&#x7B26;&#x5408;&#x6761;&#x4EF6;&#x7684;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#xFF0C;&#x8FD9;&#x91CC;&#x8981;&#x6CE8;&#x610F;&#x5982;&#x679C;&#x6CE8;&#x89E3;&#x6CA1;&#x6709;&#x6807;&#x8BC6;requestCode&#x5C5E;&#x6027;&#xFF0C;&#x90A3;&#x4E48;&#x8BE5;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#x53EF;&#x4EE5;&#x63A5;&#x6536;&#x5176;&#x6CE8;&#x89E3;&#x5BF9;&#x5E94;permission&#x7684;&#x6240;&#x6709;&#x56DE;&#x8C03;</li>
+<li>&#x6BCF;&#x4E2A;permission&#x5904;&#x7406;&#x7ED3;&#x679C;grantResult&#x7528;&#x6765;&#x786E;&#x8BA4;&#x662F;&#x8C03;&#x7528;<code>@PermissionGrant</code>&#x8FD8;&#x662F;<code>@PermissionDeny</code>&#x5BF9;&#x5E94;&#x7684;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;</li>
+</ol>
+<h3 id="&#x4E3E;&#x4E24;&#x4E2A;&#x6817;&#x5B50;"><a href="#&#x4E3E;&#x4E24;&#x4E2A;&#x6817;&#x5B50;" class="headerlink" title="&#x4E3E;&#x4E24;&#x4E2A;&#x6817;&#x5B50;"></a>&#x4E3E;&#x4E24;&#x4E2A;&#x6817;&#x5B50;</h3><h4 id="&#x5728;activity&#x4E2D;&#x4F7F;&#x7528;"><a href="#&#x5728;Activity&#x4E2D;&#x4F7F;&#x7528;" class="headerlink" title="&#x5728;Activity&#x4E2D;&#x4F7F;&#x7528;"></a>&#x5728;Activity&#x4E2D;&#x4F7F;&#x7528;</h4><pre><code>public class PermissionActivity extends Activity implements View.OnClickListener {
+
+    private static final String TAG = &quot;permission&quot;;
+
+    private static final int REQUEST_SINGLE_PERMISSON = 1;
+    private static final int REQUEST_MULTI_PERMISSON = 2;
+
+    Button mBtnRequestSinglePermission;
+    Button mBtnRequestMultiPermission;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_permission);
+
+        initView();
+    }
+
+    private void initView() {
+        mBtnRequestSinglePermission = (Button) findViewById(R.id.btn_request_single_permission);
+        mBtnRequestMultiPermission = (Button) findViewById(R.id.btn_request_multi_permission);
+
+        mBtnRequestSinglePermission.setOnClickListener(this);
+        mBtnRequestMultiPermission.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_request_multi_permission:
+                EPermission.requestPermissions(this, REQUEST_MULTI_PERMISSON, Manifest.permission.CAMERA, Manifest.permission.READ_CONTACTS);
+                break;
+            case R.id.btn_request_single_permission:
+                // judge the request permission should be show the rational explain to the user
+                if (!EPermission.shouldShowRequestPermissionRationale(this, REQUEST_SINGLE_PERMISSON, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    EPermission.requestPermissions(this, REQUEST_SINGLE_PERMISSON, Manifest.permission.READ_EXTERNAL_STORAGE);
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
+    /**
+     * below content is process READ_EXTERNAL_STORAGE permission callback
+     */
+
+    @PermissionGrant(requestPermission = Manifest.permission.READ_EXTERNAL_STORAGE)
+    public void grantSdcardPermission() {
+        Log.d(TAG, &quot;permission READ_EXTERNAL_STORAGE grant&quot;);
+        Toast.makeText(this, &quot;permission READ_EXTERNAL_STORAGE grant&quot;, Toast.LENGTH_SHORT).show();
+    }
+
+    @PermissionDeny(requestCode = REQUEST_SINGLE_PERMISSON, requestPermission = Manifest.permission.READ_EXTERNAL_STORAGE)
+    public void denyGrantSdcardPermission() {
+        Log.d(TAG, &quot;permission READ_EXTERNAL_STORAGE deny&quot;);
+        Toast.makeText(this, &quot;permission READ_EXTERNAL_STORAGE deny&quot;, Toast.LENGTH_SHORT).show();
+    }
+
+    @PermissionRationale(requestCode = REQUEST_SINGLE_PERMISSON, requestPermission = Manifest.permission.READ_EXTERNAL_STORAGE)
+    public void rationableSdcardPermission() {
+        Log.d(TAG, &quot;ask to rationable READ_EXTERNAL_STORAGE permission&quot;);
+        Toast.makeText(this, &quot;ask to rationable READ_EXTERNAL_STORAGE permission&quot;, Toast.LENGTH_SHORT).show();
+        EPermission.requestPermissions(this, REQUEST_SINGLE_PERMISSON, Manifest.permission.READ_EXTERNAL_STORAGE);
+    }
+
+
+    /**
+     * below content is process CAMERA permission callback
+     */
+
+    @PermissionGrant(requestPermission = Manifest.permission.CAMERA)
+    public void grantCameraPermission() {
+        Log.d(TAG, &quot;permission CAMERA grant&quot;);
+        Toast.makeText(this, &quot;permission CAMERA grant&quot;, Toast.LENGTH_SHORT).show();
+    }
+
+    @PermissionDeny(requestPermission = Manifest.permission.CAMERA)
+    public void denyGrantCameraPermission() {
+        Log.d(TAG, &quot;permission CAMERA deny&quot;);
+        Toast.makeText(this, &quot;permission CAMERA deny&quot;, Toast.LENGTH_SHORT).show();
+    }
+
+
+    @PermissionRationale(requestPermission = Manifest.permission.CAMERA)
+    public void rationableCameraPermission() {
+        Log.d(TAG, &quot;ask to rationable CAMERA permission&quot;);
+        Toast.makeText(this, &quot;ask to rationable CAMERA permission&quot;, Toast.LENGTH_SHORT).show();
+        EPermission.requestPermissions(this, REQUEST_SINGLE_PERMISSON, Manifest.permission.CAMERA);
+    }
+
+
+    /**
+     * below content is process READ_CONTACTS permission callback
+     */
+
+    @PermissionGrant(requestCode = REQUEST_MULTI_PERMISSON, requestPermission = Manifest.permission.READ_CONTACTS)
+    public void grantContactPermission() {
+        Log.d(TAG, &quot;permission READ_CONTACTS grant&quot;);
+        Toast.makeText(this, &quot;permission READ_CONTACTS grant&quot;, Toast.LENGTH_SHORT).show();
+    }
+
+    @PermissionDeny(requestCode = REQUEST_MULTI_PERMISSON, requestPermission = Manifest.permission.READ_CONTACTS)
+    public void denyGrantContactPermission() {
+        Log.d(TAG, &quot;permission READ_CONTACTS deny&quot;);
+        Toast.makeText(this, &quot;permission READ_CONTACTS deny&quot;, Toast.LENGTH_SHORT).show();
+    }
+
+    @PermissionRationale(requestCode = REQUEST_MULTI_PERMISSON, requestPermission = Manifest.permission.READ_CONTACTS)
+    public void rationableContactPermission() {
+        Log.d(TAG, &quot;ask to rationable READ_CONTACTS permission&quot;);
+        Toast.makeText(this, &quot;ask to rationable READ_CONTACTS permission&quot;, Toast.LENGTH_SHORT).show();
+        EPermission.requestPermissions(this, REQUEST_SINGLE_PERMISSON, Manifest.permission.READ_CONTACTS);
+    }
+
+}
+</code></pre><h4 id="&#x5728;fragment&#x4E2D;&#x4F7F;&#x7528;"><a href="#&#x5728;Fragment&#x4E2D;&#x4F7F;&#x7528;" class="headerlink" title="&#x5728;Fragment&#x4E2D;&#x4F7F;&#x7528;"></a>&#x5728;Fragment&#x4E2D;&#x4F7F;&#x7528;</h4><pre><code>public class PermissionFragment extends Fragment implements View.OnClickListener {
+
+    private static final String TAG = &quot;permission&quot;;
+
+    private static final int REQUEST_SINGLE_PERMISSON = 1;
+    private static final int REQUEST_MULTI_PERMISSON = 2;
+
+    private View view;
+
+    Button mBtnRequestSinglePermission;
+    Button mBtnRequestMultiPermission;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        view = inflater.inflate(R.layout.fragment_permission, container, false);
+        initView();
+        return view;
+    }
+
+    private void initView() {
+        mBtnRequestSinglePermission = (Button) view.findViewById(R.id.btn_request_single_permission);
+        mBtnRequestMultiPermission = (Button) view.findViewById(R.id.btn_request_multi_permission);
+
+        mBtnRequestSinglePermission.setOnClickListener(this);
+        mBtnRequestMultiPermission.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_request_multi_permission:
+                EPermission.requestPermissions(this, REQUEST_MULTI_PERMISSON, Manifest.permission.CAMERA, Manifest.permission.READ_CONTACTS);
+                break;
+            case R.id.btn_request_single_permission:
+                // judge the request permission should be show the rational explain to the user
+                if (!EPermission.shouldShowRequestPermissionRationale(this, REQUEST_SINGLE_PERMISSON, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    EPermission.requestPermissions(this, REQUEST_SINGLE_PERMISSON, Manifest.permission.READ_EXTERNAL_STORAGE);
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EPermission.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
+    /**
+     * below content is process READ_EXTERNAL_STORAGE permission callback
+     */
+
+    @PermissionGrant(requestPermission = Manifest.permission.READ_EXTERNAL_STORAGE)
+    public void grantSdcardPermission() {
+        Log.d(TAG, &quot;permission READ_EXTERNAL_STORAGE grant&quot;);
+        Toast.makeText(getActivity(), &quot;permission READ_EXTERNAL_STORAGE grant&quot;, Toast.LENGTH_SHORT).show();
+    }
+
+    @PermissionDeny(requestCode = REQUEST_SINGLE_PERMISSON, requestPermission = Manifest.permission.READ_EXTERNAL_STORAGE)
+    public void denyGrantSdcardPermission() {
+        Log.d(TAG, &quot;permission READ_EXTERNAL_STORAGE deny&quot;);
+        Toast.makeText(getActivity(), &quot;permission READ_EXTERNAL_STORAGE deny&quot;, Toast.LENGTH_SHORT).show();
+    }
+
+    @PermissionRationale(requestCode = REQUEST_SINGLE_PERMISSON, requestPermission = Manifest.permission.READ_EXTERNAL_STORAGE)
+    public void rationableSdcardPermission() {
+        Log.d(TAG, &quot;ask to rationable READ_EXTERNAL_STORAGE permission&quot;);
+        Toast.makeText(getActivity(), &quot;ask to rationable READ_EXTERNAL_STORAGE permission&quot;, Toast.LENGTH_SHORT).show();
+        EPermission.requestPermissions(this, REQUEST_SINGLE_PERMISSON, Manifest.permission.READ_EXTERNAL_STORAGE);
+    }
+
+
+    /**
+     * below content is process CAMERA permission callback
+     */
+
+    @PermissionGrant(requestPermission = Manifest.permission.CAMERA)
+    public void grantCameraPermission() {
+        Log.d(TAG, &quot;permission CAMERA grant&quot;);
+        Toast.makeText(getActivity(), &quot;permission CAMERA grant&quot;, Toast.LENGTH_SHORT).show();
+    }
+
+    @PermissionDeny(requestPermission = Manifest.permission.CAMERA)
+    public void denyGrantCameraPermission() {
+        Log.d(TAG, &quot;permission CAMERA deny&quot;);
+        Toast.makeText(getActivity(), &quot;permission CAMERA deny&quot;, Toast.LENGTH_SHORT).show();
+    }
+
+
+    @PermissionRationale(requestPermission = Manifest.permission.CAMERA)
+    public void rationableCameraPermission() {
+        Log.d(TAG, &quot;ask to rationable CAMERA permission&quot;);
+        Toast.makeText(getActivity(), &quot;ask to rationable CAMERA permission&quot;, Toast.LENGTH_SHORT).show();
+        EPermission.requestPermissions(this, REQUEST_SINGLE_PERMISSON, Manifest.permission.CAMERA);
+    }
+
+
+    /**
+     * below content is process READ_CONTACTS permission callback
+     */
+
+    @PermissionGrant(requestCode = REQUEST_MULTI_PERMISSON, requestPermission = Manifest.permission.READ_CONTACTS)
+    public void grantContactPermission() {
+        Log.d(TAG, &quot;permission READ_CONTACTS grant&quot;);
+        Toast.makeText(getActivity(), &quot;permission READ_CONTACTS grant&quot;, Toast.LENGTH_SHORT).show();
+    }
+
+    @PermissionDeny(requestCode = REQUEST_MULTI_PERMISSON, requestPermission = Manifest.permission.READ_CONTACTS)
+    public void denyGrantContactPermission() {
+        Log.d(TAG, &quot;permission READ_CONTACTS deny&quot;);
+        Toast.makeText(getActivity(), &quot;permission READ_CONTACTS deny&quot;, Toast.LENGTH_SHORT).show();
+    }
+
+    @PermissionRationale(requestCode = REQUEST_MULTI_PERMISSON, requestPermission = Manifest.permission.READ_CONTACTS)
+    public void rationableContactPermission() {
+        Log.d(TAG, &quot;ask to rationable READ_CONTACTS permission&quot;);
+        Toast.makeText(getActivity(), &quot;ask to rationable READ_CONTACTS permission&quot;, Toast.LENGTH_SHORT).show();
+        EPermission.requestPermissions(this, REQUEST_SINGLE_PERMISSON, Manifest.permission.READ_CONTACTS);
+    }
+}
+</code></pre><h4 id="&#x5C0F;&#x5FC3;&#x8E29;&#x5751;"><a href="#&#x5C0F;&#x5FC3;&#x8E29;&#x5751;" class="headerlink" title="&#x5C0F;&#x5FC3;&#x8E29;&#x5751;"></a>&#x5C0F;&#x5FC3;&#x8E29;&#x5751;</h4><ul>
+<li><p><code>@PermissionGrant</code>,<code>@PermissionDeny</code> and <code>@PermissionRationale</code>&#x6709;&#x4E00;&#x4E2A;<code>requestCode</code>&#x5C5E;&#x6027;&#xFF0C;&#x5982;&#x679C;&#x4F60;&#x6CA1;&#x6709;&#x6307;&#x5B9A;&#x5176;&#x503C;&#xFF0C;&#x90A3;&#x4E48;&#x8BE5;&#x6CE8;&#x89E3;&#x5BF9;&#x5E94;&#x7684;&#x65B9;&#x6CD5;&#x53EF;&#x4EE5;&#x63A5;&#x6536;&#x6240;&#x6709;&#x7684;&#x5173;&#x4E8E;<code>requestPermission</code>&#x7684;&#x56DE;&#x8C03;</p>
+</li>
+<li><p>&#x5BF9;&#x4E8E;&#x4E00;&#x6B21;&#x6027;&#x7533;&#x8BF7;&#x591A;&#x4E2A;&#x6743;&#x9650;&#x7684;&#x64CD;&#x4F5C;&#xFF0C;&#x4F1A;&#x9488;&#x5BF9;&#x7528;&#x6237;&#x5BF9;&#x6BCF;&#x4E2A;&#x6743;&#x9650;&#x6388;&#x6743;&#x4E0E;&#x5426;&#xFF0C;&#x56DE;&#x8C03;&#x4E0D;&#x540C;&#x7684;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;</p>
+</li>
+<li><p>&#x5982;&#x679C;&#x5728;&#x7533;&#x8BF7;&#x6743;&#x9650;&#x7684;&#x5F39;&#x51FA;&#x6846;&#x4E2D;&#xFF0C;&#x7528;&#x6237;&#x52FE;&#x9009;&#x4E86;&#x201C;&#x7981;&#x6B62;&#x540E;&#x4E0D;&#x518D;&#x8BE2;&#x95EE;&#x201D;&#x9009;&#x9879;&#xFF0C;&#x6216;&#x8005;&#x5728;&#x7CFB;&#x7EDF;&#x7684;&#x6743;&#x9650;&#x7BA1;&#x7406;&#x754C;&#x9762;&#x7981;&#x6B62;&#x4E86;&#x8BE5;&#x6743;&#x9650;&#x540E;&#xFF0C;&#x90A3;&#x4E48;&#x540E;&#x7EED;&#x65E0;&#x8BBA;&#x4F55;&#x65F6;&#x518D;&#x7533;&#x8BF7;&#x6743;&#x9650;&#xFF0C;&#x90FD;&#x4F1A;&#x76F4;&#x63A5;&#x56DE;&#x8C03;<code>@PermissionDeny</code>&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;</p>
+</li>
+<li><p>&#x5982;&#x679C;&#x7528;&#x6237;&#x540C;&#x610F;&#x4E86;&#x67D0;&#x4E2A;&#x6743;&#x9650;&#x7684;&#x7533;&#x8BF7;&#x540E;&#xFF0C;&#x540E;&#x7EED;&#x518D;&#x6B21;&#x8C03;&#x7528;&#x6743;&#x9650;&#x7533;&#x8BF7;&#xFF0C;&#x90FD;&#x4F1A;&#x76F4;&#x63A5;&#x56DE;&#x8C03;<code>@PermissionGrant</code>&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;</p>
+</li>
+</ul>
+<h4 id="&#x603B;&#x7ED3;"><a href="#&#x603B;&#x7ED3;" class="headerlink" title="&#x603B;&#x7ED3;"></a>&#x603B;&#x7ED3;</h4><ul>
+<li><p>&#x9879;&#x76EE;&#x5DF2;&#x7ECF;&#x53D1;&#x5E03;&#x5728;github&#x4E0A;(<a href="https://github.com/eggsywelsh/EPermission" target="_blank" rel="external">EPermission</a>)&#xFF0C;&#x60F3;&#x770B;&#x6E90;&#x7801;&#x7684;&#x5C0F;&#x4F19;&#x4F34;&#xFF0C;&#x53EF;&#x4EE5;clone&#x4E0B;&#x6765;&#x770B;&#x770B;</p>
+</li>
+<li><p>&#x9879;&#x76EE;&#x91C7;&#x7528;&#x4E86;&#x57FA;&#x4E8E;Annotation Processing Tool&#x6280;&#x672F;&#xFF0C;&#x5173;&#x4E8E;&#x8FD9;&#x4E2A;&#x6280;&#x672F;&#x7684;&#x8BE6;&#x7EC6;&#x89E3;&#x91CA;&#xFF0C;&#x53EF;&#x4EE5;&#x53C2;&#x8003;&#x8FD9;&#x7BC7;<a href="http://qiushao.net/2015/07/07/Annotation-Processing-Tool%E8%AF%A6%E8%A7%A3/" target="_blank" rel="external">Annotation-Processing-Tool&#x8BE6;&#x89E3;</a></p>
+</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;介绍自己写的一个关于android6.0运行时权限封装库&lt;br&gt;
+    
+    </summary>
+    
+      <category term="android" scheme="http://blog.eggsychan.com/categories/android/"/>
+    
+      <category term="apt" scheme="http://blog.eggsychan.com/categories/android/apt/"/>
+    
+    
+      <category term="android运行时权限" scheme="http://blog.eggsychan.com/tags/android%E8%BF%90%E8%A1%8C%E6%97%B6%E6%9D%83%E9%99%90/"/>
+    
+      <category term="android权限封装" scheme="http://blog.eggsychan.com/tags/android%E6%9D%83%E9%99%90%E5%B0%81%E8%A3%85/"/>
+    
+      <category term="EPermission" scheme="http://blog.eggsychan.com/tags/EPermission/"/>
+    
+  </entry>
+  
+  <entry>
     <title>详解android6.0权限</title>
     <link href="http://blog.eggsychan.com/2016/12/21/%E8%AF%A6%E8%A7%A3android6-0%E6%9D%83%E9%99%90/"/>
     <id>http://blog.eggsychan.com/2016/12/21/详解android6-0权限/</id>
     <published>2016-12-21T12:49:10.000Z</published>
-    <updated>2016-12-22T10:12:33.439Z</updated>
+    <updated>2016-12-29T08:53:24.241Z</updated>
     
     <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;android6.0&#x8FD0;&#x884C;&#x65F6;&#x6743;&#x9650;&#xFF0C;&#x4EE5;&#x53CA;&#x6743;&#x9650;&#x7533;&#x8BF7;&#xFF0C;&#x6743;&#x9650;&#x9002;&#x914D;<br><a id="more"></a></p>
 <blockquote>
@@ -192,7 +514,7 @@ if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.M) {
 <li><p>&#x5BF9;&#x4E8E;&#x4E00;&#x4E2A;&#x6709;&#x5F88;&#x591A;&#x4F9D;&#x8D56;&#x7684;&#x5BBF;&#x4E3B;&#x5E94;&#x7528;&#xFF0C;&#x60F3;&#x8981;&#x505A;&#x5230;&#x652F;&#x6301;&#x8FD8;&#x662F;&#x6709;&#x4E00;&#x4E9B;&#x5DE5;&#x4F5C;&#x91CF;&#x7684;&#xFF0C;&#x56E0;&#x4E3A;&#x4F60;&#x7684;&#x6743;&#x9650;&#x7533;&#x8BF7;&#x53D7;&#x5236;&#x4E8E;&#x4F9D;&#x8D56;&#x3002;</p>
 </li>
 </ul>
-<p>&#x6700;&#x540E;&#xFF0C;&#x901A;&#x8FC7;&#x4EE5;&#x4E0A;&#x4F7F;&#x7528;&#x4F8B;&#x5B50;&#x7684;&#x4EE3;&#x7801;&#x6211;&#x4EEC;&#x770B;&#x5230;&#xFF0C;&#x867D;&#x7136;&#x539F;&#x7406;&#x548C;&#x5185;&#x5BB9;&#x5F88;&#x7B80;&#x5355;&#xFF0C;&#x4F46;&#x662F;&#x6D41;&#x7A0B;&#x4E0A;&#x6211;&#x4EEC;&#x8FD8;&#x662F;&#x8981;&#x5199;&#x5F88;&#x591A;&#x4EE3;&#x7801;&#xFF0C;&#x5224;&#x65AD;&#x51E0;&#x4E2A;&#x6761;&#x4EF6;&#xFF0C;&#x7A0D;&#x540E;&#x6211;&#x5C06;&#x5728;&#x53E6;&#x5916;&#x4E00;&#x7247;&#x6587;&#x7AE0;&#x4E2D;&#x6839;&#x636E;&#x8BF7;&#x6C42;&#x8FD0;&#x884C;&#x65F6;&#x6743;&#x9650;&#x7684;&#x7279;&#x70B9;&#xFF0C;&#x5C01;&#x88C5;&#x51FA;&#x4E00;&#x4E2A;&#x5E93;&#xFF0C;&#x4F7F;&#x5F00;&#x53D1;&#x7740;&#x53EF;&#x4EE5;&#x65B9;&#x4FBF;&#x7684;&#x5B9A;&#x4E49;&#x6743;&#x9650;&#x7533;&#x8BF7;&#x6D41;&#x7A0B;&#xFF0C;&#x656C;&#x8BF7;&#x671F;&#x5F85;&#x2026;&#x2026;</p>
+<p>&#x6700;&#x540E;&#xFF0C;&#x901A;&#x8FC7;&#x4EE5;&#x4E0A;&#x4F7F;&#x7528;&#x4F8B;&#x5B50;&#x7684;&#x4EE3;&#x7801;&#x6211;&#x4EEC;&#x770B;&#x5230;&#xFF0C;&#x867D;&#x7136;&#x539F;&#x7406;&#x548C;&#x5185;&#x5BB9;&#x5F88;&#x7B80;&#x5355;&#xFF0C;&#x4F46;&#x662F;&#x6D41;&#x7A0B;&#x4E0A;&#x6211;&#x4EEC;&#x8FD8;&#x662F;&#x8981;&#x5199;&#x5F88;&#x591A;&#x4EE3;&#x7801;&#xFF0C;&#x5224;&#x65AD;&#x51E0;&#x4E2A;&#x6761;&#x4EF6;&#xFF0C;&#x7A0D;&#x540E;&#x6211;&#x5C06;&#x5728;&#x53E6;&#x5916;&#x4E00;&#x7247;&#x6587;&#x7AE0;&#x4E2D;&#x6839;&#x636E;&#x8BF7;&#x6C42;&#x8FD0;&#x884C;&#x65F6;&#x6743;&#x9650;&#x7684;&#x7279;&#x70B9;&#xFF0C;&#x5C01;&#x88C5;&#x51FA;&#x4E00;&#x4E2A;&#x5E93;<a href="/2016/12/29/&#x5C01;&#x88C5;android&#x8FD0;&#x884C;&#x65F6;&#x6743;&#x9650;-EPermission/">EPermission</a> &#xFF0C;&#x5EFA;&#x8BAE;&#x5927;&#x5BB6;&#x4F7F;&#x7528;&#x8FD9;&#x4E2A;&#x5E93;&#xFF0C;&#x7B80;&#x5316;&#x6743;&#x9650;&#x7533;&#x8BF7;&#x6D41;&#x7A0B;</p>
 <h2 id="&#x9644;&#x5F55;"><a href="#&#x9644;&#x5F55;" class="headerlink" title="&#x9644;&#x5F55;"></a>&#x9644;&#x5F55;</h2><h3 id="&#x6743;&#x9650;&#x7ED3;&#x679C;&#x5E38;&#x91CF;"><a href="#&#x6743;&#x9650;&#x7ED3;&#x679C;&#x5E38;&#x91CF;" class="headerlink" title="&#x6743;&#x9650;&#x7ED3;&#x679C;&#x5E38;&#x91CF;"></a>&#x6743;&#x9650;&#x7ED3;&#x679C;&#x5E38;&#x91CF;</h3><p>PackageManager.PERMISSION_DENIED&#xFF1A;&#x8BE5;&#x6743;&#x9650;&#x662F;&#x88AB;&#x62D2;&#x7EDD;&#x7684;&#x3002;<br>PackageManager.PERMISSION_GRANTED&#xFF1A;&#x8BE5;&#x6743;&#x9650;&#x662F;&#x88AB;&#x6388;&#x6743;&#x7684;&#x3002;</p>
 <h3 id="&#x6743;&#x9650;&#x540D;&#x79F0;"><a href="#&#x6743;&#x9650;&#x540D;&#x79F0;" class="headerlink" title="&#x6743;&#x9650;&#x540D;&#x79F0;"></a>&#x6743;&#x9650;&#x540D;&#x79F0;</h3><p>Manifest.permission.READ_EXTERNAL_STORAGE<br>Manifest.permission.CAMERA<br>&#x7B49;&#x7B49;Manifest.permission&#x7C7B;&#x4E2D;&#x5BF9;&#x5E94;&#x7684;&#x5E38;&#x91CF;</p>
 ]]></content>
@@ -206,9 +528,9 @@ if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.M) {
       <category term="android" scheme="http://blog.eggsychan.com/categories/android/"/>
     
     
-      <category term="android6.0" scheme="http://blog.eggsychan.com/tags/android6-0/"/>
-    
       <category term="android运行时权限" scheme="http://blog.eggsychan.com/tags/android%E8%BF%90%E8%A1%8C%E6%97%B6%E6%9D%83%E9%99%90/"/>
+    
+      <category term="android6.0" scheme="http://blog.eggsychan.com/tags/android6-0/"/>
     
   </entry>
   
