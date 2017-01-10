@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://blog.eggsychan.com/"/>
-  <updated>2016-12-29T08:55:09.801Z</updated>
+  <updated>2017-01-10T11:06:50.518Z</updated>
   <id>http://blog.eggsychan.com/</id>
   
   <author>
@@ -16,11 +16,152 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>支持RxJava2的RxBus简单封装</title>
+    <link href="http://blog.eggsychan.com/2017/01/10/%E6%94%AF%E6%8C%81RxJava2%E7%9A%84RxBus%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85/"/>
+    <id>http://blog.eggsychan.com/2017/01/10/支持RxJava2的RxBus简单封装/</id>
+    <published>2017-01-10T11:00:49.000Z</published>
+    <updated>2017-01-10T11:06:50.518Z</updated>
+    
+    <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;&#x57FA;&#x4E8E;RxJava2&#x7684;RxBus&#x5C01;&#x88C5;&#x793A;&#x4F8B;<br><a id="more"></a></p>
+<blockquote>
+<p>&#x7531;&#x4E8E;&#x7F51;&#x7EDC;&#x4E0A;&#x641C;&#x7D22;RxBus&#x7684;&#x6587;&#x7AE0;&#x90FD;&#x53EA;&#x652F;&#x6301;RxJava1&#xFF0C;&#x800C;RxJava2&#x5DF2;&#x7ECF;&#x5728;16&#x5E74;&#x5E95;&#x6B63;&#x5F0F;&#x53D1;&#x5E03;&#x4E86;&#xFF0C;&#x6211;&#x4EEC;&#x73B0;&#x5728;&#x6765;&#x652F;&#x6301;&#x4E00;&#x4E0B;RxJava2&#x7248;&#x672C;&#x7684;RxBus</p>
+</blockquote>
+<h3 id="&#x5F15;&#x5165;"><a href="#&#x5F15;&#x5165;" class="headerlink" title="&#x5F15;&#x5165;"></a>&#x5F15;&#x5165;</h3><pre><code>dependencies { 
+    // rxjava and rxandroid 
+    compile &apos;io.reactivex.rxjava2:rxjava:2.0.4&apos; 
+    compile &apos;io.reactivex.rxjava2:rxandroid:2.0.1&apos;
+}
+</code></pre><h3 id="rxbus&#x7C7B;"><a href="#RxBus&#x7C7B;" class="headerlink" title="RxBus&#x7C7B;"></a>RxBus&#x7C7B;</h3><pre><code>package com.eggsy.framework.bus;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.internal.operators.flowable.FlowableOnBackpressureError;
+import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.processors.FlowableProcessor;
+import io.reactivex.processors.PublishProcessor;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
+
+/**
+ * Created by eggsy on 17-1-6.
+ */
+public class RxBus {
+
+    private static RxBus instance;
+
+    private Subject&lt;Object&gt; subjectBus;
+
+    private FlowableProcessor&lt;Object&gt; processorBus;
+
+    public static RxBus getDefault() {
+        if (instance == null) {
+            synchronized (RxBus.class) {
+                if (instance == null) {
+                    RxBus tempInstance = new RxBus();
+                    tempInstance.subjectBus = PublishSubject.create().toSerialized();
+                    tempInstance.processorBus = PublishProcessor.create().toSerialized();
+                    instance = tempInstance;
+                }
+            }
+        }
+        return instance;
+    }
+
+    public Disposable register(Class eventType, Consumer observer) {
+        return toObserverable(eventType).subscribe(observer);
+    }
+
+    public Disposable register(Class eventType, Consumer observer, Scheduler scheduler) {
+        return toObserverable(eventType).observeOn(scheduler).subscribe(observer);
+    }
+
+    public Disposable register(Class eventType, Consumer observer,Scheduler scheduler, BackpressureStrategy strategy){
+        Flowable o = toFlowable(eventType);
+        switch (strategy) {
+            case DROP:
+                o = o.onBackpressureDrop();
+            case LATEST:
+                o = o.onBackpressureLatest();
+            case MISSING:
+                o = o;
+            case ERROR:
+                o = RxJavaPlugins.onAssembly(new FlowableOnBackpressureError&lt;&gt;(o));
+            default:
+                o = o.onBackpressureBuffer();
+        }
+        if(scheduler!=null){
+            o.observeOn(scheduler);
+        }
+        return o.subscribe(observer);
+    }
+
+    public Disposable register(Class eventType, Consumer observer,BackpressureStrategy strategy){
+        return register(eventType,observer,null,strategy);
+    }
+
+    public void unRegister(Disposable disposable) {
+        if (disposable != null &amp;&amp; !disposable.isDisposed()) {
+            disposable.dispose();
+        }
+    }
+
+    public void unRegister(CompositeDisposable compositeDisposable) {
+        if (compositeDisposable != null) {
+            compositeDisposable.dispose();
+        }
+    }
+
+    public void post(final Object event) {
+        subjectBus.onNext(event);
+        processorBus.onNext(event);
+    }
+
+    private Observable toObserverable(Class cls) {
+        return subjectBus.ofType(cls);
+    }
+
+    private Flowable toFlowable(Class cls) {
+        return processorBus.ofType(cls);
+    }
+
+    public boolean hasObservers() {
+        return subjectBus.hasObservers();
+    }
+
+    public boolean hasSubscribers() {
+        return processorBus.hasSubscribers();
+    }
+
+}
+</code></pre><p>&#x4EE5;&#x4E0A;&#x662F;&#x5BF9;RxJava2&#x7684;RxBus&#x7684;&#x7B80;&#x5355;&#x5C01;&#x88C5;&#xFF0C;&#x5728;&#x6B64;&#x57FA;&#x7840;&#x4E0A;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;apt&#x6765;&#x5BF9;&#x7C7B;&#x8FDB;&#x884C;&#x8FDB;&#x4E00;&#x6B65;&#x7684;&#x5C01;&#x88C5;&#xFF0C;&#x8FD9;&#x5C31;&#x662F;&#x540E;&#x9762;&#x7684;&#x5DE5;&#x4F5C;&#x4E86;&#xFF0C;&#x6700;&#x540E;&#x6211;&#x4F1A;&#x5C06;&#x5B83;&#x653E;&#x5230;github&#x4E0A;&#x5E76;&#x4E14;&#x8865;&#x5145;&#x76F8;&#x5E94;&#x7684;&#x793A;&#x4F8B;&#xFF0C;&#x5199;&#x7684;&#x4E0D;&#x597D;&#x6216;&#x8005;&#x4E0D;&#x5BF9;&#x7684;&#x5730;&#x65B9;&#xFF0C;&#x6B22;&#x8FCE;&#x7559;&#x8A00;&#x8BC4;&#x8BBA;&#x4EA4;&#x6D41;&#xFF5E;&#xFF5E;&#xFF5E;</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;介绍基于RxJava2的RxBus封装示例&lt;br&gt;
+    
+    </summary>
+    
+      <category term="android" scheme="http://blog.eggsychan.com/categories/android/"/>
+    
+    
+      <category term="RxBus" scheme="http://blog.eggsychan.com/tags/RxBus/"/>
+    
+      <category term="Rxjava2" scheme="http://blog.eggsychan.com/tags/Rxjava2/"/>
+    
+  </entry>
+  
+  <entry>
     <title>封装android运行时权限(EPermission)</title>
     <link href="http://blog.eggsychan.com/2016/12/29/%E5%B0%81%E8%A3%85android%E8%BF%90%E8%A1%8C%E6%97%B6%E6%9D%83%E9%99%90-EPermission/"/>
     <id>http://blog.eggsychan.com/2016/12/29/封装android运行时权限-EPermission/</id>
     <published>2016-12-29T07:00:24.000Z</published>
-    <updated>2016-12-29T08:55:09.801Z</updated>
+    <updated>2017-01-09T06:57:37.229Z</updated>
     
     <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;&#x81EA;&#x5DF1;&#x5199;&#x7684;&#x4E00;&#x4E2A;&#x5173;&#x4E8E;android6.0&#x8FD0;&#x884C;&#x65F6;&#x6743;&#x9650;&#x5C01;&#x88C5;&#x5E93;<br><a id="more"></a></p>
 <blockquote>
@@ -35,9 +176,9 @@
 </ul>
 <p><strong>&#x57FA;&#x672C;&#x539F;&#x7406;</strong><br>&#x6839;&#x636E;&#x8BF7;&#x6C42;&#x6743;&#x9650;&#x65F6;&#x7684;requestCode&#x548C;requestPermission&#x4EE5;&#x53CA;&#x5904;&#x7406;&#x7ED3;&#x679C;grantResult&#xFF0C;&#x5BFB;&#x627E;&#x5BF9;&#x5E94;&#x7684;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#x8FDB;&#x884C;&#x56DE;&#x8C03;</p>
 <h4 id="&#x5F15;&#x5165;"><a href="#&#x5F15;&#x5165;" class="headerlink" title="&#x5F15;&#x5165;"></a>&#x5F15;&#x5165;</h4><pre><code>dependencies {
-    annotationProcessor &apos;com.eggsy:epermission-processor:1.0.4&apos;
-    compile &apos;com.eggsy:epermission:1.0.4&apos;
-    compile &apos;com.eggsy:epermission-annotations:1.0.4&apos;
+    annotationProcessor &apos;com.eggsy:epermission-processor:1.1.1&apos;
+    compile &apos;com.eggsy:epermission:1.1.1&apos;
+    compile &apos;com.eggsy:epermission-annotations:1.1.1&apos;
 }
 </code></pre><h4 id="&#x6743;&#x9650;&#x5224;&#x65AD;"><a href="#&#x6743;&#x9650;&#x5224;&#x65AD;" class="headerlink" title="&#x6743;&#x9650;&#x5224;&#x65AD;"></a>&#x6743;&#x9650;&#x5224;&#x65AD;</h4><p>&#x5224;&#x65AD;&#x4F60;&#x662F;&#x5426;&#x5DF2;&#x7ECF;&#x6709;&#x67D0;&#x4E2A;&#x6743;&#x9650;</p>
 <pre><code>ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED

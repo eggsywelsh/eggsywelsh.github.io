@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="technology blog, open source blog, android blog, java blog" />
+  <meta name="keywords" content="RxBus,Rxjava2," />
 
 
 
@@ -84,15 +84,16 @@
 
 
 
-<meta name="description" content="我,一直在路上,从未停止攀登的步伐...">
-<meta property="og:type" content="website">
-<meta property="og:title" content="蛋西的博客">
-<meta property="og:url" content="http://blog.eggsychan.com/categories/ButterKnife/index.html">
+<meta name="description" content="介绍基于RxJava2的RxBus封装示例">
+<meta property="og:type" content="article">
+<meta property="og:title" content="支持RxJava2的RxBus简单封装">
+<meta property="og:url" content="http://blog.eggsychan.com/2017/01/10/支持RxJava2的RxBus简单封装/index.html">
 <meta property="og:site_name" content="蛋西的博客">
-<meta property="og:description" content="我,一直在路上,从未停止攀登的步伐...">
+<meta property="og:description" content="介绍基于RxJava2的RxBus封装示例">
+<meta property="og:updated_time" content="2017-01-10T11:06:50.518Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="蛋西的博客">
-<meta name="twitter:description" content="我,一直在路上,从未停止攀登的步伐...">
+<meta name="twitter:title" content="支持RxJava2的RxBus简单封装">
+<meta name="twitter:description" content="介绍基于RxJava2的RxBus封装示例">
 
 
 
@@ -114,9 +115,9 @@
 
 
 
-  <link rel="canonical" href="http://blog.eggsychan.com/categories/ButterKnife/"/>
+  <link rel="canonical" href="http://blog.eggsychan.com/2017/01/10/支持RxJava2的RxBus简单封装/"/>
 
-  <title> 分类: ButterKnife | 蛋西的博客 </title>
+  <title> 支持RxJava2的RxBus简单封装 | 蛋西的博客 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -147,7 +148,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left  ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -268,47 +269,275 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <div class="collection-title">
-      <h2 >
-        ButterKnife
-        <small>分类</small>
-      </h2>
-    </div>
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
 
     
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                支持RxJava2的RxBus简单封装
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-10T19:00:49+08:00" content="2017-01-10">
+              2017-01-10
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/10/支持RxJava2的RxBus简单封装/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/10/支持RxJava2的RxBus简单封装/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2017/01/10/支持RxJava2的RxBus简单封装/" class="leancloud_visitors" data-flag-title="支持RxJava2的RxBus简单封装">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
       
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+      
+        <p>&#x4ECB;&#x7ECD;&#x57FA;&#x4E8E;RxJava2&#x7684;RxBus&#x5C01;&#x88C5;&#x793A;&#x4F8B;<br><a id="more"></a></p>
+<blockquote>
+<p>&#x7531;&#x4E8E;&#x7F51;&#x7EDC;&#x4E0A;&#x641C;&#x7D22;RxBus&#x7684;&#x6587;&#x7AE0;&#x90FD;&#x53EA;&#x652F;&#x6301;RxJava1&#xFF0C;&#x800C;RxJava2&#x5DF2;&#x7ECF;&#x5728;16&#x5E74;&#x5E95;&#x6B63;&#x5F0F;&#x53D1;&#x5E03;&#x4E86;&#xFF0C;&#x6211;&#x4EEC;&#x73B0;&#x5728;&#x6765;&#x652F;&#x6301;&#x4E00;&#x4E0B;RxJava2&#x7248;&#x672C;&#x7684;RxBus</p>
+</blockquote>
+<h3 id="&#x5F15;&#x5165;"><a href="#&#x5F15;&#x5165;" class="headerlink" title="&#x5F15;&#x5165;"></a>&#x5F15;&#x5165;</h3><pre><code>dependencies { 
+    // rxjava and rxandroid 
+    compile &apos;io.reactivex.rxjava2:rxjava:2.0.4&apos; 
+    compile &apos;io.reactivex.rxjava2:rxandroid:2.0.1&apos;
+}
+</code></pre><h3 id="rxbus&#x7C7B;"><a href="#RxBus&#x7C7B;" class="headerlink" title="RxBus&#x7C7B;"></a>RxBus&#x7C7B;</h3><pre><code>package com.eggsy.framework.bus;
 
-      <h1 class="post-title">
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.internal.operators.flowable.FlowableOnBackpressureError;
+import io.reactivex.plugins.RxJavaPlugins;
+import io.reactivex.processors.FlowableProcessor;
+import io.reactivex.processors.PublishProcessor;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
+
+/**
+ * Created by eggsy on 17-1-6.
+ */
+public class RxBus {
+
+    private static RxBus instance;
+
+    private Subject&lt;Object&gt; subjectBus;
+
+    private FlowableProcessor&lt;Object&gt; processorBus;
+
+    public static RxBus getDefault() {
+        if (instance == null) {
+            synchronized (RxBus.class) {
+                if (instance == null) {
+                    RxBus tempInstance = new RxBus();
+                    tempInstance.subjectBus = PublishSubject.create().toSerialized();
+                    tempInstance.processorBus = PublishProcessor.create().toSerialized();
+                    instance = tempInstance;
+                }
+            }
+        }
+        return instance;
+    }
+
+    public Disposable register(Class eventType, Consumer observer) {
+        return toObserverable(eventType).subscribe(observer);
+    }
+
+    public Disposable register(Class eventType, Consumer observer, Scheduler scheduler) {
+        return toObserverable(eventType).observeOn(scheduler).subscribe(observer);
+    }
+
+    public Disposable register(Class eventType, Consumer observer,Scheduler scheduler, BackpressureStrategy strategy){
+        Flowable o = toFlowable(eventType);
+        switch (strategy) {
+            case DROP:
+                o = o.onBackpressureDrop();
+            case LATEST:
+                o = o.onBackpressureLatest();
+            case MISSING:
+                o = o;
+            case ERROR:
+                o = RxJavaPlugins.onAssembly(new FlowableOnBackpressureError&lt;&gt;(o));
+            default:
+                o = o.onBackpressureBuffer();
+        }
+        if(scheduler!=null){
+            o.observeOn(scheduler);
+        }
+        return o.subscribe(observer);
+    }
+
+    public Disposable register(Class eventType, Consumer observer,BackpressureStrategy strategy){
+        return register(eventType,observer,null,strategy);
+    }
+
+    public void unRegister(Disposable disposable) {
+        if (disposable != null &amp;&amp; !disposable.isDisposed()) {
+            disposable.dispose();
+        }
+    }
+
+    public void unRegister(CompositeDisposable compositeDisposable) {
+        if (compositeDisposable != null) {
+            compositeDisposable.dispose();
+        }
+    }
+
+    public void post(final Object event) {
+        subjectBus.onNext(event);
+        processorBus.onNext(event);
+    }
+
+    private Observable toObserverable(Class cls) {
+        return subjectBus.ofType(cls);
+    }
+
+    private Flowable toFlowable(Class cls) {
+        return processorBus.ofType(cls);
+    }
+
+    public boolean hasObservers() {
+        return subjectBus.hasObservers();
+    }
+
+    public boolean hasSubscribers() {
+        return processorBus.hasSubscribers();
+    }
+
+}
+</code></pre><p>&#x4EE5;&#x4E0A;&#x662F;&#x5BF9;RxJava2&#x7684;RxBus&#x7684;&#x7B80;&#x5355;&#x5C01;&#x88C5;&#xFF0C;&#x5728;&#x6B64;&#x57FA;&#x7840;&#x4E0A;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;apt&#x6765;&#x5BF9;&#x7C7B;&#x8FDB;&#x884C;&#x8FDB;&#x4E00;&#x6B65;&#x7684;&#x5C01;&#x88C5;&#xFF0C;&#x8FD9;&#x5C31;&#x662F;&#x540E;&#x9762;&#x7684;&#x5DE5;&#x4F5C;&#x4E86;&#xFF0C;&#x6700;&#x540E;&#x6211;&#x4F1A;&#x5C06;&#x5B83;&#x653E;&#x5230;github&#x4E0A;&#x5E76;&#x4E14;&#x8865;&#x5145;&#x76F8;&#x5E94;&#x7684;&#x793A;&#x4F8B;&#xFF0C;&#x5199;&#x7684;&#x4E0D;&#x597D;&#x6216;&#x8005;&#x4E0D;&#x5BF9;&#x7684;&#x5730;&#x65B9;&#xFF0C;&#x6B22;&#x8FCE;&#x7559;&#x8A00;&#x8BC4;&#x8BBA;&#x4EA4;&#x6D41;&#xFF5E;&#xFF5E;&#xFF5E;</p>
+
+      
+    </div>
+
+    <div>
+      
         
-            <a class="post-title-link" href="/2016/08/23/ButterKnife使用和原理/" itemprop="url">
-              
-                <span itemprop="name">ButterKnife使用和原理</span>
-              
-            </a>
+
+      
+    </div>
+
+    <div>
+      
         
-      </h1>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-08-23T17:15:55+08:00"
-              content="2016-08-23" >
-          08-23
-        </time>
-      </div>
+      
+    </div>
 
-    </header>
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RxBus/" rel="tag">#RxBus</a>
+          
+            <a href="/tags/Rxjava2/" rel="tag">#Rxjava2</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/29/封装android运行时权限-EPermission/" rel="next" title="封装android运行时权限(EPermission)">
+                <i class="fa fa-chevron-left"></i> 封装android运行时权限(EPermission)
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </article>
 
 
-    
-  </section>
 
-  
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -316,6 +545,14 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/01/10/支持RxJava2的RxBus简单封装/"
+           data-title="支持RxJava2的RxBus简单封装" data-url="http://blog.eggsychan.com/2017/01/10/支持RxJava2的RxBus简单封装/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -335,8 +572,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.png"
@@ -424,6 +670,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#引入"><span class="nav-text">引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rxbus类"><span class="nav-text">RxBus类</span></a></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -520,6 +777,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 
