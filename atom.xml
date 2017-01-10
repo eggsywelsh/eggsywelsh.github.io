@@ -669,9 +669,9 @@ if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.M) {
       <category term="android" scheme="http://blog.eggsychan.com/categories/android/"/>
     
     
-      <category term="android运行时权限" scheme="http://blog.eggsychan.com/tags/android%E8%BF%90%E8%A1%8C%E6%97%B6%E6%9D%83%E9%99%90/"/>
-    
       <category term="android6.0" scheme="http://blog.eggsychan.com/tags/android6-0/"/>
+    
+      <category term="android运行时权限" scheme="http://blog.eggsychan.com/tags/android%E8%BF%90%E8%A1%8C%E6%97%B6%E6%9D%83%E9%99%90/"/>
     
   </entry>
   
