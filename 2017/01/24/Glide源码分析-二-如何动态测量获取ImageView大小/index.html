@@ -1,0 +1,1233 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Glide,Glide源码分析,Glide如何动态测量ImageView大小," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="介绍Glide如何动态测量ImageView大小">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Glide源码分析(二) 如何动态测量获取ImageView大小">
+<meta property="og:url" content="http://blog.eggsychan.com/2017/01/24/Glide源码分析-二-如何动态测量获取ImageView大小/index.html">
+<meta property="og:site_name" content="蛋西的博客">
+<meta property="og:description" content="介绍Glide如何动态测量ImageView大小">
+<meta property="og:updated_time" content="2017-02-08T13:04:37.923Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Glide源码分析(二) 如何动态测量获取ImageView大小">
+<meta name="twitter:description" content="介绍Glide如何动态测量ImageView大小">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<link href="/js/google-code-prettify/tomorrow-night-bright.min.css" type="text/css" rel="stylesheet" />
+
+
+
+  <link rel="canonical" href="http://blog.eggsychan.com/2017/01/24/Glide源码分析-二-如何动态测量获取ImageView大小/"/>
+
+  <title> Glide源码分析(二) 如何动态测量获取ImageView大小 | 蛋西的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?f9b45cab7ff54195350ae8bd50648ccf";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">蛋西的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Glide源码分析(二) 如何动态测量获取ImageView大小
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-24T21:02:48+08:00" content="2017-01-24">
+              2017-01-24
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/android/Glide/" itemprop="url" rel="index">
+                    <span itemprop="name">Glide</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/24/Glide源码分析-二-如何动态测量获取ImageView大小/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/24/Glide源码分析-二-如何动态测量获取ImageView大小/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2017/01/24/Glide源码分析-二-如何动态测量获取ImageView大小/" class="leancloud_visitors" data-flag-title="Glide源码分析(二) 如何动态测量获取ImageView大小">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&#x4ECB;&#x7ECD;Glide&#x5982;&#x4F55;&#x52A8;&#x6001;&#x6D4B;&#x91CF;ImageView&#x5927;&#x5C0F;<br><a id="more"></a></p>
+<blockquote>
+<p>&#x6211;&#x4EEC;&#x90FD;&#x77E5;&#x9053;&#xFF0C;Glide&#x662F;&#x5728;Picasso&#x7684;&#x57FA;&#x7840;&#x4E0A;&#x8FDB;&#x884C;&#x7684;&#x6539;&#x5584;&#xFF0C;&#x76F8;&#x6BD4;&#x4E8E;Picasso&#xFF0C;Glide&#x4F1A;&#x6839;&#x636E;ImageView&#x7684;&#x5927;&#x5C0F;&#x6765;&#x751F;&#x6210;&#x56FE;&#x7247;&#x5927;&#x5C0F;&#xFF0C;&#x8FD9;&#x6837;&#x53EF;&#x4EE5;&#x51CF;&#x5C11;&#x56FE;&#x7247;&#x5360;&#x7528;&#x7684;&#x5185;&#x5B58;&#x5927;&#x5C0F;&#xFF0C;&#x6211;&#x4EEC;&#x6765;&#x770B;&#x770B;Glide&#x662F;&#x600E;&#x4E48;&#x52A8;&#x6001;&#x6D4B;&#x91CF;&#x83B7;&#x53D6;ImageView&#x7684;&#x5927;&#x5C0F;&#xFF0C;&#x5E76;&#x4E14;&#x8BBE;&#x7F6E;&#x6839;&#x636E;&#x5927;&#x5C0F;&#x8BBE;&#x7F6E;&#x56FE;&#x7247;&#x7684;&#x5927;&#x5C0F;</p>
+</blockquote>
+<p>&#x6211;&#x4EEC;&#x5148;&#x6765;&#x7B80;&#x5355;&#x56DE;&#x987E;&#x4E00;&#x4E0B;Activity&#x4E2D;&#x52A0;&#x8F7D;&#x89C6;&#x56FE;&#x7684;&#x8FC7;&#x7A0B;&#xFF1A;<br>&#x6211;&#x4EEC;&#x5728;<code>onCreate(...)</code>&#x65B9;&#x6CD5;&#x4E2D;&#x8C03;&#x7528;&#x4E86;<code>setContentView(int layoutId)</code>&#x6765;&#x8BBE;&#x7F6E;&#x4E86;&#x5E03;&#x5C40;&#x6587;&#x4EF6;&#xFF0C;&#x5176;&#x5B9E;&#x8FD9;&#x91CC;&#x5E76;&#x6CA1;&#x6709;&#x9A6C;&#x4E0A;&#x8FDB;&#x884C;&#x89C6;&#x56FE;&#x7684;&#x6D4B;&#x91CF;&#xFF0C;&#x5E03;&#x5C40;&#xFF0C;&#x7ED8;&#x5236;&#xFF0C;&#x4E00;&#x5207;&#x90FD;&#x662F;&#x7B49;&#x5230;onResume&#x4E4B;&#x540E;&#x624D;&#x8FDB;&#x884C;&#x754C;&#x9762;&#x89C6;&#x56FE;&#x7684;&#x6E32;&#x67D3;&#x3002;&#x81F3;&#x4E8E;&#x5982;&#x4F55;&#x6E32;&#x67D3;&#xFF0C;&#x8FD9;&#x91CC;&#x6709;&#x4E24;&#x7BC7;&#x6587;&#x7AE0;&#xFF0C;&#x5982;&#x679C;&#x4F60;&#x4E0D;&#x719F;&#x6089;&#x6216;&#x8005;&#x8FD8;&#x662F;&#x5C0F;&#x767D;&#xFF0C;&#x53EF;&#x4EE5;&#x5148;&#x53C2;&#x8003;&#x4E0B;&#xFF1A;<br><a href="http://www.jianshu.com/p/5a71014e7b1b" target="_blank" rel="external">Android View&#x7684;&#x7ED8;&#x5236;&#x6D41;&#x7A0B;</a><br><a href="http://blog.csdn.net/luoshengyang/article/details/6689748" target="_blank" rel="external">Android&#x5E94;&#x7528;&#x7A0B;&#x5E8F;&#x542F;&#x52A8;&#x8FC7;&#x7A0B;&#x6E90;&#x4EE3;&#x7801;&#x5206;&#x6790;</a></p>
+<p>&#x90A3;&#x4E48;&#x5728;&#x8FD9;&#x4E2A;&#x751F;&#x547D;&#x5468;&#x671F;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x5982;&#x679C;&#x4F7F;&#x7528;&#x4E86;Glide&#x7684;&#x52A0;&#x8F7D;&#x56FE;&#x7247;&#x65B9;&#x6CD5;&#xFF0C;&#x90A3;&#x4E48;&#x5176;&#x5B9E;&#x8FD9;&#x65F6;&#x5019;&#x56FE;&#x7247;&#x662F;&#x65E0;&#x6CD5;&#x786E;&#x5B9A;&#x5927;&#x5C0F;&#x548C;&#x4F4D;&#x7F6E;&#x7684;(&#x56E0;&#x4E3A;&#x8FD9;&#x65F6;&#x5019;&#x6574;&#x4E2A;&#x9875;&#x9762;&#x89C6;&#x56FE;&#x8FD8;&#x6CA1;&#x6709;&#x8FDB;&#x884C;&#x6D4B;&#x91CF;&#x5E03;&#x5C40;&#x7ED8;&#x5236;&#xFF0C;&#x54EA;&#x6765;&#x7684;&#x786E;&#x5B9A;&#x5927;&#x5C0F;&#x548C;&#x4F4D;&#x7F6E;)&#xFF0C;&#x8FD9;&#x65F6;&#x5019;Glide&#x8BE5;&#x600E;&#x4E48;&#x529E;&#x5462;&#xFF1F;</p>
+<p>&#x8FD8;&#x662F;&#x4EE5;&#x6211;&#x4EEC;&#x4E0A;&#x6587;<a href="http://www.jianshu.com/p/c7746ffed0c7" target="_blank" rel="external">Glide&#x6E90;&#x7801;&#x5206;&#x6790;(&#x4E00;) &#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;</a>&#x4E2D;&#x7684;&#x4F8B;&#x5B50;&#x6765;&#x5206;&#x6790;&#x4E00;&#x4E0B;&#x6574;&#x4E2A;&#x8FC7;&#x7A0B;&#xFF0C;&#x91CD;&#x70B9;&#x8BB2;&#x89E3;&#x4E00;&#x4E0B;&#x52A8;&#x6001;&#x83B7;&#x53D6;ImageView&#x5927;&#x5C0F;</p>
+<h4 id="&#x4F8B;&#x5B50;"><a href="#&#x4F8B;&#x5B50;" class="headerlink" title="&#x4F8B;&#x5B50;"></a>&#x4F8B;&#x5B50;</h4><pre><code>Glide.with(StartActivity.this).load(R.mipmap.pizza).into(mIvShow);
+</code></pre><h4 id="&#x5206;&#x6790;"><a href="#&#x5206;&#x6790;" class="headerlink" title="&#x5206;&#x6790;"></a>&#x5206;&#x6790;</h4><p>&#x672C;&#x4F8B;&#x4E2D;&#xFF0C;Glide&#x524D;&#x9762;&#x7684;&#x65B9;&#x6CD5;&#x6700;&#x7EC8;&#x8981;&#x751F;&#x6210;Bitmap&#x5BF9;&#x8C61;&#x5199;&#x5165;ImageView&#x5BF9;&#x8C61;&#x4E2D;&#x663E;&#x793A;&#x51FA;&#x6765;&#xFF0C;&#x6211;&#x4EEC;&#x770B;&#x4E0B;<code>into()</code>&#x65B9;&#x6CD5;<br><strong>GenericRequestBuilder.java</strong></p>
+<pre><code>// &#x8BBE;&#x7F6E;&#x4E86;&#x5C06;&#x8981;&#x52A0;&#x8F7D;&#x56FE;&#x7247;&#x5230;&#x54EA;&#x4E2A;&#x89C6;&#x56FE;&#xFF0C;&#x53D6;&#x6D88;&#x5DF2;&#x7ECF;&#x52A0;&#x8F7D;&#x5230;ImageView&#x4E2D;&#x7684;&#x8D44;&#x6E90;&#xFF0C;&#x5E76;&#x4E14;&#x91CA;&#x653E;&#x8D44;&#x6E90;&#x7528;&#x4E8E;&#x540E;&#x9762;&#x53EF;&#x80FD;&#x7684;&#x590D;&#x7528;
+ public Target&lt;TranscodeType&gt; into(ImageView view) {
+        Util.assertMainThread();
+        if (view == null) {
+            throw new IllegalArgumentException(&quot;You must pass in a non null View&quot;);
+        }
+        // &#x5982;&#x679C;&#x4E4B;&#x524D;&#x6CA1;&#x6709;&#x5B9A;&#x4E49;&#x8FC7;Transformation&#xFF0C;&#x5E76;&#x4E14;ImageView&#x8BBE;&#x7F6E;&#x4E86;scaleType
+        if (!isTransformationSet &amp;&amp; view.getScaleType() != null) {
+            switch (view.getScaleType()) {
+                case CENTER_CROP:
+                   // &#x751F;&#x6210;&#x4E00;&#x4E2A;CENTER_CROP&#x7684;Transformation&#xFF0C;&#x7528;&#x4E8E;&#x540E;&#x9762;&#x751F;&#x6210;&#x56FE;&#x7247;&#x65F6;&#x8F6C;&#x6362;
+                    applyCenterCrop();
+                    break;
+                case FIT_CENTER:
+                case FIT_START:
+                case FIT_END:
+                   // &#x751F;&#x6210;&#x4E00;&#x4E2A;FIT_END&#x7684;Transformation&#x5BF9;&#x8C61;&#xFF0C;&#x7528;&#x4E8E;&#x540E;&#x9762;&#x751F;&#x6210;&#x56FE;&#x7247;&#x65F6;&#x8F6C;&#x6362;
+                    applyFitCenter();
+                    break;
+                //$CASES-OMITTED$
+                default:
+                    // Do nothing.
+            }
+        }
+        // &#x7EDF;&#x4E00;&#x6784;&#x5EFA;ImageViewTarget
+        return into(glide.buildImageViewTarget(view, transcodeClass));
+    }
+</code></pre><p>&#x8FD9;&#x91CC;&#x6700;&#x7EC8;&#x4F1A;&#x6784;&#x5EFA;&#x4E00;&#x4E2A;ImageViewTarget&#x5BF9;&#x8C61;&#xFF0C;&#x63A5;&#x4E0B;&#x6765;&#x770B;&#x4E0B;&#x662F;&#x5982;&#x4F55;&#x6784;&#x5EFA;&#x8FD9;&#x4E2A;&#x7C7B;<br>&#x5173;&#x4E8E;&#x81EA;&#x5B9A;&#x4E49;Transformation&#x7684;&#x4F8B;&#x5B50;&#xFF0C;&#x5177;&#x4F53;&#x770B;&#x6211;&#x7684;&#x4F8B;&#x5B50;&#x5DE5;&#x7A0B;<a href="https://github.com/eggsywelsh/GlideSample" target="_blank" rel="external">GlideSample</a>&#x7684;<code>TransformationActivity.java</code></p>
+<p><strong>Glide.java</strong></p>
+<pre><code>    &lt;R&gt; Target&lt;R&gt; buildImageViewTarget(ImageView imageView, Class&lt;R&gt; transcodedClass) {
+        return imageViewTargetFactory.buildTarget(imageView, transcodedClass);
+    }
+</code></pre><p><strong>ImageViewTargetFactory.java</strong></p>
+<pre><code>    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;Z&gt; Target&lt;Z&gt; buildTarget(ImageView view, Class&lt;Z&gt; clazz) {
+        if (GlideDrawable.class.isAssignableFrom(clazz)) {
+            return (Target&lt;Z&gt;) new GlideDrawableImageViewTarget(view);
+        } else if (Bitmap.class.equals(clazz)) {
+            ......
+        }
+        ......
+    }
+</code></pre><p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x6700;&#x7EC8;&#x4F1A;&#x8FD4;&#x56DE;<code>GlideDrawableImageViewTarget</code>&#x5BF9;&#x8C61;&#xFF0C;&#x63A5;&#x4E0B;&#x6765;&#x5C31;&#x662F;request&#x4EFB;&#x52A1;<br><strong>GenericRequestBuilder.java</strong></p>
+<pre><code>public &lt;Y extends Target&lt;TranscodeType&gt;&gt; Y into(Y target) {
+        Util.assertMainThread();
+        if (target == null) {
+            throw new IllegalArgumentException(&quot;You must pass in a non null Target&quot;);
+        }
+        if (!isModelSet) {
+            throw new IllegalArgumentException(&quot;You must first set a model (try #load())&quot;);
+        }
+
+        // &#x8FD9;&#x4E2A;target&#x4E4B;&#x524D;&#x662F;&#x5426;&#x6709;&#x5B58;&#x5728;Request&#x4EFB;&#x52A1;
+        Request previous = target.getRequest();
+
+        if (previous != null) {
+            // &#x5982;&#x679C;&#x5B58;&#x5728;&#xFF0C;&#x90A3;&#x4E48;&#x6E05;&#x9664;&#x4E4B;&#x524D;&#x7684;Request
+            previous.clear();
+            requestTracker.removeRequest(previous);
+            previous.recycle();
+        }
+        // &#x6784;&#x5EFA;&#x65B0;&#x7684;Request&#xFF0C;&#x4E0B;&#x9762;&#x4F1A;&#x8BB2;&#x89E3;&#x5230;
+        Request request = buildRequest(target);
+        target.setRequest(request);
+        lifecycle.addListener(target);
+        // &#x8FD0;&#x884C;Request&#xFF0C;&#x672C;&#x6587;&#x91CD;&#x70B9;&#x5728;&#x8FD9;&#x91CC;
+        requestTracker.runRequest(request);
+
+        return target;
+    }
+</code></pre><p>&#x4E0A;&#x9762;&#x4EE3;&#x7801;&#x6211;&#x4EEC;&#x4E3B;&#x8981;&#x5173;&#x6CE8;&#x4E0B;<code>buildRequest(target)</code>&#x65B9;&#x6CD5;&#x548C;<code>requestTracker.runRequest(request)</code>&#x65B9;&#x6CD5;(&#x672C;&#x6587;&#x91CD;&#x70B9;)<br><strong>GenericRequestBuilder.java</strong></p>
+<pre><code>private Request buildRequest(Target&lt;TranscodeType&gt; target) {
+        if (priority == null) {
+            priority = Priority.NORMAL;
+        }
+        return buildRequestRecursive(target, null);
+    }
+
+    private Request buildRequestRecursive(Target&lt;TranscodeType&gt; target, ThumbnailRequestCoordinator parentCoordinator) {
+        if (thumbnailRequestBuilder != null) {  // &#x662F;&#x5426;&#x6709;&#x6307;&#x5B9A;&#x81EA;&#x5B9A;&#x4E49;&#x7F29;&#x7565;&#x56FE;&#x7684;&#x8BF7;&#x6C42;&#xFF0C;&#x672C;&#x4F8B;&#x4E2D;&#x6CA1;&#x6709;
+            ......
+        } else if (thumbSizeMultiplier != null) {  // &#x662F;&#x5426;&#x6709;&#x7B49;&#x6BD4;&#x4F8B;&#x7F29;&#x653E;&#x7684;&#x8BF7;&#x6C42;&#xFF0C;&#x672C;&#x4F8B;&#x4E2D;&#x6CA1;&#x6709;
+           ......
+        } else {
+            // &#x6CA1;&#x6709;&#x7F29;&#x7565;&#x56FE;&#xFF0C;&#x6784;&#x5EFA;&#x4E00;&#x4E2A;GenericRequest&#x5BF9;&#x8C61;
+            return obtainRequest(target, sizeMultiplier, priority, parentCoordinator);
+        }
+    }
+</code></pre><p>&#x5173;&#x4E8E;&#x7F29;&#x7565;&#x56FE;&#xFF0C;&#x5177;&#x4F53;&#x770B;&#x6211;&#x7684;&#x4F8B;&#x5B50;&#x5DE5;&#x7A0B;<a href="https://github.com/eggsywelsh/GlideSample" target="_blank" rel="external">GlideSample</a>&#x7684;<code>ThumbnailActivity.java</code>&#x7C7B;&#xFF0C;&#x91CC;&#x9762;&#x6709;&#x5173;&#x4E8E;&#x7F29;&#x7565;&#x56FE;&#x7684;&#x7528;&#x6CD5;</p>
+<p>&#x597D;&#x4E86;&#xFF0C;&#x524D;&#x9762;&#x94FA;&#x57AB;&#x4E86;&#x8FD9;&#x4E48;&#x591A;&#xFF0C;&#x5176;&#x5B9E;&#x8FD8;&#x6CA1;&#x6709;&#x6D89;&#x53CA;&#x5230;&#x5982;&#x4F55;&#x83B7;&#x53D6;ImageView&#x7684;&#x5927;&#x5C0F;&#xFF0C;&#x522B;&#x6025;&#xFF0C;&#x9A6C;&#x4E0A;&#x5C31;&#x6765;&#xFF5E;&#xFF5E;<br>&#x6211;&#x4EEC;&#x770B;&#x4E0B;<code>requestTracker.runRequest(target)</code>&#x65B9;&#x6CD5;<br><strong>RequestTracker.java</strong></p>
+<pre><code>public void runRequest(Request request) {
+        requests.add(request);
+        if (!isPaused) {
+            request.begin();
+        } else {
+            pendingRequests.add(request);
+        }
+    }
+</code></pre><p>&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x8FD0;&#x884C;&#x4E86;&#x5C01;&#x88C5;&#x597D;&#x7684;<code>GenericRequest.begin()</code>&#x7C7B;&#x65B9;&#x6CD5;<br><strong>GenericRequest.java</strong></p>
+<pre><code>public void begin() {
+       // &#x8BB0;&#x5F55;Request&#x8FD0;&#x884C;&#x8D77;&#x59CB;&#x65F6;&#x95F4;
+        startTime = LogTime.getLogTime();
+        if (model == null) {
+            onException(null);
+            return;
+        }
+        // &#x8BBE;&#x7F6E;&#x4E3A;&#x7B49;&#x5F85;&#x6D4B;&#x91CF;ImageView&#x5927;&#x5C0F;
+        status = Status.WAITING_FOR_SIZE;
+       // overrideWidth&#x548C;overrideHeight&#x662F;&#x7528;&#x6237;&#x53EF;&#x80FD;&#x901A;&#x8FC7;Glide.override(x,y)
+       // &#x5728;&#x663E;&#x793A;&#x56FE;&#x7247;&#x524D;&#x91CD;&#x65B0;&#x526A;&#x88C1;&#x56FE;&#x7247;&#x5927;&#x5C0F;
+        if (Util.isValidDimensions(overrideWidth, overrideHeight)) {
+            &#x7528;&#x6237;&#x5DF2;&#x7ECF;&#x6307;&#x5B9A;&#x56FE;&#x7247;&#x5927;&#x5C0F;&#xFF0C;&#x65E0;&#x9700;&#x6D4B;&#x91CF;ImageView&#x5927;&#x5C0F;
+            onSizeReady(overrideWidth, overrideHeight);
+        } else {
+            // &#x8FD9;&#x91CC;&#x7684;target&#x662F;&#x6211;&#x4EEC;&#x4E0A;&#x6587;&#x4E2D;&#x5F97;&#x5230;&#x7684;GlideDrawableImageViewTarget&#xFF0C;
+            // &#x901A;&#x8FC7;target&#x7C7B;&#x8BBE;&#x7F6E;&#x4E86;&#x4E00;&#x4E2A;&#x76D1;&#x542C;&#x8FDB;&#x53BB;&#xFF0C;&#x6765;&#x76D1;&#x542C;ImageView&#x7684;&#x56FE;&#x7247;&#x56FA;&#x5B9A;
+            target.getSize(this);
+        }
+
+        if (!isComplete() &amp;&amp; !isFailed() &amp;&amp; canNotifyStatusChanged()) {
+            // &#x5F00;&#x59CB;&#x52A0;&#x8F7D;&#x5360;&#x4F4D;&#x7B26;&#x56FE;&#x7247;(&#x5982;&#x679C;&#x7528;&#x6237;&#x6709;&#x8BBE;&#x7F6E;&#x5360;&#x4F4D;&#x7B26;&#x7684;&#x60C5;&#x51B5;&#x4E0B;)
+            target.onLoadStarted(getPlaceholderDrawable());
+        }
+        // &#x8BB0;&#x5F55;&#x672C;&#x6B21;run&#x7684;&#x65F6;&#x95F4;
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            logV(&quot;finished run method in &quot; + LogTime.getElapsedMillis(startTime));
+        }
+    }
+</code></pre><p>&#x91CD;&#x70B9;&#x5728;&#x8FD9;&#x91CC;<code>target.getSize(this)</code>&#xFF0C;&#x8FD9;&#x4E2A;&#x7C7B;&#x8BBE;&#x7F6E;&#x4E86;<br><strong>GlideDrawableImageViewTarget.java</strong></p>
+<pre><code>    public void getSize(SizeReadyCallback cb) {
+        sizeDeterminer.getSize(cb);
+    }
+</code></pre><p><strong>GlideDrawableImageViewTarget.java</strong></p>
+<pre><code>public void getSize(SizeReadyCallback cb) {
+            // &#x83B7;&#x53D6;ImageView&#x7684;&#x51C6;&#x786E;&#x5BBD;&#x5EA6;&#x6216;&#x8005;LayoutParams&#x7684;&#x5E38;&#x91CF;&#x503C;(&#x4F8B;&#x5982;&#xFF1A;LayoutParams.WRAP_CONTENT)
+            int currentWidth = getViewWidthOrParam();
+            // &#x540C;&#x4E0A;&#x9762;&#x83B7;&#x53D6;&#x5BBD;&#x5EA6;
+            int currentHeight = getViewHeightOrParam();
+            // &#x5982;&#x679C;&#x5BBD;&#x5EA6;&#x662F;&#x51C6;&#x786E;&#x503C;&#xFF0C;&#x6216;&#x8005;&#x662F;LayoutParams.WRAP_CONTENT&#x5C5E;&#x6027;
+            // &#x5982;&#x679C;&#x9AD8;&#x5EA6;&#x662F;&#x51C6;&#x786E;&#x503C;&#xFF0C;&#x6216;&#x8005;&#x662F;LayoutParams.WRAP_CONTENT&#x5C5E;&#x6027;
+            if (isSizeValid(currentWidth) &amp;&amp; isSizeValid(currentHeight)) {
+                // &#x76F4;&#x63A5;&#x56DE;&#x8C03;&#x5DF2;&#x83B7;&#x53D6;&#x5230;&#x5F53;&#x524D;&#x7684;&#x5BBD;&#x9AD8;
+                cb.onSizeReady(currentWidth, currentHeight);
+            } else {
+                // &#x52A0;&#x5165;&#x5230;&#x56DE;&#x8C03;&#x961F;&#x5217;&#x4E2D;
+                if (!cbs.contains(cb)) {
+                    cbs.add(cb);
+                }
+                if (layoutListener == null) {
+                    // &#x83B7;&#x53D6;ImageView&#x7684;&#x89C6;&#x56FE;&#x6811;&#x76D1;&#x542C;
+                    final ViewTreeObserver observer = view.getViewTreeObserver();
+                    layoutListener = new SizeDeterminerLayoutListener(this);
+                    /* 
+                       &#x91CD;&#x70B9;&#x6765;&#x54AF;&#xFF0C;&#x6DFB;&#x52A0;&#x4E00;&#x4E2A;OnPreDrawListener&#x8FD9;&#x4E2A;&#x76D1;&#x542C;&#xFF0C;&#x5173;&#x4E8E;&#x8FD9;&#x4E2A;&#x76D1;&#x542C;&#x7684;&#x542B;&#x4E49;&#x5927;&#x4F53;
+                       &#x662F;&#x5728;&#x89C6;&#x56FE;&#x7ED8;&#x5236;&#x4E4B;&#x524D;&#x8FDB;&#x884C;&#x56DE;&#x8C03;&#xFF0C;&#x7ED8;&#x5236;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x89C6;&#x56FE;&#x7684;&#x80AF;&#x5B9A;&#x662F;&#x7ECF;&#x8FC7;&#x6D4B;&#x91CF;&#x8FC7;&#x5BBD;&#x9AD8;&#x4E86;&#xFF0C;&#x522B;&#x95EE;&#x6211;&#x4E3A;&#x4EC0;&#x4E48;&#xFF0C;&#x6211;&#x4F1A;&#x6253;&#x4EBA;&#x7684;
+                     */
+                    observer.addOnPreDrawListener(layoutListener);
+                }
+            }
+        }
+</code></pre><p>&#x6211;&#x4EEC;&#x770B;&#x4E0B;<code>SizeDeterminerLayoutListener</code>&#x8FD9;&#x4E2A;&#x7C7B;&#xFF0C;&#x5B9E;&#x73B0;&#x4E86;<code>ViewTreeObserver.OnPreDrawListener</code>&#x63A5;&#x53E3;&#xFF0C;&#x901A;&#x8FC7;onPreDraw&#x65B9;&#x6CD5;&#xFF0C;&#x6267;&#x884C;&#x56DE;&#x8C03;&#x961F;&#x5217;&#x8FDB;&#x884C;&#x7EDF;&#x4E00;&#x7684;&#x56DE;&#x8C03;</p>
+<pre><code>private static class SizeDeterminerLayoutListener implements ViewTreeObserver.OnPreDrawListener {
+            /* &#x8FD9;&#x91CC;&#x4E3A;&#x4EC0;&#x4E48;&#x7528;&#x5F31;&#x5F15;&#x7528;&#xFF0C;&#x6211;&#x60F3;&#x662F;&#x56E0;&#x4E3A;&#x6211;&#x4EEC;&#x7684;ViewTarget&#x53EF;&#x80FD;&#x5728;&#x6D4B;&#x91CF;ImageView&#x524D;
+               &#x6709;&#x53EF;&#x80FD;&#x8FDB;&#x884C;&#x591A;&#x6B21;&#x7684;Glide.into()&#xFF0C;&#x8FD8;&#x8BB0;&#x5F97;&#x6211;&#x4EEC;&#x5728;GenericRequestBuilder.into()&#x65B9;&#x6CD5;&#x5417;&#xFF1F;
+               &#x91CC;&#x9762;&#x6709;&#x5BF9;&#x4E4B;&#x524D;&#x7684;Request&#x8FDB;&#x884C;clear&#xFF0C;recycle&#x7B49;&#x64CD;&#x4F5C;&#xFF0C;&#x5FD8;&#x8BB0;&#x7684;&#x540C;&#x5B66;&#x53EF;&#x4EE5;&#x56DE;&#x5934;&#x53BB;&#x770B;&#x770B;&#x4EE3;&#x7801;
+            */
+            private final WeakReference&lt;SizeDeterminer&gt; sizeDeterminerRef;
+
+            public SizeDeterminerLayoutListener(SizeDeterminer sizeDeterminer) {
+                sizeDeterminerRef = new WeakReference&lt;SizeDeterminer&gt;(sizeDeterminer);
+            }
+
+            @Override
+            public boolean onPreDraw() {
+                if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                    Log.v(TAG, &quot;OnGlobalLayoutListener called listener=&quot; + this);
+                }
+                SizeDeterminer sizeDeterminer = sizeDeterminerRef.get();
+                if (sizeDeterminer != null) {
+                    // &#x7EDF;&#x4E00;&#x56DE;&#x8C03;&#xFF0C;&#x53EF;&#x4EE5;&#x83B7;&#x53D6;&#x5F53;&#x524D;ImageView&#x7684;&#x5BBD;&#x9AD8;
+                    sizeDeterminer.checkCurrentDimens();
+                }
+                return true;
+            }
+        }
+</code></pre><p><strong>SizeDeterminer.java</strong></p>
+<pre><code>private void checkCurrentDimens() {
+            if (cbs.isEmpty()) {
+                return;
+            }
+            // &#x4E0A;&#x9762;&#x5DF2;&#x7ECF;&#x89E3;&#x91CA;&#x8FC7;&#x4E86;
+            int currentWidth = getViewWidthOrParam();
+            int currentHeight = getViewHeightOrParam();
+            if (!isSizeValid(currentWidth) || !isSizeValid(currentHeight)) {
+                return;
+            }
+            // &#x7EDF;&#x4E00;&#x56DE;&#x8C03;&#x76D1;&#x542C;&#x961F;&#x5217;
+            notifyCbs(currentWidth, currentHeight);
+            // Keep a reference to the layout listener and remove it here
+            // rather than having the observer remove itself because the observer
+            // we add the listener to will be almost immediately merged into
+            // another observer and will therefore never be alive. If we instead
+            // keep a reference to the listener and remove it here, we get the
+            // current view tree observer and should succeed.
+            ViewTreeObserver observer = view.getViewTreeObserver();
+            if (observer.isAlive()) {
+                // &#x6D4B;&#x91CF;&#x5F97;&#x5230;&#x4E86;&#x7ED3;&#x679C;&#xFF0C;&#x79FB;&#x9664;&#x76D1;&#x542C;
+                observer.removeOnPreDrawListener(layoutListener);
+            }
+            layoutListener = null;
+        }
+</code></pre><p>&#x56DE;&#x8C03;&#x65B9;&#x6CD5;<code>notifyCbs(currentWidth, currentHeight)</code>&#x6700;&#x540E;&#x56DE;&#x8C03;GenericRequest.onSizeReady()&#x65B9;&#x6CD5;&#x5BF9;&#x56FE;&#x7247;&#x8FDB;&#x884C;&#x52A0;&#x8F7D;&#x663E;&#x793A;&#xFF0C;&#x672C;&#x8282;&#x6682;&#x65F6;&#x4E0D;&#x5BF9;&#x56FE;&#x7247;&#x7684;&#x52A0;&#x8F7D;&#x6E90;&#x7801;&#x8FDB;&#x884C;&#x5206;&#x6790;<br><strong>GenericRequest.java</strong></p>
+<pre><code>    public void onSizeReady(int width, int height) {
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            logV(&quot;Got onSizeReady in &quot; + LogTime.getElapsedMillis(startTime));
+        }
+        if (status != Status.WAITING_FOR_SIZE) {
+            return;
+        }
+        status = Status.RUNNING;
+        // &#x56FE;&#x7247;&#x7F29;&#x653E;&#x53C2;&#x6570;&#xFF0C;&#x5982;&#x679C;&#x7528;&#x6237;&#x6709;&#x8BBE;&#x7F6E;thumbnail&#x53C2;&#x6570;&#x65F6;`Glide.with(...).thumbnail(0.2f).into(...)`&#x8FDB;&#x884C;&#x6BD4;&#x4F8B;&#x7F29;&#x653E;
+        // &#x9ED8;&#x8BA4;&#x503C;&#x662F;1&#xFF0C;&#x4E0D;&#x8FDB;&#x884C;&#x56FE;&#x7247;&#x5927;&#x5C0F;&#x7F29;&#x653E;
+        width = Math.round(sizeMultiplier * width);
+        height = Math.round(sizeMultiplier * height);
+        // &#x56FE;&#x7247;&#x52A0;&#x8F7D;
+        ......
+        ......
+        ......
+    }
+</code></pre><h4 id="&#x603B;&#x7ED3;"><a href="#&#x603B;&#x7ED3;" class="headerlink" title="&#x603B;&#x7ED3;"></a>&#x603B;&#x7ED3;</h4><p>&#x901A;&#x8FC7;&#x672C;&#x8282;&#x7684;&#x6E90;&#x7801;&#x5206;&#x6790;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x53D1;&#x73B0;Glide&#x5C06;&#x52A0;&#x8F7D;&#x56FE;&#x7247;&#x5230;ImageVIew&#x5C01;&#x88C5;&#x6210;Request&#x5BF9;&#x8C61;&#xFF0C;&#x5728;run Request&#x7684;&#x65F6;&#x5019;&#x8FDB;&#x884C;&#x5224;&#x65AD;&#xFF0C;&#x5982;&#x679C;ImageView&#x6709;&#x56FA;&#x5B9A;&#x5927;&#x5C0F;&#xFF0C;&#x90A3;&#x4E48;&#x5C31;&#x76F4;&#x63A5;&#x56DE;&#x8C03;&#x52A0;&#x8F7D;&#x56FE;&#x7247;&#xFF0C;&#x5982;&#x679C;&#x56FE;&#x7247;&#x8FD8;&#x6CA1;&#x6709;&#x8FDB;&#x884C;&#x6D4B;&#x91CF;&#x8FC7;&#xFF0C;&#x90A3;&#x4E48;&#x5C31;&#x8BBE;&#x7F6E;&#x76D1;&#x542C;ViewTreeObserver.OnPreDrawListener&#xFF0C;&#x7B49;&#x5F85;ImageView&#x7ED8;&#x5236;&#x524D;&#x56DE;&#x8C03;&#x76D1;&#x542C;&#x83B7;&#x53D6;&#x89C6;&#x56FE;&#x5927;&#x5C0F;&#xFF0C;&#x5728;&#x52A0;&#x8F7D;&#x786E;&#x5B9A;&#x5927;&#x5C0F;&#x7684;&#x56FE;&#x7247;</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Glide/" rel="tag">#Glide</a>
+          
+            <a href="/tags/Glide源码分析/" rel="tag">#Glide源码分析</a>
+          
+            <a href="/tags/Glide如何动态测量ImageView大小/" rel="tag">#Glide如何动态测量ImageView大小</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/18/Glide源码分析-一-Glide的图片加载的生命周期/" rel="next" title="Glide源码分析(一) Glide的图片加载的生命周期">
+                <i class="fa fa-chevron-left"></i> Glide源码分析(一) Glide的图片加载的生命周期
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/08/基于APT的RxBus库/" rel="prev" title="基于APT的RxBus库使用">
+                基于APT的RxBus库使用 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/01/24/Glide源码分析-二-如何动态测量获取ImageView大小/"
+           data-title="Glide源码分析(二) 如何动态测量获取ImageView大小" data-url="http://blog.eggsychan.com/2017/01/24/Glide源码分析-二-如何动态测量获取ImageView大小/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="蛋西" />
+          <p class="site-author-name" itemprop="name">蛋西</p>
+          <p class="site-description motion-element" itemprop="description">我,一直在路上,从未停止攀登的步伐...</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/eggsywelsh" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/eggsy_welsh" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/3083087487" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/eggsy-78" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#例子"><span class="nav-text">例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分析"><span class="nav-text">分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蛋西</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"eggsywelsh"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("1SAFUegNmFH14FSrV7XSNeuM-gzGzoHsz", "HfNLKPfowRxviJr5NkQhBgY5");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+<script type="text/javascript" src="/js/google-code-prettify/prettify.js"></script>
+<script type="text/javascript">
+$(window).load(function(){
+   $('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+   prettyPrint();
+ })	
+</script>
+
+
+</body>
+</html>

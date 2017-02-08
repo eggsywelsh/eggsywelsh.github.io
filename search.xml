@@ -4,6 +4,599 @@
   
     
     <entry>
+      <title><![CDATA[统计App方法数量]]></title>
+      <url>http://blog.eggsychan.com/2017/02/08/%E7%BB%9F%E8%AE%A1App%E6%96%B9%E6%B3%95%E6%95%B0%E9%87%8F/</url>
+      <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;&#x5982;&#x4F55;&#x7EDF;&#x8BA1;App&#x4E2D;&#x7684;&#x65B9;&#x6CD5;&#x6570;<br><a id="more"></a></p>
+<p>&#x5728;&#x6574;&#x4E2A;&#x5DE5;&#x7A0B;&#x7684;build.gradle&#x6587;&#x4EF6;&#x4E2D;&#xFF0C;&#x6DFB;&#x52A0;</p>
+<pre><code>buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath &apos;com.android.tools.build:gradle:2.2.3&apos;
+        // add this
+        classpath &apos;com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.6.2&apos;
+    }
+}
+</code></pre><p>&#x5728;&#x5DE5;&#x7A0B;&#x7684;&#x4E3B;module&#x4E2D;(&#x4E00;&#x822C;&#x547D;&#x540D;&#x6210;app)&#xFF0C;&#x5E94;&#x7528;&#x4EE5;&#x4E0B;&#x63D2;&#x4EF6;</p>
+<pre><code>apply plugin: &apos;com.getkeepsafe.dexcount&apos;
+</code></pre><p>&#x7136;&#x540E;&#x5728;Terminal&#x4E2D;&#x7F16;&#x8BD1;</p>
+<pre><code>./gradlew build
+</code></pre><p>&#x7136;&#x540E;&#x5728;&#x7ED3;&#x679C;&#x4E2D;&#x6211;&#x4EEC;&#x770B;&#x5230;&#xFF0C;&#x4F1A;&#x7EDF;&#x8BA1;&#x51FA;&#x5F53;&#x524D;&#x7684;&#x65B9;&#x6CD5;&#x6570;</p>
+<pre><code>Total methods in XXX-release-unsigned.apk: 39518 (60.30% used)
+Total fields in XXX-release-unsigned.apk:  24296 (37.07% used)
+</code></pre>]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[如何使用Gradle打apk包时动态输入密码]]></title>
+      <url>http://blog.eggsychan.com/2017/02/08/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Gradle%E6%89%93apk%E5%8C%85%E6%97%B6%E5%8A%A8%E6%80%81%E8%BE%93%E5%85%A5%E5%AF%86%E7%A0%81/</url>
+      <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;&#x5982;&#x4F55;&#x5728;Gradle&#x6253;&#x5305;&#x65F6;&#x52A8;&#x6001;&#x8F93;&#x5165;&#x5BC6;&#x7801;<br><a id="more"></a></p>
+<blockquote>
+<p>&#x6211;&#x4EEC;&#x5728;&#x65E5;&#x5E38;&#x7684;&#x5F00;&#x53D1;&#x4E2D;&#xFF0C;&#x53D1;&#x5E03;&#x5E02;&#x573A;&#x7684;apk&#x5305;&#xFF0C;&#x901A;&#x5E38;&#x662F;&#x7531;&#x56E2;&#x961F;&#x4E2D;&#x7684;&#x67D0;&#x4E2A;&#x6210;&#x5458;&#x6765;&#x8FDB;&#x884C;&#x6253;&#x5305;&#x53D1;&#x5E03;&#x5E02;&#x573A;&#x5DE5;&#x4F5C;&#xFF0C;&#x90A3;&#x4E48;&#x6709;&#x65F6;&#x5019;&#x4E3A;&#x4E86;&#x65B9;&#x4FBF;&#x7BA1;&#x7406;&#xFF0C;&#x6211;&#x4EEC;&#x4E0D;&#x4F1A;&#x5C06;key password&#x548C;store password&#x539F;&#x6587;&#x653E;&#x5728;&#x5DE5;&#x7A0B;&#x7684;build.gradle&#x6587;&#x4EF6;&#x4E2D;&#xFF0C;&#x90A3;&#x4E48;&#x6211;&#x4EEC;&#x5728;&#x6253;&#x5305;&#x7684;&#x65F6;&#x5019;&#x53C8;&#x786E;&#x5B9E;&#x9700;&#x8981;&#x8F93;&#x5165;&#x5BC6;&#x7801;&#xFF0C;&#x90A3;&#x4E48;&#x8FD9;&#x65F6;&#x5019;&#x8981;&#x600E;&#x4E48;&#x529E;&#x5462;&#xFF1F;&#x522B;&#x7740;&#x6025;&#xFF0C;&#x4E0B;&#x9762;&#x6211;&#x6765;&#x8BB2;&#x89E3;&#x4E00;&#x4E0B;&#x4E00;&#x4E2A;&#x7B80;&#x5355;&#x7684;&#x52A8;&#x6001;&#x8F93;&#x5165;key&#x548C;store&#x5BC6;&#x7801;&#x7684;&#x65B9;&#x6CD5;&#x3002;</p>
+</blockquote>
+<h4 id="&#x6B63;&#x5E38;&#x4F7F;&#x7528;"><a href="#&#x6B63;&#x5E38;&#x4F7F;&#x7528;" class="headerlink" title="&#x6B63;&#x5E38;&#x4F7F;&#x7528;"></a>&#x6B63;&#x5E38;&#x4F7F;&#x7528;</h4><p>&#x6211;&#x4EEC;&#x6765;&#x770B;&#x4E0B;&#x901A;&#x5E38;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x6211;&#x4EEC;&#x662F;&#x600E;&#x4E48;&#x914D;&#x7F6E;&#x5BC6;&#x7801;&#x7684;</p>
+<pre><code>// &#x5728;&#x5DE5;&#x7A0B;&#x7684;app module(&#x6216;&#x8005;&#x662F;&#x4F60;&#x7684;&#x5176;&#x4ED6;&#x4E3B;module)&#x4E2D;&#x7684;build.gradle
+// &#x6587;&#x4EF6;&#x4E2D;&#x914D;&#x7F6E;
+android {
+    signingConfigs {
+        release {
+            keyAlias &apos;xxx_keystore&apos;
+            keyPassword &apos;12345678&apos;
+            storeFile file(&apos;/home/eggsy/work/war/project/xxx.jks&apos;)
+            storePassword &apos;12345678&apos;
+        }
+    }
+}
+</code></pre><p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x770B;&#x5230;&#x5BC6;&#x7801;&#x5C31;&#x66B4;&#x9732;&#x51FA;&#x6765;&#x4E86;&#xFF0C;&#x5982;&#x679C;&#x56E2;&#x961F;&#x4F7F;&#x7528;git&#x6216;&#x8005;svn&#x7B49;&#x4EE3;&#x7801;&#x7BA1;&#x7406;&#x5DE5;&#x5177;&#xFF0C;&#x8FD9;&#x4E2A;&#x4E5F;&#x4E00;&#x6837;&#x4F1A;&#x63D0;&#x4EA4;&#x5230;&#x4ED3;&#x5E93;&#x91CC;&#x9762;&#xFF0C;&#x8FD9;&#x6837;&#x5BC6;&#x7801;&#x66B4;&#x9732;&#x7684;&#x98CE;&#x9669;&#x5C31;&#x5927;&#x5927;&#x63D0;&#x9AD8;&#x4E86;&#xFF0C;&#x90A3;&#x4E48;&#x6211;&#x4E48;&#x8BE5;&#x600E;&#x4E48;&#x505A;&#x5462;&#xFF1F;</p>
+<h4 id="&#x6253;&#x5305;&#x65F6;&#x52A8;&#x6001;&#x8F93;&#x5165;"><a href="#&#x6253;&#x5305;&#x65F6;&#x52A8;&#x6001;&#x8F93;&#x5165;" class="headerlink" title="&#x6253;&#x5305;&#x65F6;&#x52A8;&#x6001;&#x8F93;&#x5165;"></a>&#x6253;&#x5305;&#x65F6;&#x52A8;&#x6001;&#x8F93;&#x5165;</h4><p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x5229;&#x7528;gradle&#x7684;&#x529F;&#x80FD;&#xFF0C;&#x5728;&#x6253;&#x5305;&#x524D;&#x52A8;&#x6001;&#x7684;&#x63D2;&#x5165;&#x4E00;&#x4E2A;&#x6211;&#x4EEC;&#x7684;&#x4EFB;&#x52A1;&#xFF0C;&#x8FD9;&#x6837;&#x5B50;&#x5C31;&#x53EF;&#x4EE5;&#x83B7;&#x53D6;&#x8F93;&#x5165;&#x7684;&#x5BC6;&#x7801;&#xFF0C;&#x7136;&#x540E;&#x8BBE;&#x7F6E;&#x5230;gradle&#x4E2D;&#xFF0C;&#x63A5;&#x7740;&#x5B8C;&#x6210;&#x540E;&#x7EED;&#x7684;&#x6253;&#x5305;&#x5DE5;&#x4F5C;&#xFF0C;&#x4E3A;&#x4E86;&#x6A21;&#x5757;&#x5316;&#xFF0C;&#x6211;&#x628A;&#x8FD9;&#x4E2A;&#x529F;&#x80FD;&#x5355;&#x72EC;&#x5199;&#x5728;&#x4E00;&#x4E2A;gradle&#x6587;&#x4EF6;&#x4E2D;<br><strong>password.gradle</strong></p>
+<pre><code>import groovy.swing.SwingBuilder
+
+task getReleasePassword &lt;&lt; {
+    // &#x521D;&#x59CB;&#x5316;&#x5BC6;&#x7801;
+    def password = &apos;&apos;;
+    // &#x5DE5;&#x7A0B;&#x7684;&#x6839;&#x76EE;&#x5F55;&#x662F;&#x5426;&#x5B58;&#x5728;private.properties&#x6587;&#x4EF6;
+    if (rootProject.file(&apos;private.properties&apos;).exists()) {
+        // &#x5982;&#x679C;&#x5B58;&#x5728;&#xFF0C;&#x5219;&#x8BFB;&#x53D6;&#x5176;&#x4E2D;&#x7684;&#x5BC6;&#x7801;&#xFF0C;&#x76F4;&#x63A5;&#x4F7F;&#x7528;
+        java.util.Properties properties = new Properties();
+        properties.load(rootProject.file(&apos;private.properties&apos;).newDataInputStream());
+        password = properties.getProperty(&quot;release.password&quot;);
+    }
+    // &#x5BC6;&#x7801;&#x6587;&#x4EF6;&#x4E0D;&#x5B58;&#x5728;&#x6216;&#x8005;&#x6CA1;&#x6709;release.password&#x5C5E;&#x6027;&#x503C;
+    if (!password?.trim()) {
+        if (System.console() == null) {
+            def tempPassword = &apos;&apos;;
+            // &#x901A;&#x8FC7;swing&#x663E;&#x793A;&#x51FA;&#x4E00;&#x4E2A;&#x5BC6;&#x7801;&#x6846;
+            new SwingBuilder().edt {
+                dialog(modal: true, title: &apos;Enter password&apos;, alwaysOnTop: true, resizable: false, locationRelativeTo: null, pack: true, show: true) {
+                    vbox { // Put everything below each other
+                        label(text: &quot;Please enter store passphrase:&quot;)
+                        // &#x83B7;&#x53D6;&#x8F93;&#x5165;&#x7684;&#x5BC6;&#x7801;
+                        def input1 = passwordField()
+                        button(defaultButton: true, text: &apos;OK&apos;, actionPerformed: {
+                            tempPassword = input1.password;
+                            dispose();
+                        })
+                    }
+                }
+            }
+            if (tempPassword.size() &lt;= 0) {
+                &#x6CA1;&#x6709;&#x83B7;&#x53D6;&#x5230;&#x8F93;&#x5165;&#x7684;&#x5BC6;&#x7801;&#xFF0C;&#x629B;&#x51FA;&#x5F02;&#x5E38;
+                throw new InvalidUserDataException(&quot;You must enter the passwords to proceed.&quot;)
+            }else{
+                password = new String(tempPassword)
+            }
+        }
+    }
+    // &#x5C06;&#x5BC6;&#x7801;&#x8BBE;&#x7F6E;&#x5230;gradle&#x4E2D;&#xFF0C;&#x914D;&#x7F6E;&#x6210;store&#x548C;key&#x7684;&#x5BC6;&#x7801;
+    android.signingConfigs.release.storePassword = password
+    android.signingConfigs.release.keyPassword = password
+}
+
+// &#x8FD9;&#x91CC;&#x4E3B;&#x8981;&#x662F;&#x63D2;&#x5165;&#x4E00;&#x4E2A;&#x4EFB;&#x52A1;&#xFF0C;&#x7528;&#x4E8E;&#x5728;gradle assembleRelease&#x4EFB;&#x52A1;&#x4E4B;&#x524D;
+// &#x8C03;&#x7528;&#x6211;&#x4EEC;&#x7684;&#x52A8;&#x6001;&#x5BC6;&#x7801;&#x4EFB;&#x52A1;
+tasks.whenTaskAdded { theTask -&gt;
+    if (theTask.name.equals(&quot;packageRelease&quot;)) {
+        theTask.dependsOn getReleasePassword
+    }
+}
+</code></pre><p>&#x5728;app module&#x4E0B;&#x7684;build.gradle&#x4E2D;&#x5E94;&#x7528;password.gradle</p>
+<pre><code>apply from: &apos;password.gradle&apos;
+</code></pre><p>&#x540C;&#x65F6;&#x5C06;&#x914D;&#x7F6E;&#x6539;&#x6210;</p>
+<pre><code>    signingConfigs {
+        release {
+            keyAlias &apos;xxx_keystore&apos;
+            storeFile file(&apos;/home/eggsy/work/war/project/xxx.jks&apos;)
+        }
+    }
+</code></pre><p>keyPassword&#x548C;storePassword&#x7531;&#x7528;&#x6237;&#x5728;&#x5F39;&#x51FA;&#x5BC6;&#x7801;&#x6846;&#x4E2D;&#x624B;&#x52A8;&#x8F93;&#x5165;</p>
+<h4 id="&#x6D4B;&#x8BD5;"><a href="#&#x6D4B;&#x8BD5;" class="headerlink" title="&#x6D4B;&#x8BD5;"></a>&#x6D4B;&#x8BD5;</h4><p>&#x8FD0;&#x884C;&#x6211;&#x4EEC;&#x6253;&#x6B63;&#x5F0F;&#x7B7E;&#x540D;&#x5305;&#x7684;&#x4EFB;&#x52A1;</p>
+<pre><code>./gradlew assembleRelease
+</code></pre><p>&#x5C31;&#x4F1A;&#x8DF3;&#x51FA;&#x6211;&#x4EEC;&#x7684;&#x8F93;&#x5165;&#x6846;</p>
+<p><img src="images/popup_password_dialog.png" alt="popup_password_dialog.png"><br>&#x8F93;&#x5165;&#x4F60;&#x7684;&#x5BC6;&#x7801;&#xFF0C;&#x6253;&#x5305;&#x8FC7;&#x7A0B;&#x4F1A;&#x7EE7;&#x7EED;</p>
+<p>&#x6700;&#x540E;&#x5728;&#x4F60;&#x7684;app/build/outputs/apk&#x76EE;&#x5F55;&#x4E0B;&#x751F;&#x6210;&#x6B63;&#x5F0F;&#x7B7E;&#x540D;&#x5305;&#x7684;apk</p>
+<p>&#x597D;&#x4E86;&#xFF0C;Gradle&#x6253;&#x5305;&#x52A8;&#x6001;&#x8F93;&#x5165;&#x5BC6;&#x7801;&#x5C31;&#x8BB2;&#x5230;&#x8FD9;&#x91CC;&#xFF0C;&#x6709;&#x5199;&#x7684;&#x4E0D;&#x597D;&#x6216;&#x8005;&#x4E0D;&#x6B63;&#x786E;&#x7684;&#xFF0C;&#x6B22;&#x8FCE;&#x5927;&#x5BB6;&#x7559;&#x8A00;&#x4EA4;&#x6D41;&#xFF5E;&#xFF5E;&#xFF5E;</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[基于APT的RxBus库使用]]></title>
+      <url>http://blog.eggsychan.com/2017/02/08/%E5%9F%BA%E4%BA%8EAPT%E7%9A%84RxBus%E5%BA%93/</url>
+      <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;&#x4F7F;&#x7528;java APT&#x5C01;&#x88C5;&#x57FA;&#x4E8E;RxJava2&#x548C;RxAndroid&#x7684;RxBus&#x5E93;<br><a id="more"></a></p>
+<blockquote>
+<p>&#x5728;&#x4E0A;&#x7BC7;&#x6587;&#x7AE0;&#x6211;&#x5199;&#x4E86;&#x4E00;&#x4E0B;<a href="http://blog.eggsychan.com/2017/01/10/%E6%94%AF%E6%8C%81RxJava2%E7%9A%84RxBus%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85/">&#x57FA;&#x4E8E;RxJava2&#x7684;RxBus&#x7B80;&#x5355;&#x5C01;&#x88C5;</a>,&#x6CA1;&#x770B;&#x8FC7;&#x7684;&#x540C;&#x5B66;&#x53EF;&#x4EE5;&#x7B80;&#x5355;&#x770B;&#x4E0B;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#x5BF9;&#x5916;&#x66B4;&#x9732;&#x7684;&#x6CE8;&#x518C;&#x548C;&#x89E3;&#x7ED1;&#x63A5;&#x53E3;&#xFF0C;&#x7528;&#x6237;&#x8FD8;&#x9700;&#x8981;&#x5728;&#x8C03;&#x7528;&#x6CE8;&#x518C;&#x65B9;&#x6CD5;&#x540E;&#xFF0C;&#x624B;&#x52A8;&#x7BA1;&#x7406;RxJava2&#x7684;Disposable&#x6216;&#x8005;CompositeDisposable&#x5BF9;&#x8C61;&#xFF0C;&#x8FD8;&#x662F;&#x4E0D;&#x662F;&#x592A;&#x65B9;&#x4FBF;&#x5F00;&#x53D1;&#x8005;&#x4F7F;&#x7528;&#x3002;&#x90A3;&#x600E;&#x4E48;&#x6539;&#x8FDB;&#x5462;&#xFF1F;&#x8FD9;&#x91CC;&#x6211;&#x501F;&#x9274;EventBus&#x8FD9;&#x4E2A;&#x5F00;&#x6E90;&#x5E93;&#x7684;&#x4E00;&#x4E9B;&#x601D;&#x60F3;&#xFF0C;&#x901A;&#x8FC7;Java Annotation Processing Tool (apt)&#x751F;&#x6210;&#x8F85;&#x52A9;&#x4EE3;&#x7801;&#x6765;&#x5E2E;&#x52A9;&#x7528;&#x6237;&#x901A;&#x8FC7;&#x7B80;&#x5355;&#x7684;api&#x5C31;&#x80FD;&#x5B9E;&#x73B0;&#x6D88;&#x606F;&#x603B;&#x7EBF;&#x7684;&#x529F;&#x80FD;</p>
+</blockquote>
+<h4 id="github"><a href="#Github" class="headerlink" title="Github"></a>Github</h4><p>&#x672C;&#x9879;&#x76EE;&#x5DF2;&#x7ECF;&#x653E;&#x5230;<a href="https://github.com/eggsywelsh/RxBus" target="_blank" rel="external">Github</a>&#x4E0A;&#xFF0C;&#x6B22;&#x8FCE;&#x5174;&#x8DA3;&#x7684;&#x540C;&#x5B66;fork&#x67E5;&#x770B;&#x793A;&#x4F8B;&#x548C;&#x6E90;&#x7801;&#xFF0C;&#x540C;&#x65F6;&#x4E5F;&#x6B22;&#x8FCE;star</p>
+<h4 id="&#x76EE;&#x7684;"><a href="#&#x76EE;&#x7684;" class="headerlink" title="&#x76EE;&#x7684;"></a>&#x76EE;&#x7684;</h4><p>&#x65E8;&#x5728;App&#x4E2D;&#x4F7F;&#x7528;Rxjava2&#x7684;&#x540C;&#x5B66;&#x4EEC;&#x53EF;&#x4EE5;&#x65B9;&#x4FBF;&#x901A;&#x8FC7;&#x8FD9;&#x4E2A;&#x5E93;&#xFF0C;&#x6765;&#x4F7F;&#x7528;&#x7C7B;&#x4F3C;&#x4E8E;EventBus&#x6D88;&#x606F;&#x603B;&#x7EBF;&#x7684;&#x529F;&#x80FD;&#xFF0C;&#x8FD9;&#x6837;&#x5C31;&#x4E0D;&#x7528;&#x989D;&#x5916;&#x7684;&#x5F15;&#x5165;EventBus&#xFF0C;&#x589E;&#x52A0;App&#x7684;&#x5E93;&#x81C3;&#x80BF;</p>
+<h4 id="&#x5F15;&#x5165;"><a href="#&#x5F15;&#x5165;" class="headerlink" title="&#x5F15;&#x5165;"></a>&#x5F15;&#x5165;</h4><p>&#x5728;&#x4F60;&#x7684;Android Studio&#x4E2D;module&#x7684;build.gradle&#x6587;&#x4EF6;&#x4E2D;&#x5F15;&#x5165;</p>
+<pre><code>dependencies {
+    annotationProcessor &apos;com.eggsy:rxbus-processor:0.0.4&apos;
+    compile &apos;com.eggsy:rxbus:0.0.4&apos;
+    // RxJava and RxAndroid is necessary
+    compile &apos;io.reactivex.rxjava2:rxandroid:2.0.1&apos;
+    compile &apos;io.reactivex.rxjava2:rxjava:2.0.4&apos;
+}
+</code></pre><p>&#x9700;&#x8981;&#x5F15;&#x5165;<code>rxjava2</code>&#x548C;<code>rxandroid</code>&#xFF0C;&#x5982;&#x679C;&#x4F60;&#x7684;App&#x4E2D;&#x6CA1;&#x6709;&#x7528;&#x5230;<code>rxjava</code>&#xFF0C;&#x90A3;&#x4E48;&#x4E0D;&#x5EFA;&#x8BAE;&#x4F60;&#x4F7F;&#x7528;RxBus&#x5E93;&#xFF0C;&#x56E0;&#x4E3A;RxBus&#x662F;&#x57FA;&#x4E8E;<code>rxjava2</code>&#x548C;<code>rxandroid</code>&#xFF0C;&#x5982;&#x679C;&#x5355;&#x7EAF;&#x4E3A;&#x4E86;&#x4F7F;&#x7528;RxBus&#x989D;&#x5916;&#x5F15;&#x5165;&#x8FD9;&#x4E24;&#x4E2A;&#x5E93;&#xFF0C;&#x6211;&#x4E2A;&#x4EBA;&#x89C9;&#x5F97;&#x662F;&#x6CA1;&#x5FC5;&#x8981;&#x7684;&#xFF0C;&#x5B8C;&#x5168;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;<code>EventBus</code>&#x66FF;&#x6362;</p>
+<h4 id="&#x5982;&#x4F55;&#x4F7F;&#x7528;"><a href="#&#x5982;&#x4F55;&#x4F7F;&#x7528;" class="headerlink" title="&#x5982;&#x4F55;&#x4F7F;&#x7528;"></a>&#x5982;&#x4F55;&#x4F7F;&#x7528;</h4><p>&#x4F7F;&#x7528;&#x4E3B;&#x8981;&#x5206;&#x4E3A;</p>
+<ol>
+<li>&#x6CE8;&#x518C;</li>
+<li>&#x6CE8;&#x89E3;&#x4E8B;&#x4EF6;&#x65B9;&#x6CD5;</li>
+<li>&#x53D1;&#x51FA;&#x4E8B;&#x4EF6;</li>
+<li>&#x89E3;&#x7ED1;</li>
+</ol>
+<h5 id="&#x6CE8;&#x518C;"><a href="#&#x6CE8;&#x518C;" class="headerlink" title="&#x6CE8;&#x518C;"></a>&#x6CE8;&#x518C;</h5><p>&#x5728;Activity&#xFF0C;Fragment&#x6216;&#x8005;&#x5176;&#x4ED6;&#x4EFB;&#x4F55;&#x4F60;&#x7684;&#x7C7B;&#x4E2D;(&#x6BD4;&#x5982;Mvp&#x6A21;&#x5F0F;&#x4E2D;&#x7684;Presenter<br>&#x7C7B;)&#xFF0C;&#x90FD;&#x53EF;&#x4EE5;&#x7528;&#x6765;&#x6CE8;&#x518C;RxBus&#x4E8B;&#x4EF6;</p>
+<pre><code>RxBus.register(this); // &#x8FD9;&#x91CC;&#x7684;this&#x662F;&#x6307;&#x5305;&#x542B;&#x4E86;&#x4E0B;&#x9762;&#x6CE8;&#x89E3;&#x4E8B;&#x4EF6;&#x65B9;&#x6CD5;&#x7684;&#x7C7B;&#x5B9E;&#x4F8B;
+</code></pre><h5 id="&#x6CE8;&#x89E3;&#x4E8B;&#x4EF6;&#x65B9;&#x6CD5;"><a href="#&#x6CE8;&#x89E3;&#x4E8B;&#x4EF6;&#x65B9;&#x6CD5;" class="headerlink" title="&#x6CE8;&#x89E3;&#x4E8B;&#x4EF6;&#x65B9;&#x6CD5;"></a>&#x6CE8;&#x89E3;&#x4E8B;&#x4EF6;&#x65B9;&#x6CD5;</h5><pre><code>@EventSubscribe
+public void testboolean(boolean testParam) {  // boolean&#x4E8B;&#x4EF6;
+    Toast.makeText(this, testParam, Toast.LENGTH_SHORT).show();
+}
+
+// tmode, &#x6307;&#x5B9A;&#x4E0B;&#x9762;&#x65B9;&#x6CD5;&#x63A5;&#x6536;&#x5230;&#x4E8B;&#x4EF6;&#x4E4B;&#x540E;&#xFF0C;&#x5728;&#x54EA;&#x4E2A;&#x7EBF;&#x7A0B;&#x4E0A;&#x8FD0;&#x884C;
+@EventSubscribe(tmode = ThreadMode.NewThread)
+public void test(String testParam) {  // String&#x7C7B;&#x578B;&#x4E8B;&#x4EF6;
+    Log.i(TAG,&quot;test IoThread, main thread id=&quot;+getMainLooper().getThread().getId()+&quot; , result=&quot;+testParam);
+    Log.i(TAG,&quot;test IoThread, curr thread id=&quot;+Thread.currentThread().getId()+&quot; , result=&quot;+testParam);
+    Toast.makeText(this, testParam, Toast.LENGTH_SHORT).show();
+}
+
+@EventSubscribe
+public void testCustomEvent(TestEvent event) {  // &#x81EA;&#x5B9A;&#x4E49;&#x4E8B;&#x4EF6;
+    Log.i(TAG, &quot;test custom Event, event=&quot; + event.toString());
+}
+</code></pre><p>&#x8FD9;&#x91CC;&#x7684;<code>@EventSubscribe</code>&#x6CE8;&#x89E3;&#x6709;&#x4E24;&#x4E2A;&#x5C5E;&#x6027;</p>
+<ol>
+<li><strong>tmode</strong>&#xFF1A;&#x6307;&#x5B9A;&#x4E8B;&#x4EF6;&#x53D1;&#x51FA;&#x65F6;&#xFF0C;&#x6CE8;&#x89E3;&#x7684;&#x65B9;&#x6CD5;&#x6267;&#x884C;&#x7684;&#x7EBF;&#x7A0B;&#xFF0C;&#x4E00;&#x5171;&#x6709;6&#x79CD;&#x6A21;&#x5F0F;<ul>
+<li>PostThread &#x4E0E;&#x53D1;&#x51FA;&#x4E8B;&#x4EF6;(&#x8C03;&#x7528;RxBus.post()&#x65B9;&#x6CD5;)&#x6240;&#x5728;&#x7EBF;&#x7A0B;&#x4F7F;&#x7528;&#x540C;&#x4E00;&#x4E2A;&#x7EBF;&#x7A0B;</li>
+<li>MainThread &#x4F7F;&#x7528;App&#x4E3B;&#x7EBF;&#x7A0B;</li>
+<li>IoThread &#x4F7F;&#x7528;&#x4E00;&#x4E2A;&#x81EA;&#x589E;&#x957F;&#x7684;&#x7EBF;&#x7A0B;&#x6C60;&#x4E2D;&#x7684;&#x7EBF;&#x7A0B;&#xFF0C;&#x9002;&#x5408;&#x5F02;&#x6B65;&#x963B;&#x585E;&#x7684;IO&#x64CD;&#x4F5C;</li>
+<li>NewThread &#x4F7F;&#x7528;&#x4E00;&#x4E2A;&#x65B0;&#x7684;&#x7EBF;&#x7A0B;</li>
+<li>SingleThread &#x4F7F;&#x7528;&#x4E00;&#x4E2A;&#x901A;&#x7528;&#x7684;&#x5355;&#x7EBF;&#x7A0B;&#xFF0C;&#x652F;&#x6301;&#x7528;&#x4E8E;&#x4E3B;&#x7EBF;&#x7A0B;&#x5230;&#x5176;&#x4ED6;&#x7EBF;&#x7A0B;&#x7684;&#x7BA1;&#x9053;&#x6570;&#x636E;</li>
+<li>ComputationThread &#x4F7F;&#x7528;&#x4E00;&#x4E2A;&#x975E;&#x4E3B;&#x7EBF;&#x7A0B;&#x6765;&#x505A;&#x8BA1;&#x7B97;&#x578B;&#x7684;&#x5DE5;&#x4F5C;</li>
+</ul>
+</li>
+<li><strong>bpstrategy</strong>&#xFF1A;&#x6307;&#x5B9A;&#x4E0A;&#x6E38;&#x4E8B;&#x4EF6;&#x53D1;&#x9001;&#x5F88;&#x5FEB;&#xFF0C;&#x6B21;&#x6570;&#x5F88;&#x591A;&#xFF0C;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#x6765;&#x4E0D;&#x53CA;&#x5904;&#x7406;&#x60C5;&#x51B5;&#xFF0C;&#x8FD9;&#x91CC;&#x6307;&#x5B9A;&#x4E00;&#x4E2A;&#x7B56;&#x7565;&#xFF0C;&#x4E3B;&#x8981;&#x6709;6&#x79CD;&#x7B56;&#x7565;<ul>
+<li>DEFAULT &#x5982;&#x679C;&#x4E0D;&#x8BBE;&#x7F6E;&#xFF0C;&#x9ED8;&#x8BA4;&#x8BE5;&#x5C5E;&#x6027;&#xFF0C;&#x4E0D;&#x505A;&#x4EFB;&#x4F55;&#x5904;&#x7406;</li>
+<li>MISSING &#x4E8B;&#x4EF6;&#x5728;&#x6CA1;&#x6709;&#x4EFB;&#x4F55;&#x7F13;&#x51B2;&#x6216;&#x4E22;&#x5F03;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#x5199;&#x5165;&#x3002;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#x9700;&#x8981;&#x5904;&#x7406;&#x6240;&#x6709;&#x4EFB;&#x4F55;&#x6EA2;&#x51FA;</li>
+<li>ERROR &#x5728;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#x5904;&#x7406;&#x901F;&#x5EA6;&#x4E0D;&#x80FD;&#x8DDF;&#x4E0A;&#x4E8B;&#x4EF6;&#x53D1;&#x51FA;&#x901F;&#x5EA6;&#x65F6;&#xFF0C;&#x53D1;&#x51FA;&#x4E00;&#x4E2A;Exception</li>
+<li>BUFFER &#x7F13;&#x5B58;&#x4E8B;&#x4EF6;&#xFF0C;&#x7B49;&#x5230;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#x6D88;&#x8D39;&#x6389;&#x8FD9;&#x4E2A;&#x4E8B;&#x4EF6;</li>
+<li>DROP &#x5982;&#x679C;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#x4E0D;&#x80FD;&#x8DDF;&#x4E0A;&#x4E8B;&#x4EF6;&#x53D1;&#x9001;&#x901F;&#x5EA6;&#xFF0C;&#x4E22;&#x5F03;&#x6700;&#x8FD1;&#x7684;&#x4E8B;&#x4EF6;</li>
+<li>LATEST &#x4EC5;&#x4FDD;&#x7559;&#x6700;&#x65B0;&#x7684;&#x4E8B;&#x4EF6;&#xFF0C;&#x5982;&#x679C;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#x5904;&#x7406;&#x901F;&#x5EA6;&#x8DDF;&#x4E0D;&#x4E0A;&#x4E8B;&#x4EF6;&#x53D1;&#x51FA;&#x901F;&#x5EA6;&#xFF0C;&#x5219;&#x8986;&#x76D6;&#x4EFB;&#x4F55;&#x5148;&#x524D;&#x7684;&#x503C;&#xFF0C;&#x4FDD;&#x7559;&#x6700;&#x65B0;&#x4E8B;&#x4EF6;&#x3002;</li>
+</ul>
+</li>
+</ol>
+<p><strong>&#x6CE8;&#x610F;</strong>&#xFF1A;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#x9650;&#x5B9A;&#x4E86;&#x53C2;&#x6570;&#x53EA;&#x80FD;&#x6709;&#x4E00;&#x4E2A;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x6307;&#x5B9A;&#x63A5;&#x6536;&#x4E00;&#x4E2A;&#x4E8B;&#x4EF6;&#x89E6;&#x53D1;</p>
+<h5 id="&#x53D1;&#x51FA;&#x4E8B;&#x4EF6;"><a href="#&#x53D1;&#x51FA;&#x4E8B;&#x4EF6;" class="headerlink" title="&#x53D1;&#x51FA;&#x4E8B;&#x4EF6;"></a>&#x53D1;&#x51FA;&#x4E8B;&#x4EF6;</h5><pre><code>RxBus.post(&quot;eggsy test&quot;);  // &#x53D1;&#x51FA;String&#x7C7B;&#x578B;&#x7684;&#x4E8B;&#x4EF6;
+RxBus.post(true);  // &#x53D1;&#x51FA;boolean&#x4E8B;&#x4EF6;
+RxBus.post(new Boolean(false));  // &#x53D1;&#x51FA;Boolean&#x7C7B;&#x4F7F;&#x52B2;
+RxBus.post(newTestEvent(1,&quot;post event object&quot;));  // &#x5F53;&#x7136;&#xFF0C;&#x8FD8;&#x53EF;&#x4EE5;&#x53D1;&#x51FA;&#x81EA;&#x5B9A;&#x4E49;&#x7684;&#x5BF9;&#x8C61;&#x4E8B;&#x4EF6;
+</code></pre><p>&#x8FD9;&#x91CC;&#x6211;&#x652F;&#x6301;&#x53D1;&#x9001;&#x7684;&#x4E8B;&#x4EF6;&#x7C7B;&#x578B;&#x6709;&#x4E24;&#x79CD;&#xFF0C;&#x4E00;&#x79CD;&#x662F;java 8&#x79CD;&#x57FA;&#x7840;&#x7C7B;&#x578B;&#x4EE5;&#x53CA;&#x5305;&#x88C5;&#x7C7B;&#xFF0C;&#x53E6;&#x5916;&#x4E00;&#x79CD;&#x81EA;&#x5B9A;&#x4E49;&#x7C7B;&#x3002;&#x5176;&#x4E2D;&#xFF0C;&#x5982;&#x679C;&#x53D1;&#x51FA;&#x7684;&#x4E8B;&#x4EF6;&#x7C7B;&#x578B;&#x662F;&#x57FA;&#x7840;&#x7C7B;&#x578B;&#xFF0C;&#x90A3;&#x4E48;&#x5982;&#x679C;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#x662F;&#x5BF9;&#x5E94;&#x5305;&#x88C5;&#x7C7B;&#x578B;&#x7684;&#x4E8B;&#x4EF6;&#xFF0C;&#x4E5F;&#x4F1A;&#x8DDF;&#x7740;&#x89E6;&#x53D1;&#xFF0C;&#x53CD;&#x4E4B;&#xFF0C;&#x5982;&#x679C;&#x53D1;&#x51FA;&#x7684;&#x662F;&#x5305;&#x88C5;&#x7C7B;&#x578B;&#x7684;&#x4E8B;&#x4EF6;&#xFF0C;&#x90A3;&#x4E48;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#x662F;&#x5BF9;&#x5E94;&#x7684;&#x57FA;&#x7840;&#x7C7B;&#x578B;&#xFF0C;&#x4E5F;&#x4F1A;&#x8DDF;&#x7740;&#x89E6;&#x53D1;&#xFF0C;&#x6BD4;&#x5982;&#xFF0C;&#x53D1;&#x51FA;&#x5982;&#x4E0B;&#x4E8B;&#x4EF6;</p>
+<pre><code>RxBus.post(true);  // &#x53D1;&#x51FA;boolean&#x4E8B;&#x4EF6;
+RxBus.post(new Boolean(false));  // &#x53D1;&#x51FA;Boolean&#x7C7B;&#x4F7F;&#x52B2;
+</code></pre><p>&#x90A3;&#x4E48;&#x4E0B;&#x9762;&#x65B9;&#x6CD5;&#x4F1A;&#x88AB;&#x89E6;&#x53D1;&#x4E24;&#x6B21;</p>
+<pre><code>@EventSubscribe
+public void testboolean(boolean testParam) {  // boolean&#x4E8B;&#x4EF6;
+    Toast.makeText(this, testParam, Toast.LENGTH_SHORT).show();
+}
+</code></pre><h5 id="&#x89E3;&#x7ED1;"><a href="#&#x89E3;&#x7ED1;" class="headerlink" title="&#x89E3;&#x7ED1;"></a>&#x89E3;&#x7ED1;</h5><pre><code> RxBus.unRegister(this);
+</code></pre><p>&#x5728;&#x5408;&#x9002;&#x7684;&#x5730;&#x65B9;&#xFF0C;&#x89E3;&#x7ED1;&#x6CE8;&#x518C;&#x4E8B;&#x4EF6;&#xFF0C;&#x8FD9;&#x6837;&#x5C31;&#x6536;&#x4E0D;&#x5230;&#x540E;&#x7EED;&#x53D1;&#x51FA;&#x7684;&#x4E8B;&#x4EF6;&#xFF0C;&#x6BD4;&#x5982;&#x5728;Activity&#x7684;onDestory&#x4E2D;&#x89E3;&#x7ED1;&#xFF0C;&#x8FD9;&#x6837;&#x5C31;&#x5F62;&#x6210;&#x4E86;&#x4E00;&#x4E2A;&#x5B8C;&#x6574;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;</p>
+<h5 id="&#x751F;&#x6210;&#x8F85;&#x52A9;&#x7C7B;"><a href="#&#x751F;&#x6210;&#x8F85;&#x52A9;&#x7C7B;" class="headerlink" title="&#x751F;&#x6210;&#x8F85;&#x52A9;&#x7C7B;"></a>&#x751F;&#x6210;&#x8F85;&#x52A9;&#x7C7B;</h5><p>&#x5728;&#x7F16;&#x8BD1;&#x65F6;&#xFF0C;&#x4F1A;&#x751F;&#x6210;&#x4E00;&#x4E2A;<code>_RxBusProxy</code>&#x540E;&#x7F00;&#x7684;&#x8F85;&#x52A9;&#x7C7B;&#xFF0C;&#x4F8B;&#x5982;&#x6211;&#x4F8B;&#x5B50;&#x4E2D;&#xFF0C;</p>
+<pre><code>public class MainActivity_RxBusProxy implements RxBusProxy&lt;MainActivity&gt; {
+    protected CompositeDisposable compositeDisposable;
+
+    protected MainActivity sourceInstance;
+
+    public CompositeDisposable register(MainActivity source) {
+        sourceInstance = source;
+        Disposable test4_disposable = RxBusHelper.getDefault().register(String.class, new Consumer&lt;String&gt;() {
+            @Override
+            public void accept(String o) throws Exception {
+                sourceInstance.test4(o);
+            }
+        }, io.reactivex.schedulers.Schedulers.computation());
+        if (compositeDisposable == null || compositeDisposable.isDisposed()) {
+            compositeDisposable = new CompositeDisposable();
+        }
+        compositeDisposable.add(test4_disposable);
+        return compositeDisposable;
+    }
+
+    public void unRegister() {
+        if (compositeDisposable != null &amp;&amp; !compositeDisposable.isDisposed()) {
+            compositeDisposable.dispose();
+        }
+    }
+}
+</code></pre><h4 id="&#x6817;&#x5B50;"><a href="#&#x6817;&#x5B50;" class="headerlink" title="&#x6817;&#x5B50;"></a>&#x6817;&#x5B50;</h4><p>&#x5177;&#x4F53;&#x6817;&#x5B50;&#x8BF7;&#x53C2;&#x8003;&#x6211;&#x7684;github&#x4E0A;&#x7684;&#x5DE5;&#x7A0B;<a href="https://github.com/eggsywelsh/RxBus" target="_blank" rel="external">RxBus</a>&#xFF0C;&#x6B22;&#x8FCE;&#x5927;&#x5BB6;fork&#x4E0B;&#x6765;&#x73A9;&#x73A9;&#x3002;</p>
+<h4 id="&#x603B;&#x7ED3;"><a href="#&#x603B;&#x7ED3;" class="headerlink" title="&#x603B;&#x7ED3;"></a>&#x603B;&#x7ED3;</h4><p><code>RxBus</code>&#x6700;&#x57FA;&#x672C;&#x7684;&#x8FD8;&#x662F;&#x57FA;&#x4E8E;<code>RxJava2</code>&#x548C;<code>RxAndroid</code>&#xFF0C;&#x5229;&#x7528;Rxjava2&#x4E2D;&#x7684;&#x652F;&#x6301;&#x4E8B;&#x4EF6;&#x5728;&#x4E0D;&#x540C;&#x7EBF;&#x7A0B;&#x4E4B;&#x95F4;&#x4F20;&#x9012;&#xFF0C;&#x5C01;&#x88C5;&#x51FA;&#x7684;&#x4E00;&#x4E2A;&#x7C7B;&#x4F3C;&#x4E8E;EventBus&#x529F;&#x80FD;&#x7684;&#x5E93;&#xFF0C;&#x5E95;&#x5C42;&#x8FD8;&#x662F;&#x8C03;&#x7528;&#x4E86;&#x6211;&#x4E0A;&#x4E00;&#x7BC7;&#x6587;&#x7AE0;&#x4E2D;&#x7684;<a href="http://blog.eggsychan.com/2017/01/10/%E6%94%AF%E6%8C%81RxJava2%E7%9A%84RxBus%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85/">RxBus&#x7C7B;</a>&#xFF0C;&#x628A;&#x4E8B;&#x4EF6;&#x4E0E;Rxjava2&#x7ED3;&#x5408;&#x8D77;&#x6765;&#x3002;&#x7136;&#x540E;&#x5229;&#x7528;Java APT&#xFF0C;&#x8BC6;&#x522B;&#x51FA;@EventSubscribe&#x6CE8;&#x89E3;&#x548C;&#x6CE8;&#x89E3;&#x5185;&#x5BB9;&#xFF0C;&#x52A8;&#x6001;&#x7684;&#x6839;&#x636E;&#x6CE8;&#x89E3;&#x5185;&#x5BB9;&#xFF0C;&#x751F;&#x6210;&#x6CE8;&#x89E3;&#x65B9;&#x6CD5;&#x6240;&#x5728;&#x7C7B;&#x7684;&#x4E00;&#x4E2A;&#x8F85;&#x52A9;&#x7C7B;&#xFF0C;&#x5728;&#x8F85;&#x52A9;&#x7C7B;&#x91CC;&#x9762;&#x505A;&#x4E86;register&#x548C;unregister&#x65B9;&#x6CD5;&#xFF0C;&#x5B9E;&#x73B0;&#x6CE8;&#x518C;&#x548C;&#x89E3;&#x7ED1;&#x529F;&#x80FD;&#x3002;&#x5BF9;&#x5916;&#x5C01;&#x88C5;&#x4E86;api&#x65B9;&#x4FBF;&#x8C03;&#x7528;&#x8005;&#x6839;&#x636E;&#x4F20;&#x5165;&#x7684;&#x7C7B;&#x7C7B;&#x578B;&#xFF0C;&#x627E;&#x5230;&#x5BF9;&#x5E94;&#x7684;&#x8F85;&#x52A9;&#x7C7B;&#xFF0C;&#x8C03;&#x7528;register&#x65B9;&#x6CD5;&#x3002;</p>
+<p>&#x6700;&#x540E;&#xFF0C;&#x8C22;&#x8C22;&#x5927;&#x5BB6;&#x67E5;&#x770B;&#x8FD9;&#x7BC7;&#x6587;&#x7AE0;&#xFF0C;&#x5199;&#x7684;&#x4E0D;&#x597D;&#x7684;&#x6216;&#x8005;&#x6709;&#x95EE;&#x9898;&#x7684;&#xFF0C;&#x6B22;&#x8FCE;&#x5927;&#x5BB6;&#x7559;&#x8A00;&#x4EA4;&#x6D41;&#xFF5E;&#xFF5E;&#xFF5E;</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Glide源码分析(二) 如何动态测量获取ImageView大小]]></title>
+      <url>http://blog.eggsychan.com/2017/01/24/Glide%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E4%BA%8C-%E5%A6%82%E4%BD%95%E5%8A%A8%E6%80%81%E6%B5%8B%E9%87%8F%E8%8E%B7%E5%8F%96ImageView%E5%A4%A7%E5%B0%8F/</url>
+      <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;Glide&#x5982;&#x4F55;&#x52A8;&#x6001;&#x6D4B;&#x91CF;ImageView&#x5927;&#x5C0F;<br><a id="more"></a></p>
+<blockquote>
+<p>&#x6211;&#x4EEC;&#x90FD;&#x77E5;&#x9053;&#xFF0C;Glide&#x662F;&#x5728;Picasso&#x7684;&#x57FA;&#x7840;&#x4E0A;&#x8FDB;&#x884C;&#x7684;&#x6539;&#x5584;&#xFF0C;&#x76F8;&#x6BD4;&#x4E8E;Picasso&#xFF0C;Glide&#x4F1A;&#x6839;&#x636E;ImageView&#x7684;&#x5927;&#x5C0F;&#x6765;&#x751F;&#x6210;&#x56FE;&#x7247;&#x5927;&#x5C0F;&#xFF0C;&#x8FD9;&#x6837;&#x53EF;&#x4EE5;&#x51CF;&#x5C11;&#x56FE;&#x7247;&#x5360;&#x7528;&#x7684;&#x5185;&#x5B58;&#x5927;&#x5C0F;&#xFF0C;&#x6211;&#x4EEC;&#x6765;&#x770B;&#x770B;Glide&#x662F;&#x600E;&#x4E48;&#x52A8;&#x6001;&#x6D4B;&#x91CF;&#x83B7;&#x53D6;ImageView&#x7684;&#x5927;&#x5C0F;&#xFF0C;&#x5E76;&#x4E14;&#x8BBE;&#x7F6E;&#x6839;&#x636E;&#x5927;&#x5C0F;&#x8BBE;&#x7F6E;&#x56FE;&#x7247;&#x7684;&#x5927;&#x5C0F;</p>
+</blockquote>
+<p>&#x6211;&#x4EEC;&#x5148;&#x6765;&#x7B80;&#x5355;&#x56DE;&#x987E;&#x4E00;&#x4E0B;Activity&#x4E2D;&#x52A0;&#x8F7D;&#x89C6;&#x56FE;&#x7684;&#x8FC7;&#x7A0B;&#xFF1A;<br>&#x6211;&#x4EEC;&#x5728;<code>onCreate(...)</code>&#x65B9;&#x6CD5;&#x4E2D;&#x8C03;&#x7528;&#x4E86;<code>setContentView(int layoutId)</code>&#x6765;&#x8BBE;&#x7F6E;&#x4E86;&#x5E03;&#x5C40;&#x6587;&#x4EF6;&#xFF0C;&#x5176;&#x5B9E;&#x8FD9;&#x91CC;&#x5E76;&#x6CA1;&#x6709;&#x9A6C;&#x4E0A;&#x8FDB;&#x884C;&#x89C6;&#x56FE;&#x7684;&#x6D4B;&#x91CF;&#xFF0C;&#x5E03;&#x5C40;&#xFF0C;&#x7ED8;&#x5236;&#xFF0C;&#x4E00;&#x5207;&#x90FD;&#x662F;&#x7B49;&#x5230;onResume&#x4E4B;&#x540E;&#x624D;&#x8FDB;&#x884C;&#x754C;&#x9762;&#x89C6;&#x56FE;&#x7684;&#x6E32;&#x67D3;&#x3002;&#x81F3;&#x4E8E;&#x5982;&#x4F55;&#x6E32;&#x67D3;&#xFF0C;&#x8FD9;&#x91CC;&#x6709;&#x4E24;&#x7BC7;&#x6587;&#x7AE0;&#xFF0C;&#x5982;&#x679C;&#x4F60;&#x4E0D;&#x719F;&#x6089;&#x6216;&#x8005;&#x8FD8;&#x662F;&#x5C0F;&#x767D;&#xFF0C;&#x53EF;&#x4EE5;&#x5148;&#x53C2;&#x8003;&#x4E0B;&#xFF1A;<br><a href="http://www.jianshu.com/p/5a71014e7b1b" target="_blank" rel="external">Android View&#x7684;&#x7ED8;&#x5236;&#x6D41;&#x7A0B;</a><br><a href="http://blog.csdn.net/luoshengyang/article/details/6689748" target="_blank" rel="external">Android&#x5E94;&#x7528;&#x7A0B;&#x5E8F;&#x542F;&#x52A8;&#x8FC7;&#x7A0B;&#x6E90;&#x4EE3;&#x7801;&#x5206;&#x6790;</a></p>
+<p>&#x90A3;&#x4E48;&#x5728;&#x8FD9;&#x4E2A;&#x751F;&#x547D;&#x5468;&#x671F;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x5982;&#x679C;&#x4F7F;&#x7528;&#x4E86;Glide&#x7684;&#x52A0;&#x8F7D;&#x56FE;&#x7247;&#x65B9;&#x6CD5;&#xFF0C;&#x90A3;&#x4E48;&#x5176;&#x5B9E;&#x8FD9;&#x65F6;&#x5019;&#x56FE;&#x7247;&#x662F;&#x65E0;&#x6CD5;&#x786E;&#x5B9A;&#x5927;&#x5C0F;&#x548C;&#x4F4D;&#x7F6E;&#x7684;(&#x56E0;&#x4E3A;&#x8FD9;&#x65F6;&#x5019;&#x6574;&#x4E2A;&#x9875;&#x9762;&#x89C6;&#x56FE;&#x8FD8;&#x6CA1;&#x6709;&#x8FDB;&#x884C;&#x6D4B;&#x91CF;&#x5E03;&#x5C40;&#x7ED8;&#x5236;&#xFF0C;&#x54EA;&#x6765;&#x7684;&#x786E;&#x5B9A;&#x5927;&#x5C0F;&#x548C;&#x4F4D;&#x7F6E;)&#xFF0C;&#x8FD9;&#x65F6;&#x5019;Glide&#x8BE5;&#x600E;&#x4E48;&#x529E;&#x5462;&#xFF1F;</p>
+<p>&#x8FD8;&#x662F;&#x4EE5;&#x6211;&#x4EEC;&#x4E0A;&#x6587;<a href="http://www.jianshu.com/p/c7746ffed0c7" target="_blank" rel="external">Glide&#x6E90;&#x7801;&#x5206;&#x6790;(&#x4E00;) &#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;</a>&#x4E2D;&#x7684;&#x4F8B;&#x5B50;&#x6765;&#x5206;&#x6790;&#x4E00;&#x4E0B;&#x6574;&#x4E2A;&#x8FC7;&#x7A0B;&#xFF0C;&#x91CD;&#x70B9;&#x8BB2;&#x89E3;&#x4E00;&#x4E0B;&#x52A8;&#x6001;&#x83B7;&#x53D6;ImageView&#x5927;&#x5C0F;</p>
+<h4 id="&#x4F8B;&#x5B50;"><a href="#&#x4F8B;&#x5B50;" class="headerlink" title="&#x4F8B;&#x5B50;"></a>&#x4F8B;&#x5B50;</h4><pre><code>Glide.with(StartActivity.this).load(R.mipmap.pizza).into(mIvShow);
+</code></pre><h4 id="&#x5206;&#x6790;"><a href="#&#x5206;&#x6790;" class="headerlink" title="&#x5206;&#x6790;"></a>&#x5206;&#x6790;</h4><p>&#x672C;&#x4F8B;&#x4E2D;&#xFF0C;Glide&#x524D;&#x9762;&#x7684;&#x65B9;&#x6CD5;&#x6700;&#x7EC8;&#x8981;&#x751F;&#x6210;Bitmap&#x5BF9;&#x8C61;&#x5199;&#x5165;ImageView&#x5BF9;&#x8C61;&#x4E2D;&#x663E;&#x793A;&#x51FA;&#x6765;&#xFF0C;&#x6211;&#x4EEC;&#x770B;&#x4E0B;<code>into()</code>&#x65B9;&#x6CD5;<br><strong>GenericRequestBuilder.java</strong></p>
+<pre><code>// &#x8BBE;&#x7F6E;&#x4E86;&#x5C06;&#x8981;&#x52A0;&#x8F7D;&#x56FE;&#x7247;&#x5230;&#x54EA;&#x4E2A;&#x89C6;&#x56FE;&#xFF0C;&#x53D6;&#x6D88;&#x5DF2;&#x7ECF;&#x52A0;&#x8F7D;&#x5230;ImageView&#x4E2D;&#x7684;&#x8D44;&#x6E90;&#xFF0C;&#x5E76;&#x4E14;&#x91CA;&#x653E;&#x8D44;&#x6E90;&#x7528;&#x4E8E;&#x540E;&#x9762;&#x53EF;&#x80FD;&#x7684;&#x590D;&#x7528;
+ public Target&lt;TranscodeType&gt; into(ImageView view) {
+        Util.assertMainThread();
+        if (view == null) {
+            throw new IllegalArgumentException(&quot;You must pass in a non null View&quot;);
+        }
+        // &#x5982;&#x679C;&#x4E4B;&#x524D;&#x6CA1;&#x6709;&#x5B9A;&#x4E49;&#x8FC7;Transformation&#xFF0C;&#x5E76;&#x4E14;ImageView&#x8BBE;&#x7F6E;&#x4E86;scaleType
+        if (!isTransformationSet &amp;&amp; view.getScaleType() != null) {
+            switch (view.getScaleType()) {
+                case CENTER_CROP:
+                   // &#x751F;&#x6210;&#x4E00;&#x4E2A;CENTER_CROP&#x7684;Transformation&#xFF0C;&#x7528;&#x4E8E;&#x540E;&#x9762;&#x751F;&#x6210;&#x56FE;&#x7247;&#x65F6;&#x8F6C;&#x6362;
+                    applyCenterCrop();
+                    break;
+                case FIT_CENTER:
+                case FIT_START:
+                case FIT_END:
+                   // &#x751F;&#x6210;&#x4E00;&#x4E2A;FIT_END&#x7684;Transformation&#x5BF9;&#x8C61;&#xFF0C;&#x7528;&#x4E8E;&#x540E;&#x9762;&#x751F;&#x6210;&#x56FE;&#x7247;&#x65F6;&#x8F6C;&#x6362;
+                    applyFitCenter();
+                    break;
+                //$CASES-OMITTED$
+                default:
+                    // Do nothing.
+            }
+        }
+        // &#x7EDF;&#x4E00;&#x6784;&#x5EFA;ImageViewTarget
+        return into(glide.buildImageViewTarget(view, transcodeClass));
+    }
+</code></pre><p>&#x8FD9;&#x91CC;&#x6700;&#x7EC8;&#x4F1A;&#x6784;&#x5EFA;&#x4E00;&#x4E2A;ImageViewTarget&#x5BF9;&#x8C61;&#xFF0C;&#x63A5;&#x4E0B;&#x6765;&#x770B;&#x4E0B;&#x662F;&#x5982;&#x4F55;&#x6784;&#x5EFA;&#x8FD9;&#x4E2A;&#x7C7B;<br>&#x5173;&#x4E8E;&#x81EA;&#x5B9A;&#x4E49;Transformation&#x7684;&#x4F8B;&#x5B50;&#xFF0C;&#x5177;&#x4F53;&#x770B;&#x6211;&#x7684;&#x4F8B;&#x5B50;&#x5DE5;&#x7A0B;<a href="https://github.com/eggsywelsh/GlideSample" target="_blank" rel="external">GlideSample</a>&#x7684;<code>TransformationActivity.java</code></p>
+<p><strong>Glide.java</strong></p>
+<pre><code>    &lt;R&gt; Target&lt;R&gt; buildImageViewTarget(ImageView imageView, Class&lt;R&gt; transcodedClass) {
+        return imageViewTargetFactory.buildTarget(imageView, transcodedClass);
+    }
+</code></pre><p><strong>ImageViewTargetFactory.java</strong></p>
+<pre><code>    @SuppressWarnings(&quot;unchecked&quot;)
+    public &lt;Z&gt; Target&lt;Z&gt; buildTarget(ImageView view, Class&lt;Z&gt; clazz) {
+        if (GlideDrawable.class.isAssignableFrom(clazz)) {
+            return (Target&lt;Z&gt;) new GlideDrawableImageViewTarget(view);
+        } else if (Bitmap.class.equals(clazz)) {
+            ......
+        }
+        ......
+    }
+</code></pre><p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x6700;&#x7EC8;&#x4F1A;&#x8FD4;&#x56DE;<code>GlideDrawableImageViewTarget</code>&#x5BF9;&#x8C61;&#xFF0C;&#x63A5;&#x4E0B;&#x6765;&#x5C31;&#x662F;request&#x4EFB;&#x52A1;<br><strong>GenericRequestBuilder.java</strong></p>
+<pre><code>public &lt;Y extends Target&lt;TranscodeType&gt;&gt; Y into(Y target) {
+        Util.assertMainThread();
+        if (target == null) {
+            throw new IllegalArgumentException(&quot;You must pass in a non null Target&quot;);
+        }
+        if (!isModelSet) {
+            throw new IllegalArgumentException(&quot;You must first set a model (try #load())&quot;);
+        }
+
+        // &#x8FD9;&#x4E2A;target&#x4E4B;&#x524D;&#x662F;&#x5426;&#x6709;&#x5B58;&#x5728;Request&#x4EFB;&#x52A1;
+        Request previous = target.getRequest();
+
+        if (previous != null) {
+            // &#x5982;&#x679C;&#x5B58;&#x5728;&#xFF0C;&#x90A3;&#x4E48;&#x6E05;&#x9664;&#x4E4B;&#x524D;&#x7684;Request
+            previous.clear();
+            requestTracker.removeRequest(previous);
+            previous.recycle();
+        }
+        // &#x6784;&#x5EFA;&#x65B0;&#x7684;Request&#xFF0C;&#x4E0B;&#x9762;&#x4F1A;&#x8BB2;&#x89E3;&#x5230;
+        Request request = buildRequest(target);
+        target.setRequest(request);
+        lifecycle.addListener(target);
+        // &#x8FD0;&#x884C;Request&#xFF0C;&#x672C;&#x6587;&#x91CD;&#x70B9;&#x5728;&#x8FD9;&#x91CC;
+        requestTracker.runRequest(request);
+
+        return target;
+    }
+</code></pre><p>&#x4E0A;&#x9762;&#x4EE3;&#x7801;&#x6211;&#x4EEC;&#x4E3B;&#x8981;&#x5173;&#x6CE8;&#x4E0B;<code>buildRequest(target)</code>&#x65B9;&#x6CD5;&#x548C;<code>requestTracker.runRequest(request)</code>&#x65B9;&#x6CD5;(&#x672C;&#x6587;&#x91CD;&#x70B9;)<br><strong>GenericRequestBuilder.java</strong></p>
+<pre><code>private Request buildRequest(Target&lt;TranscodeType&gt; target) {
+        if (priority == null) {
+            priority = Priority.NORMAL;
+        }
+        return buildRequestRecursive(target, null);
+    }
+
+    private Request buildRequestRecursive(Target&lt;TranscodeType&gt; target, ThumbnailRequestCoordinator parentCoordinator) {
+        if (thumbnailRequestBuilder != null) {  // &#x662F;&#x5426;&#x6709;&#x6307;&#x5B9A;&#x81EA;&#x5B9A;&#x4E49;&#x7F29;&#x7565;&#x56FE;&#x7684;&#x8BF7;&#x6C42;&#xFF0C;&#x672C;&#x4F8B;&#x4E2D;&#x6CA1;&#x6709;
+            ......
+        } else if (thumbSizeMultiplier != null) {  // &#x662F;&#x5426;&#x6709;&#x7B49;&#x6BD4;&#x4F8B;&#x7F29;&#x653E;&#x7684;&#x8BF7;&#x6C42;&#xFF0C;&#x672C;&#x4F8B;&#x4E2D;&#x6CA1;&#x6709;
+           ......
+        } else {
+            // &#x6CA1;&#x6709;&#x7F29;&#x7565;&#x56FE;&#xFF0C;&#x6784;&#x5EFA;&#x4E00;&#x4E2A;GenericRequest&#x5BF9;&#x8C61;
+            return obtainRequest(target, sizeMultiplier, priority, parentCoordinator);
+        }
+    }
+</code></pre><p>&#x5173;&#x4E8E;&#x7F29;&#x7565;&#x56FE;&#xFF0C;&#x5177;&#x4F53;&#x770B;&#x6211;&#x7684;&#x4F8B;&#x5B50;&#x5DE5;&#x7A0B;<a href="https://github.com/eggsywelsh/GlideSample" target="_blank" rel="external">GlideSample</a>&#x7684;<code>ThumbnailActivity.java</code>&#x7C7B;&#xFF0C;&#x91CC;&#x9762;&#x6709;&#x5173;&#x4E8E;&#x7F29;&#x7565;&#x56FE;&#x7684;&#x7528;&#x6CD5;</p>
+<p>&#x597D;&#x4E86;&#xFF0C;&#x524D;&#x9762;&#x94FA;&#x57AB;&#x4E86;&#x8FD9;&#x4E48;&#x591A;&#xFF0C;&#x5176;&#x5B9E;&#x8FD8;&#x6CA1;&#x6709;&#x6D89;&#x53CA;&#x5230;&#x5982;&#x4F55;&#x83B7;&#x53D6;ImageView&#x7684;&#x5927;&#x5C0F;&#xFF0C;&#x522B;&#x6025;&#xFF0C;&#x9A6C;&#x4E0A;&#x5C31;&#x6765;&#xFF5E;&#xFF5E;<br>&#x6211;&#x4EEC;&#x770B;&#x4E0B;<code>requestTracker.runRequest(target)</code>&#x65B9;&#x6CD5;<br><strong>RequestTracker.java</strong></p>
+<pre><code>public void runRequest(Request request) {
+        requests.add(request);
+        if (!isPaused) {
+            request.begin();
+        } else {
+            pendingRequests.add(request);
+        }
+    }
+</code></pre><p>&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x8FD0;&#x884C;&#x4E86;&#x5C01;&#x88C5;&#x597D;&#x7684;<code>GenericRequest.begin()</code>&#x7C7B;&#x65B9;&#x6CD5;<br><strong>GenericRequest.java</strong></p>
+<pre><code>public void begin() {
+       // &#x8BB0;&#x5F55;Request&#x8FD0;&#x884C;&#x8D77;&#x59CB;&#x65F6;&#x95F4;
+        startTime = LogTime.getLogTime();
+        if (model == null) {
+            onException(null);
+            return;
+        }
+        // &#x8BBE;&#x7F6E;&#x4E3A;&#x7B49;&#x5F85;&#x6D4B;&#x91CF;ImageView&#x5927;&#x5C0F;
+        status = Status.WAITING_FOR_SIZE;
+       // overrideWidth&#x548C;overrideHeight&#x662F;&#x7528;&#x6237;&#x53EF;&#x80FD;&#x901A;&#x8FC7;Glide.override(x,y)
+       // &#x5728;&#x663E;&#x793A;&#x56FE;&#x7247;&#x524D;&#x91CD;&#x65B0;&#x526A;&#x88C1;&#x56FE;&#x7247;&#x5927;&#x5C0F;
+        if (Util.isValidDimensions(overrideWidth, overrideHeight)) {
+            &#x7528;&#x6237;&#x5DF2;&#x7ECF;&#x6307;&#x5B9A;&#x56FE;&#x7247;&#x5927;&#x5C0F;&#xFF0C;&#x65E0;&#x9700;&#x6D4B;&#x91CF;ImageView&#x5927;&#x5C0F;
+            onSizeReady(overrideWidth, overrideHeight);
+        } else {
+            // &#x8FD9;&#x91CC;&#x7684;target&#x662F;&#x6211;&#x4EEC;&#x4E0A;&#x6587;&#x4E2D;&#x5F97;&#x5230;&#x7684;GlideDrawableImageViewTarget&#xFF0C;
+            // &#x901A;&#x8FC7;target&#x7C7B;&#x8BBE;&#x7F6E;&#x4E86;&#x4E00;&#x4E2A;&#x76D1;&#x542C;&#x8FDB;&#x53BB;&#xFF0C;&#x6765;&#x76D1;&#x542C;ImageView&#x7684;&#x56FE;&#x7247;&#x56FA;&#x5B9A;
+            target.getSize(this);
+        }
+
+        if (!isComplete() &amp;&amp; !isFailed() &amp;&amp; canNotifyStatusChanged()) {
+            // &#x5F00;&#x59CB;&#x52A0;&#x8F7D;&#x5360;&#x4F4D;&#x7B26;&#x56FE;&#x7247;(&#x5982;&#x679C;&#x7528;&#x6237;&#x6709;&#x8BBE;&#x7F6E;&#x5360;&#x4F4D;&#x7B26;&#x7684;&#x60C5;&#x51B5;&#x4E0B;)
+            target.onLoadStarted(getPlaceholderDrawable());
+        }
+        // &#x8BB0;&#x5F55;&#x672C;&#x6B21;run&#x7684;&#x65F6;&#x95F4;
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            logV(&quot;finished run method in &quot; + LogTime.getElapsedMillis(startTime));
+        }
+    }
+</code></pre><p>&#x91CD;&#x70B9;&#x5728;&#x8FD9;&#x91CC;<code>target.getSize(this)</code>&#xFF0C;&#x8FD9;&#x4E2A;&#x7C7B;&#x8BBE;&#x7F6E;&#x4E86;<br><strong>GlideDrawableImageViewTarget.java</strong></p>
+<pre><code>    public void getSize(SizeReadyCallback cb) {
+        sizeDeterminer.getSize(cb);
+    }
+</code></pre><p><strong>GlideDrawableImageViewTarget.java</strong></p>
+<pre><code>public void getSize(SizeReadyCallback cb) {
+            // &#x83B7;&#x53D6;ImageView&#x7684;&#x51C6;&#x786E;&#x5BBD;&#x5EA6;&#x6216;&#x8005;LayoutParams&#x7684;&#x5E38;&#x91CF;&#x503C;(&#x4F8B;&#x5982;&#xFF1A;LayoutParams.WRAP_CONTENT)
+            int currentWidth = getViewWidthOrParam();
+            // &#x540C;&#x4E0A;&#x9762;&#x83B7;&#x53D6;&#x5BBD;&#x5EA6;
+            int currentHeight = getViewHeightOrParam();
+            // &#x5982;&#x679C;&#x5BBD;&#x5EA6;&#x662F;&#x51C6;&#x786E;&#x503C;&#xFF0C;&#x6216;&#x8005;&#x662F;LayoutParams.WRAP_CONTENT&#x5C5E;&#x6027;
+            // &#x5982;&#x679C;&#x9AD8;&#x5EA6;&#x662F;&#x51C6;&#x786E;&#x503C;&#xFF0C;&#x6216;&#x8005;&#x662F;LayoutParams.WRAP_CONTENT&#x5C5E;&#x6027;
+            if (isSizeValid(currentWidth) &amp;&amp; isSizeValid(currentHeight)) {
+                // &#x76F4;&#x63A5;&#x56DE;&#x8C03;&#x5DF2;&#x83B7;&#x53D6;&#x5230;&#x5F53;&#x524D;&#x7684;&#x5BBD;&#x9AD8;
+                cb.onSizeReady(currentWidth, currentHeight);
+            } else {
+                // &#x52A0;&#x5165;&#x5230;&#x56DE;&#x8C03;&#x961F;&#x5217;&#x4E2D;
+                if (!cbs.contains(cb)) {
+                    cbs.add(cb);
+                }
+                if (layoutListener == null) {
+                    // &#x83B7;&#x53D6;ImageView&#x7684;&#x89C6;&#x56FE;&#x6811;&#x76D1;&#x542C;
+                    final ViewTreeObserver observer = view.getViewTreeObserver();
+                    layoutListener = new SizeDeterminerLayoutListener(this);
+                    /* 
+                       &#x91CD;&#x70B9;&#x6765;&#x54AF;&#xFF0C;&#x6DFB;&#x52A0;&#x4E00;&#x4E2A;OnPreDrawListener&#x8FD9;&#x4E2A;&#x76D1;&#x542C;&#xFF0C;&#x5173;&#x4E8E;&#x8FD9;&#x4E2A;&#x76D1;&#x542C;&#x7684;&#x542B;&#x4E49;&#x5927;&#x4F53;
+                       &#x662F;&#x5728;&#x89C6;&#x56FE;&#x7ED8;&#x5236;&#x4E4B;&#x524D;&#x8FDB;&#x884C;&#x56DE;&#x8C03;&#xFF0C;&#x7ED8;&#x5236;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x89C6;&#x56FE;&#x7684;&#x80AF;&#x5B9A;&#x662F;&#x7ECF;&#x8FC7;&#x6D4B;&#x91CF;&#x8FC7;&#x5BBD;&#x9AD8;&#x4E86;&#xFF0C;&#x522B;&#x95EE;&#x6211;&#x4E3A;&#x4EC0;&#x4E48;&#xFF0C;&#x6211;&#x4F1A;&#x6253;&#x4EBA;&#x7684;
+                     */
+                    observer.addOnPreDrawListener(layoutListener);
+                }
+            }
+        }
+</code></pre><p>&#x6211;&#x4EEC;&#x770B;&#x4E0B;<code>SizeDeterminerLayoutListener</code>&#x8FD9;&#x4E2A;&#x7C7B;&#xFF0C;&#x5B9E;&#x73B0;&#x4E86;<code>ViewTreeObserver.OnPreDrawListener</code>&#x63A5;&#x53E3;&#xFF0C;&#x901A;&#x8FC7;onPreDraw&#x65B9;&#x6CD5;&#xFF0C;&#x6267;&#x884C;&#x56DE;&#x8C03;&#x961F;&#x5217;&#x8FDB;&#x884C;&#x7EDF;&#x4E00;&#x7684;&#x56DE;&#x8C03;</p>
+<pre><code>private static class SizeDeterminerLayoutListener implements ViewTreeObserver.OnPreDrawListener {
+            /* &#x8FD9;&#x91CC;&#x4E3A;&#x4EC0;&#x4E48;&#x7528;&#x5F31;&#x5F15;&#x7528;&#xFF0C;&#x6211;&#x60F3;&#x662F;&#x56E0;&#x4E3A;&#x6211;&#x4EEC;&#x7684;ViewTarget&#x53EF;&#x80FD;&#x5728;&#x6D4B;&#x91CF;ImageView&#x524D;
+               &#x6709;&#x53EF;&#x80FD;&#x8FDB;&#x884C;&#x591A;&#x6B21;&#x7684;Glide.into()&#xFF0C;&#x8FD8;&#x8BB0;&#x5F97;&#x6211;&#x4EEC;&#x5728;GenericRequestBuilder.into()&#x65B9;&#x6CD5;&#x5417;&#xFF1F;
+               &#x91CC;&#x9762;&#x6709;&#x5BF9;&#x4E4B;&#x524D;&#x7684;Request&#x8FDB;&#x884C;clear&#xFF0C;recycle&#x7B49;&#x64CD;&#x4F5C;&#xFF0C;&#x5FD8;&#x8BB0;&#x7684;&#x540C;&#x5B66;&#x53EF;&#x4EE5;&#x56DE;&#x5934;&#x53BB;&#x770B;&#x770B;&#x4EE3;&#x7801;
+            */
+            private final WeakReference&lt;SizeDeterminer&gt; sizeDeterminerRef;
+
+            public SizeDeterminerLayoutListener(SizeDeterminer sizeDeterminer) {
+                sizeDeterminerRef = new WeakReference&lt;SizeDeterminer&gt;(sizeDeterminer);
+            }
+
+            @Override
+            public boolean onPreDraw() {
+                if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                    Log.v(TAG, &quot;OnGlobalLayoutListener called listener=&quot; + this);
+                }
+                SizeDeterminer sizeDeterminer = sizeDeterminerRef.get();
+                if (sizeDeterminer != null) {
+                    // &#x7EDF;&#x4E00;&#x56DE;&#x8C03;&#xFF0C;&#x53EF;&#x4EE5;&#x83B7;&#x53D6;&#x5F53;&#x524D;ImageView&#x7684;&#x5BBD;&#x9AD8;
+                    sizeDeterminer.checkCurrentDimens();
+                }
+                return true;
+            }
+        }
+</code></pre><p><strong>SizeDeterminer.java</strong></p>
+<pre><code>private void checkCurrentDimens() {
+            if (cbs.isEmpty()) {
+                return;
+            }
+            // &#x4E0A;&#x9762;&#x5DF2;&#x7ECF;&#x89E3;&#x91CA;&#x8FC7;&#x4E86;
+            int currentWidth = getViewWidthOrParam();
+            int currentHeight = getViewHeightOrParam();
+            if (!isSizeValid(currentWidth) || !isSizeValid(currentHeight)) {
+                return;
+            }
+            // &#x7EDF;&#x4E00;&#x56DE;&#x8C03;&#x76D1;&#x542C;&#x961F;&#x5217;
+            notifyCbs(currentWidth, currentHeight);
+            // Keep a reference to the layout listener and remove it here
+            // rather than having the observer remove itself because the observer
+            // we add the listener to will be almost immediately merged into
+            // another observer and will therefore never be alive. If we instead
+            // keep a reference to the listener and remove it here, we get the
+            // current view tree observer and should succeed.
+            ViewTreeObserver observer = view.getViewTreeObserver();
+            if (observer.isAlive()) {
+                // &#x6D4B;&#x91CF;&#x5F97;&#x5230;&#x4E86;&#x7ED3;&#x679C;&#xFF0C;&#x79FB;&#x9664;&#x76D1;&#x542C;
+                observer.removeOnPreDrawListener(layoutListener);
+            }
+            layoutListener = null;
+        }
+</code></pre><p>&#x56DE;&#x8C03;&#x65B9;&#x6CD5;<code>notifyCbs(currentWidth, currentHeight)</code>&#x6700;&#x540E;&#x56DE;&#x8C03;GenericRequest.onSizeReady()&#x65B9;&#x6CD5;&#x5BF9;&#x56FE;&#x7247;&#x8FDB;&#x884C;&#x52A0;&#x8F7D;&#x663E;&#x793A;&#xFF0C;&#x672C;&#x8282;&#x6682;&#x65F6;&#x4E0D;&#x5BF9;&#x56FE;&#x7247;&#x7684;&#x52A0;&#x8F7D;&#x6E90;&#x7801;&#x8FDB;&#x884C;&#x5206;&#x6790;<br><strong>GenericRequest.java</strong></p>
+<pre><code>    public void onSizeReady(int width, int height) {
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
+            logV(&quot;Got onSizeReady in &quot; + LogTime.getElapsedMillis(startTime));
+        }
+        if (status != Status.WAITING_FOR_SIZE) {
+            return;
+        }
+        status = Status.RUNNING;
+        // &#x56FE;&#x7247;&#x7F29;&#x653E;&#x53C2;&#x6570;&#xFF0C;&#x5982;&#x679C;&#x7528;&#x6237;&#x6709;&#x8BBE;&#x7F6E;thumbnail&#x53C2;&#x6570;&#x65F6;`Glide.with(...).thumbnail(0.2f).into(...)`&#x8FDB;&#x884C;&#x6BD4;&#x4F8B;&#x7F29;&#x653E;
+        // &#x9ED8;&#x8BA4;&#x503C;&#x662F;1&#xFF0C;&#x4E0D;&#x8FDB;&#x884C;&#x56FE;&#x7247;&#x5927;&#x5C0F;&#x7F29;&#x653E;
+        width = Math.round(sizeMultiplier * width);
+        height = Math.round(sizeMultiplier * height);
+        // &#x56FE;&#x7247;&#x52A0;&#x8F7D;
+        ......
+        ......
+        ......
+    }
+</code></pre><h4 id="&#x603B;&#x7ED3;"><a href="#&#x603B;&#x7ED3;" class="headerlink" title="&#x603B;&#x7ED3;"></a>&#x603B;&#x7ED3;</h4><p>&#x901A;&#x8FC7;&#x672C;&#x8282;&#x7684;&#x6E90;&#x7801;&#x5206;&#x6790;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x53D1;&#x73B0;Glide&#x5C06;&#x52A0;&#x8F7D;&#x56FE;&#x7247;&#x5230;ImageVIew&#x5C01;&#x88C5;&#x6210;Request&#x5BF9;&#x8C61;&#xFF0C;&#x5728;run Request&#x7684;&#x65F6;&#x5019;&#x8FDB;&#x884C;&#x5224;&#x65AD;&#xFF0C;&#x5982;&#x679C;ImageView&#x6709;&#x56FA;&#x5B9A;&#x5927;&#x5C0F;&#xFF0C;&#x90A3;&#x4E48;&#x5C31;&#x76F4;&#x63A5;&#x56DE;&#x8C03;&#x52A0;&#x8F7D;&#x56FE;&#x7247;&#xFF0C;&#x5982;&#x679C;&#x56FE;&#x7247;&#x8FD8;&#x6CA1;&#x6709;&#x8FDB;&#x884C;&#x6D4B;&#x91CF;&#x8FC7;&#xFF0C;&#x90A3;&#x4E48;&#x5C31;&#x8BBE;&#x7F6E;&#x76D1;&#x542C;ViewTreeObserver.OnPreDrawListener&#xFF0C;&#x7B49;&#x5F85;ImageView&#x7ED8;&#x5236;&#x524D;&#x56DE;&#x8C03;&#x76D1;&#x542C;&#x83B7;&#x53D6;&#x89C6;&#x56FE;&#x5927;&#x5C0F;&#xFF0C;&#x5728;&#x52A0;&#x8F7D;&#x786E;&#x5B9A;&#x5927;&#x5C0F;&#x7684;&#x56FE;&#x7247;</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Glide源码分析(一) Glide的图片加载的生命周期]]></title>
+      <url>http://blog.eggsychan.com/2017/01/18/Glide%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E4%B8%80-Glide%E7%9A%84%E5%9B%BE%E7%89%87%E5%8A%A0%E8%BD%BD%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/</url>
+      <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;Glide&#x7684;&#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;<br><a id="more"></a></p>
+<blockquote>
+<p>&#x5728;Glide&#x4E2D;&#xFF0C;&#x56FE;&#x7247;&#x7684;&#x52A0;&#x8F7D;&#x4F1A;&#x8DDF;&#x968F;&#x8FD9;Activity&#x6216;&#x8005;Fragment&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#x8FDB;&#x884C;&#x76F8;&#x5E94;&#x7684;&#x52A0;&#x8F7D;&#xFF0C;&#x505C;&#x6B62;&#x7B49;&#x64CD;&#x4F5C;&#xFF0C;&#x672C;&#x8282;&#x6211;&#x4EEC;&#x901A;&#x8FC7;&#x6E90;&#x7801;&#x6765;&#x5206;&#x6790;&#x4E00;&#x4E0B;Glide&#x662F;&#x600E;&#x4E48;&#x505A;&#x5230;&#x8FD9;&#x70B9;&#x7684;</p>
+</blockquote>
+<h4 id="&#x7528;&#x6CD5;"><a href="#&#x7528;&#x6CD5;" class="headerlink" title="&#x7528;&#x6CD5;"></a>&#x7528;&#x6CD5;</h4><p>&#x5728;&#x6211;&#x7684;<a href="https://github.com/eggsywelsh/GlideSample" target="_blank" rel="external">GlideSample</a>&#x4E2D;&#x7684;<code>StartActivity</code>&#x7C7B;&#x4E2D;</p>
+<pre><code>Glide.with(StartActivity.this).load(R.mipmap.pizza).into(mIvShow);
+</code></pre><h4 id="&#x5206;&#x6790;"><a href="#&#x5206;&#x6790;" class="headerlink" title="&#x5206;&#x6790;"></a>&#x5206;&#x6790;</h4><pre><code>// &#x4F7F;&#x7528;&#x7684;&#x4E0A;&#x4E0B;&#x6587;Context&#xFF0C;&#x53EF;&#x4EE5;&#x662F;Application&#xFF0C;Activity&#xFF0C;Fragment&#x5B9E;&#x4F8B;
+Glide.with()
+</code></pre><p>&#x6211;&#x4EEC;&#x770B;&#x5230;&#x6E90;&#x7801;&#xFF0C;&#x8FD9;&#x91CC;&#x4F20;&#x5165;&#x7684;5&#x79CD;&#x7C7B;&#x578B;&#x53C2;&#x6570;</p>
+<pre><code>with(Context context)  //  any Context
+with(android.app.Activity)
+with(android.app.Fragment)
+with(android.support.v4.app.Fragment)
+with(android.support.v4.app.FragmentActivity)
+</code></pre><p>&#x6211;&#x4EEC;&#x4EE5;<code>with(android.support.v4.app.FragmentActivity)</code>&#x4E3A;&#x4F8B;&#x770B;&#x4E0B;</p>
+<pre><code>    public static RequestManager with(Activity activity) {
+        RequestManagerRetriever retriever = RequestManagerRetriever.get();
+        return retriever.get(activity);
+    }
+</code></pre><p>&#x63A5;&#x7740;&#x770B;&#x4E0B;retriever.get(activity)&#x65B9;&#x6CD5;</p>
+<pre><code>    public RequestManager get(FragmentActivity activity) {
+        if (Util.isOnBackgroundThread()) {
+           // &#x4E0D;&#x5728;&#x4E3B;&#x7EBF;&#x7A0B;&#xFF0C;&#x8FD4;&#x56DE;&#x4E00;&#x4E2A;ApplicationContext&#x5173;&#x8054;&#x7684;RequestManager
+            return get(activity.getApplicationContext());
+        } else {
+            // &#x91CD;&#x70B9;&#x5728;&#x8FD9;&#x91CC;&#xFF0C;&#x6211;&#x4EEC;&#x8FD4;&#x56DE;&#x4E00;&#x4E2A;Fragment&#x76F8;&#x5173;&#x7684;RequestManager
+            assertNotDestroyed(activity);
+            // &#x83B7;&#x53D6;activity&#x5BF9;&#x5E94;&#x7684;FragmentManager&#xFF0C;&#x4E3B;&#x8981;&#x76EE;&#x7684;&#x662F;&#x548C;Activity&#x7ED3;&#x5408;&#xFF0C;
+            // &#x585E;&#x5165;&#x4E00;&#x4E2A;&#x7A7A;&#x7684;fragment&#x5BF9;&#x8C61;&#xFF0C;&#x7528;&#x4E8E;&#x66B4;&#x9732;&#x51FA;&#x751F;&#x547D;&#x5468;&#x671F;&#x65B9;&#x6CD5;&#xFF0C;&#x8FD9;&#x4E2A;&#x5728;&#x540E;&#x9762;&#x4F1A;&#x770B;&#x5230;
+            FragmentManager fm = activity.getSupportFragmentManager();
+            return supportFragmentGet(activity, fm);
+        }
+    }
+</code></pre><p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x5F88;&#x660E;&#x663E;&#x7684;&#x770B;&#x5230;&#x5982;&#x679C;&#x8C03;&#x7528;with()&#x65B9;&#x6CD5;&#x7684;&#x65F6;&#x5019;&#x4E0D;&#x662F;&#x5728;&#x4E3B;&#x7EBF;&#x7A0B;&#xFF0C;&#x90A3;&#x4E48;&#x6211;&#x4EEC;&#x4F1A;&#x8FD4;&#x56DE;&#x4E00;&#x4E2A;&#x548C;ApplicationContext&#x5173;&#x8054;&#x7684;RequestManager</p>
+<pre><code>private RequestManager getApplicationManager(Context context) {
+        // Either an application context or we&apos;re on a background thread.
+        if (applicationManager == null) {
+            synchronized (this) {
+                if (applicationManager == null) {
+                    // Normally pause/resume is taken care of by the fragment we add to the fragment or activity.
+                    // However, in this case since the manager attached to the application will not receive lifecycle
+                    // events, we must force the manager to start resumed using ApplicationLifecycle.
+                    applicationManager = new RequestManager(context.getApplicationContext(),
+                            new ApplicationLifecycle(), new EmptyRequestManagerTreeNode());
+                }
+            }
+        }
+
+        return applicationManager;
+    }
+</code></pre><p>&#x5982;&#x679C;&#x662F;&#x5728;&#x4E3B;&#x7EBF;&#x7A0B;&#x64CD;&#x4F5C;&#xFF0C;&#x90A3;&#x4E48;&#x6211;&#x4EEC;&#x4F1A;&#x8FD4;&#x56DE;&#x4E00;&#x4E2A;Fragment&#x76F8;&#x5173;&#x7684;RequestManager&#xFF0C;&#x8FD9;&#x91CC;&#x6D89;&#x53CA;&#x5230;&#x4E00;&#x4E2A;&#x5F88;&#x7CBE;&#x5999;&#x7684;&#x7528;&#x6CD5;&#xFF0C;&#x600E;&#x6837;&#x5C06;Activity&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#x66B4;&#x9732;&#x51FA;&#x6765;&#x4E0E;&#x4F60;&#x7684;&#x5C01;&#x88C5;&#x63A7;&#x4EF6;&#x7ED3;&#x5408;&#x4F7F;&#x7528;</p>
+<pre><code>    RequestManager supportFragmentGet(Context context, FragmentManager fm) {
+        // &#x83B7;&#x53D6;&#x4E00;&#x4E2A;&#x81EA;&#x5B9A;&#x4E49;&#x7684;Fragment
+        SupportRequestManagerFragment current = getSupportRequestManagerFragment(fm);
+        RequestManager requestManager = current.getRequestManager();
+        if (requestManager == null) {
+            // &#x751F;&#x6210;RequestManager&#x5BF9;&#x8C61;&#xFF0C;&#x770B;&#x770B;&#xFF0C;&#x8FD9;&#x91CC;&#x66B4;&#x9732;&#x51FA;&#x4E86;Lifecycle&#x63A5;&#x53E3;&#xFF0C;LIfecycle&#x5B9E;&#x73B0;&#x7C7B;&#x4E2D;&#x662F;&#x4E00;&#x4E2A;&#x76D1;&#x542C;LifecycleListener
+            requestManager = new RequestManager(context, current.getLifecycle(), current.getRequestManagerTreeNode());
+            current.setRequestManager(requestManager);
+        }
+        return requestManager;
+    }
+</code></pre><p>SupportRequestManagerFragment&#x4E2D;&#x5173;&#x8054;&#x4E86;&#x4E00;&#x4E2A;Lifecycle&#x63A5;&#x53E3;&#x7684;&#x5B9E;&#x73B0;&#x7C7B;ActivityFragmentLifecycle</p>
+<pre><code>    public SupportRequestManagerFragment() {
+        this(new ActivityFragmentLifecycle());
+    }
+</code></pre><p>&#x5176;&#x4E2D;&#xFF0C;ActivityFragmentLifecycle&#x7C7B;&#x5BF9;&#x5916;&#x63D0;&#x4F9B;&#x4E86;&#x6DFB;&#x52A0;&#x76D1;&#x542C;&#x7684;&#x65B9;&#x6CD5;</p>
+<pre><code>@Override
+    public void addListener(LifecycleListener listener) {
+        ......
+    }
+</code></pre><p>&#x5E76;&#x4E14;ActivityFragmentLifecycle&#x7C7B;&#x65B9;&#x6CD5;&#x52A0;&#x5165;&#x5230;&#x4E86;&#x8FD9;&#x4E2A;Fragment&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#x4E2D;&#xFF0C;&#x5982;&#x4E0B;&#x6240;&#x793A;</p>
+<pre><code>    @Override
+    public void onStart() {
+        super.onStart();
+        lifecycle.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        lifecycle.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        lifecycle.onDestroy();
+    }
+</code></pre><p>&#x6700;&#x7EC8;&#x5728;ActivityFragmentLifecycle&#x4E2D;&#x8C03;&#x7528;&#x4E86;&#x76D1;&#x542C;&#x4E2D;&#x7684;&#x5BF9;&#x5E94;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#x65B9;&#x6CD5;</p>
+<pre><code>    void onStart() {
+        isStarted = true;
+        for (LifecycleListener lifecycleListener : Util.getSnapshot(lifecycleListeners)) {
+            lifecycleListener.onStart();
+        }
+    }
+
+    void onStop() {
+        isStarted = false;
+        for (LifecycleListener lifecycleListener : Util.getSnapshot(lifecycleListeners)) {
+            lifecycleListener.onStop();
+        }
+    }
+
+    void onDestroy() {
+        isDestroyed = true;
+        for (LifecycleListener lifecycleListener : Util.getSnapshot(lifecycleListeners)) {
+            lifecycleListener.onDestroy();
+        }
+    }
+</code></pre><p>&#x770B;&#x5230;&#x6CA1;&#xFF0C;&#x53EA;&#x8981;&#x6DFB;&#x52A0;&#x4E86;&#x76D1;&#x542C;&#x5B9E;&#x73B0;&#x7C7B;&#xFF0C;&#x5C31;&#x80FD;&#x83B7;&#x53D6;&#x5230;&#x5BF9;&#x5E94;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#xFF0C;&#x4ECE;&#x800C;&#x5BF9;&#x5916;&#x63D0;&#x4F9B;&#x4E86;&#x751F;&#x547D;&#x5468;&#x671F;&#x65B9;&#x6CD5;</p>
+<h4 id="&#x603B;&#x7ED3;"><a href="#&#x603B;&#x7ED3;" class="headerlink" title="&#x603B;&#x7ED3;"></a>&#x603B;&#x7ED3;</h4><p>&#x770B;&#x8FC7;&#x6E90;&#x4EE3;&#x7801;&#xFF0C;&#x7ED9;&#x6211;&#x4E00;&#x4E2A;&#x4EC0;&#x4E48;&#x542F;&#x793A;&#xFF0C;&#x7531;&#x4E8E;Fragment&#x5728;onAttach()&#x4E4B;&#x540E;&#xFF0C;&#x4E0E;Activity&#x6709;&#x76F8;&#x540C;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#xFF0C;&#x90A3;&#x4E48;&#x6211;&#x4EEC;&#x5C31;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x7ED9;Activity&#x6DFB;&#x52A0;&#x4E00;&#x4E2A;&#x4E0D;&#x663E;&#x793A;&#x754C;&#x9762;&#x7684;fragment&#xFF0C;&#x5E76;&#x4E14;&#x5728;&#x751F;&#x547D;&#x5468;&#x671F;&#x65B9;&#x6CD5;&#x4E2D;&#xFF0C;&#x8C03;&#x7528;&#x66B4;&#x9732;&#x7684;&#x76D1;&#x542C;&#x7684;&#x5BF9;&#x5E94;&#x65B9;&#x6CD5;&#xFF0C;&#x8FD9;&#x6837;&#x6765;&#x8FBE;&#x5230;&#x5BF9;&#x5916;&#x66B4;&#x9732;&#x751F;&#x547D;&#x5468;&#x671F;&#x65B9;&#x6CD5;&#x7684;&#x76EE;&#x7684;&#xFF0C;&#x600E;&#x4E48;&#x6837;&#xFF0C;&#x662F;&#x4E0D;&#x662F;&#x633A;&#x5DE7;&#x5999;&#x7684;</p>
+<p>&#x597D;&#x4E86;&#xFF0C;&#x8FD9;&#x91CC;&#x5C31;&#x5148;&#x8BB2;&#x89E3;&#x5230;&#x8FD9;&#x91CC;&#x4E86;&#xFF0C;&#x540E;&#x9762;&#x6211;&#x4EEC;&#x4F1A;&#x7EE7;&#x7EED;&#x6839;&#x636E;&#x4ECB;&#x7ECD;&#x66B4;&#x9732;&#x51FA;&#x6765;&#x7684;&#x63A5;&#x53E3;&#xFF0C;&#x600E;&#x4E48;&#x8DDF;&#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x7ED3;&#x5408;&#x5728;&#x4E00;&#x8D77;</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Glide源码分析-开始]]></title>
       <url>http://blog.eggsychan.com/2017/01/18/Glide%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E5%BC%80%E5%A7%8B/</url>
       <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;Android&#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x5E93;Glide&#x7684;&#x6E90;&#x7801;&#x5206;&#x6790;<br><a id="more"></a></p>

@@ -1,0 +1,1107 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Glide,Glide源码分析,Glide图片加载的生命周期," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="介绍Glide的图片加载的生命周期">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Glide源码分析(一) Glide的图片加载的生命周期">
+<meta property="og:url" content="http://blog.eggsychan.com/2017/01/18/Glide源码分析-一-Glide的图片加载的生命周期/index.html">
+<meta property="og:site_name" content="蛋西的博客">
+<meta property="og:description" content="介绍Glide的图片加载的生命周期">
+<meta property="og:updated_time" content="2017-02-08T12:48:11.696Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Glide源码分析(一) Glide的图片加载的生命周期">
+<meta name="twitter:description" content="介绍Glide的图片加载的生命周期">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<link href="/js/google-code-prettify/tomorrow-night-bright.min.css" type="text/css" rel="stylesheet" />
+
+
+
+  <link rel="canonical" href="http://blog.eggsychan.com/2017/01/18/Glide源码分析-一-Glide的图片加载的生命周期/"/>
+
+  <title> Glide源码分析(一) Glide的图片加载的生命周期 | 蛋西的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?f9b45cab7ff54195350ae8bd50648ccf";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">蛋西的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Glide源码分析(一) Glide的图片加载的生命周期
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-01-18T20:12:19+08:00" content="2017-01-18">
+              2017-01-18
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/android/Glide/" itemprop="url" rel="index">
+                    <span itemprop="name">Glide</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/01/18/Glide源码分析-一-Glide的图片加载的生命周期/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/18/Glide源码分析-一-Glide的图片加载的生命周期/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2017/01/18/Glide源码分析-一-Glide的图片加载的生命周期/" class="leancloud_visitors" data-flag-title="Glide源码分析(一) Glide的图片加载的生命周期">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&#x4ECB;&#x7ECD;Glide&#x7684;&#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;<br><a id="more"></a></p>
+<blockquote>
+<p>&#x5728;Glide&#x4E2D;&#xFF0C;&#x56FE;&#x7247;&#x7684;&#x52A0;&#x8F7D;&#x4F1A;&#x8DDF;&#x968F;&#x8FD9;Activity&#x6216;&#x8005;Fragment&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#x8FDB;&#x884C;&#x76F8;&#x5E94;&#x7684;&#x52A0;&#x8F7D;&#xFF0C;&#x505C;&#x6B62;&#x7B49;&#x64CD;&#x4F5C;&#xFF0C;&#x672C;&#x8282;&#x6211;&#x4EEC;&#x901A;&#x8FC7;&#x6E90;&#x7801;&#x6765;&#x5206;&#x6790;&#x4E00;&#x4E0B;Glide&#x662F;&#x600E;&#x4E48;&#x505A;&#x5230;&#x8FD9;&#x70B9;&#x7684;</p>
+</blockquote>
+<h4 id="&#x7528;&#x6CD5;"><a href="#&#x7528;&#x6CD5;" class="headerlink" title="&#x7528;&#x6CD5;"></a>&#x7528;&#x6CD5;</h4><p>&#x5728;&#x6211;&#x7684;<a href="https://github.com/eggsywelsh/GlideSample" target="_blank" rel="external">GlideSample</a>&#x4E2D;&#x7684;<code>StartActivity</code>&#x7C7B;&#x4E2D;</p>
+<pre><code>Glide.with(StartActivity.this).load(R.mipmap.pizza).into(mIvShow);
+</code></pre><h4 id="&#x5206;&#x6790;"><a href="#&#x5206;&#x6790;" class="headerlink" title="&#x5206;&#x6790;"></a>&#x5206;&#x6790;</h4><pre><code>// &#x4F7F;&#x7528;&#x7684;&#x4E0A;&#x4E0B;&#x6587;Context&#xFF0C;&#x53EF;&#x4EE5;&#x662F;Application&#xFF0C;Activity&#xFF0C;Fragment&#x5B9E;&#x4F8B;
+Glide.with()
+</code></pre><p>&#x6211;&#x4EEC;&#x770B;&#x5230;&#x6E90;&#x7801;&#xFF0C;&#x8FD9;&#x91CC;&#x4F20;&#x5165;&#x7684;5&#x79CD;&#x7C7B;&#x578B;&#x53C2;&#x6570;</p>
+<pre><code>with(Context context)  //  any Context
+with(android.app.Activity)
+with(android.app.Fragment)
+with(android.support.v4.app.Fragment)
+with(android.support.v4.app.FragmentActivity)
+</code></pre><p>&#x6211;&#x4EEC;&#x4EE5;<code>with(android.support.v4.app.FragmentActivity)</code>&#x4E3A;&#x4F8B;&#x770B;&#x4E0B;</p>
+<pre><code>    public static RequestManager with(Activity activity) {
+        RequestManagerRetriever retriever = RequestManagerRetriever.get();
+        return retriever.get(activity);
+    }
+</code></pre><p>&#x63A5;&#x7740;&#x770B;&#x4E0B;retriever.get(activity)&#x65B9;&#x6CD5;</p>
+<pre><code>    public RequestManager get(FragmentActivity activity) {
+        if (Util.isOnBackgroundThread()) {
+           // &#x4E0D;&#x5728;&#x4E3B;&#x7EBF;&#x7A0B;&#xFF0C;&#x8FD4;&#x56DE;&#x4E00;&#x4E2A;ApplicationContext&#x5173;&#x8054;&#x7684;RequestManager
+            return get(activity.getApplicationContext());
+        } else {
+            // &#x91CD;&#x70B9;&#x5728;&#x8FD9;&#x91CC;&#xFF0C;&#x6211;&#x4EEC;&#x8FD4;&#x56DE;&#x4E00;&#x4E2A;Fragment&#x76F8;&#x5173;&#x7684;RequestManager
+            assertNotDestroyed(activity);
+            // &#x83B7;&#x53D6;activity&#x5BF9;&#x5E94;&#x7684;FragmentManager&#xFF0C;&#x4E3B;&#x8981;&#x76EE;&#x7684;&#x662F;&#x548C;Activity&#x7ED3;&#x5408;&#xFF0C;
+            // &#x585E;&#x5165;&#x4E00;&#x4E2A;&#x7A7A;&#x7684;fragment&#x5BF9;&#x8C61;&#xFF0C;&#x7528;&#x4E8E;&#x66B4;&#x9732;&#x51FA;&#x751F;&#x547D;&#x5468;&#x671F;&#x65B9;&#x6CD5;&#xFF0C;&#x8FD9;&#x4E2A;&#x5728;&#x540E;&#x9762;&#x4F1A;&#x770B;&#x5230;
+            FragmentManager fm = activity.getSupportFragmentManager();
+            return supportFragmentGet(activity, fm);
+        }
+    }
+</code></pre><p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x5F88;&#x660E;&#x663E;&#x7684;&#x770B;&#x5230;&#x5982;&#x679C;&#x8C03;&#x7528;with()&#x65B9;&#x6CD5;&#x7684;&#x65F6;&#x5019;&#x4E0D;&#x662F;&#x5728;&#x4E3B;&#x7EBF;&#x7A0B;&#xFF0C;&#x90A3;&#x4E48;&#x6211;&#x4EEC;&#x4F1A;&#x8FD4;&#x56DE;&#x4E00;&#x4E2A;&#x548C;ApplicationContext&#x5173;&#x8054;&#x7684;RequestManager</p>
+<pre><code>private RequestManager getApplicationManager(Context context) {
+        // Either an application context or we&apos;re on a background thread.
+        if (applicationManager == null) {
+            synchronized (this) {
+                if (applicationManager == null) {
+                    // Normally pause/resume is taken care of by the fragment we add to the fragment or activity.
+                    // However, in this case since the manager attached to the application will not receive lifecycle
+                    // events, we must force the manager to start resumed using ApplicationLifecycle.
+                    applicationManager = new RequestManager(context.getApplicationContext(),
+                            new ApplicationLifecycle(), new EmptyRequestManagerTreeNode());
+                }
+            }
+        }
+
+        return applicationManager;
+    }
+</code></pre><p>&#x5982;&#x679C;&#x662F;&#x5728;&#x4E3B;&#x7EBF;&#x7A0B;&#x64CD;&#x4F5C;&#xFF0C;&#x90A3;&#x4E48;&#x6211;&#x4EEC;&#x4F1A;&#x8FD4;&#x56DE;&#x4E00;&#x4E2A;Fragment&#x76F8;&#x5173;&#x7684;RequestManager&#xFF0C;&#x8FD9;&#x91CC;&#x6D89;&#x53CA;&#x5230;&#x4E00;&#x4E2A;&#x5F88;&#x7CBE;&#x5999;&#x7684;&#x7528;&#x6CD5;&#xFF0C;&#x600E;&#x6837;&#x5C06;Activity&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#x66B4;&#x9732;&#x51FA;&#x6765;&#x4E0E;&#x4F60;&#x7684;&#x5C01;&#x88C5;&#x63A7;&#x4EF6;&#x7ED3;&#x5408;&#x4F7F;&#x7528;</p>
+<pre><code>    RequestManager supportFragmentGet(Context context, FragmentManager fm) {
+        // &#x83B7;&#x53D6;&#x4E00;&#x4E2A;&#x81EA;&#x5B9A;&#x4E49;&#x7684;Fragment
+        SupportRequestManagerFragment current = getSupportRequestManagerFragment(fm);
+        RequestManager requestManager = current.getRequestManager();
+        if (requestManager == null) {
+            // &#x751F;&#x6210;RequestManager&#x5BF9;&#x8C61;&#xFF0C;&#x770B;&#x770B;&#xFF0C;&#x8FD9;&#x91CC;&#x66B4;&#x9732;&#x51FA;&#x4E86;Lifecycle&#x63A5;&#x53E3;&#xFF0C;LIfecycle&#x5B9E;&#x73B0;&#x7C7B;&#x4E2D;&#x662F;&#x4E00;&#x4E2A;&#x76D1;&#x542C;LifecycleListener
+            requestManager = new RequestManager(context, current.getLifecycle(), current.getRequestManagerTreeNode());
+            current.setRequestManager(requestManager);
+        }
+        return requestManager;
+    }
+</code></pre><p>SupportRequestManagerFragment&#x4E2D;&#x5173;&#x8054;&#x4E86;&#x4E00;&#x4E2A;Lifecycle&#x63A5;&#x53E3;&#x7684;&#x5B9E;&#x73B0;&#x7C7B;ActivityFragmentLifecycle</p>
+<pre><code>    public SupportRequestManagerFragment() {
+        this(new ActivityFragmentLifecycle());
+    }
+</code></pre><p>&#x5176;&#x4E2D;&#xFF0C;ActivityFragmentLifecycle&#x7C7B;&#x5BF9;&#x5916;&#x63D0;&#x4F9B;&#x4E86;&#x6DFB;&#x52A0;&#x76D1;&#x542C;&#x7684;&#x65B9;&#x6CD5;</p>
+<pre><code>@Override
+    public void addListener(LifecycleListener listener) {
+        ......
+    }
+</code></pre><p>&#x5E76;&#x4E14;ActivityFragmentLifecycle&#x7C7B;&#x65B9;&#x6CD5;&#x52A0;&#x5165;&#x5230;&#x4E86;&#x8FD9;&#x4E2A;Fragment&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#x4E2D;&#xFF0C;&#x5982;&#x4E0B;&#x6240;&#x793A;</p>
+<pre><code>    @Override
+    public void onStart() {
+        super.onStart();
+        lifecycle.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        lifecycle.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        lifecycle.onDestroy();
+    }
+</code></pre><p>&#x6700;&#x7EC8;&#x5728;ActivityFragmentLifecycle&#x4E2D;&#x8C03;&#x7528;&#x4E86;&#x76D1;&#x542C;&#x4E2D;&#x7684;&#x5BF9;&#x5E94;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#x65B9;&#x6CD5;</p>
+<pre><code>    void onStart() {
+        isStarted = true;
+        for (LifecycleListener lifecycleListener : Util.getSnapshot(lifecycleListeners)) {
+            lifecycleListener.onStart();
+        }
+    }
+
+    void onStop() {
+        isStarted = false;
+        for (LifecycleListener lifecycleListener : Util.getSnapshot(lifecycleListeners)) {
+            lifecycleListener.onStop();
+        }
+    }
+
+    void onDestroy() {
+        isDestroyed = true;
+        for (LifecycleListener lifecycleListener : Util.getSnapshot(lifecycleListeners)) {
+            lifecycleListener.onDestroy();
+        }
+    }
+</code></pre><p>&#x770B;&#x5230;&#x6CA1;&#xFF0C;&#x53EA;&#x8981;&#x6DFB;&#x52A0;&#x4E86;&#x76D1;&#x542C;&#x5B9E;&#x73B0;&#x7C7B;&#xFF0C;&#x5C31;&#x80FD;&#x83B7;&#x53D6;&#x5230;&#x5BF9;&#x5E94;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#xFF0C;&#x4ECE;&#x800C;&#x5BF9;&#x5916;&#x63D0;&#x4F9B;&#x4E86;&#x751F;&#x547D;&#x5468;&#x671F;&#x65B9;&#x6CD5;</p>
+<h4 id="&#x603B;&#x7ED3;"><a href="#&#x603B;&#x7ED3;" class="headerlink" title="&#x603B;&#x7ED3;"></a>&#x603B;&#x7ED3;</h4><p>&#x770B;&#x8FC7;&#x6E90;&#x4EE3;&#x7801;&#xFF0C;&#x7ED9;&#x6211;&#x4E00;&#x4E2A;&#x4EC0;&#x4E48;&#x542F;&#x793A;&#xFF0C;&#x7531;&#x4E8E;Fragment&#x5728;onAttach()&#x4E4B;&#x540E;&#xFF0C;&#x4E0E;Activity&#x6709;&#x76F8;&#x540C;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;&#xFF0C;&#x90A3;&#x4E48;&#x6211;&#x4EEC;&#x5C31;&#x53EF;&#x4EE5;&#x901A;&#x8FC7;&#x7ED9;Activity&#x6DFB;&#x52A0;&#x4E00;&#x4E2A;&#x4E0D;&#x663E;&#x793A;&#x754C;&#x9762;&#x7684;fragment&#xFF0C;&#x5E76;&#x4E14;&#x5728;&#x751F;&#x547D;&#x5468;&#x671F;&#x65B9;&#x6CD5;&#x4E2D;&#xFF0C;&#x8C03;&#x7528;&#x66B4;&#x9732;&#x7684;&#x76D1;&#x542C;&#x7684;&#x5BF9;&#x5E94;&#x65B9;&#x6CD5;&#xFF0C;&#x8FD9;&#x6837;&#x6765;&#x8FBE;&#x5230;&#x5BF9;&#x5916;&#x66B4;&#x9732;&#x751F;&#x547D;&#x5468;&#x671F;&#x65B9;&#x6CD5;&#x7684;&#x76EE;&#x7684;&#xFF0C;&#x600E;&#x4E48;&#x6837;&#xFF0C;&#x662F;&#x4E0D;&#x662F;&#x633A;&#x5DE7;&#x5999;&#x7684;</p>
+<p>&#x597D;&#x4E86;&#xFF0C;&#x8FD9;&#x91CC;&#x5C31;&#x5148;&#x8BB2;&#x89E3;&#x5230;&#x8FD9;&#x91CC;&#x4E86;&#xFF0C;&#x540E;&#x9762;&#x6211;&#x4EEC;&#x4F1A;&#x7EE7;&#x7EED;&#x6839;&#x636E;&#x4ECB;&#x7ECD;&#x66B4;&#x9732;&#x51FA;&#x6765;&#x7684;&#x63A5;&#x53E3;&#xFF0C;&#x600E;&#x4E48;&#x8DDF;&#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x7ED3;&#x5408;&#x5728;&#x4E00;&#x8D77;</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Glide/" rel="tag">#Glide</a>
+          
+            <a href="/tags/Glide源码分析/" rel="tag">#Glide源码分析</a>
+          
+            <a href="/tags/Glide图片加载的生命周期/" rel="tag">#Glide图片加载的生命周期</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/18/Glide源码分析-开始/" rel="next" title="Glide源码分析-开始">
+                <i class="fa fa-chevron-left"></i> Glide源码分析-开始
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/24/Glide源码分析-二-如何动态测量获取ImageView大小/" rel="prev" title="Glide源码分析(二) 如何动态测量获取ImageView大小">
+                Glide源码分析(二) 如何动态测量获取ImageView大小 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/01/18/Glide源码分析-一-Glide的图片加载的生命周期/"
+           data-title="Glide源码分析(一) Glide的图片加载的生命周期" data-url="http://blog.eggsychan.com/2017/01/18/Glide源码分析-一-Glide的图片加载的生命周期/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="蛋西" />
+          <p class="site-author-name" itemprop="name">蛋西</p>
+          <p class="site-description motion-element" itemprop="description">我,一直在路上,从未停止攀登的步伐...</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/eggsywelsh" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/eggsy_welsh" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/3083087487" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/eggsy-78" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#用法"><span class="nav-text">用法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分析"><span class="nav-text">分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蛋西</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"eggsywelsh"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("1SAFUegNmFH14FSrV7XSNeuM-gzGzoHsz", "HfNLKPfowRxviJr5NkQhBgY5");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+<script type="text/javascript" src="/js/google-code-prettify/prettify.js"></script>
+<script type="text/javascript">
+$(window).load(function(){
+   $('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+   prettyPrint();
+ })	
+</script>
+
+
+</body>
+</html>

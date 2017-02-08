@@ -1,0 +1,1079 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Gradle,Gradle打包," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="介绍如何在Gradle打包时动态输入密码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何使用Gradle打apk包时动态输入密码">
+<meta property="og:url" content="http://blog.eggsychan.com/2017/02/08/如何使用Gradle打apk包时动态输入密码/index.html">
+<meta property="og:site_name" content="蛋西的博客">
+<meta property="og:description" content="介绍如何在Gradle打包时动态输入密码">
+<meta property="og:image" content="http://blog.eggsychan.com/images/popup_password_dialog.png">
+<meta property="og:updated_time" content="2017-02-08T13:26:48.558Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何使用Gradle打apk包时动态输入密码">
+<meta name="twitter:description" content="介绍如何在Gradle打包时动态输入密码">
+<meta name="twitter:image" content="http://blog.eggsychan.com/images/popup_password_dialog.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+<link href="/js/google-code-prettify/tomorrow-night-bright.min.css" type="text/css" rel="stylesheet" />
+
+
+
+  <link rel="canonical" href="http://blog.eggsychan.com/2017/02/08/如何使用Gradle打apk包时动态输入密码/"/>
+
+  <title> 如何使用Gradle打apk包时动态输入密码 | 蛋西的博客 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?f9b45cab7ff54195350ae8bd50648ccf";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">蛋西的博客</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                如何使用Gradle打apk包时动态输入密码
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2017-02-08T21:06:12+08:00" content="2017-02-08">
+              2017-02-08
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/android/" itemprop="url" rel="index">
+                    <span itemprop="name">android</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/android/Gradle/" itemprop="url" rel="index">
+                    <span itemprop="name">Gradle</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2017/02/08/如何使用Gradle打apk包时动态输入密码/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/08/如何使用Gradle打apk包时动态输入密码/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2017/02/08/如何使用Gradle打apk包时动态输入密码/" class="leancloud_visitors" data-flag-title="如何使用Gradle打apk包时动态输入密码">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>&#x4ECB;&#x7ECD;&#x5982;&#x4F55;&#x5728;Gradle&#x6253;&#x5305;&#x65F6;&#x52A8;&#x6001;&#x8F93;&#x5165;&#x5BC6;&#x7801;<br><a id="more"></a></p>
+<blockquote>
+<p>&#x6211;&#x4EEC;&#x5728;&#x65E5;&#x5E38;&#x7684;&#x5F00;&#x53D1;&#x4E2D;&#xFF0C;&#x53D1;&#x5E03;&#x5E02;&#x573A;&#x7684;apk&#x5305;&#xFF0C;&#x901A;&#x5E38;&#x662F;&#x7531;&#x56E2;&#x961F;&#x4E2D;&#x7684;&#x67D0;&#x4E2A;&#x6210;&#x5458;&#x6765;&#x8FDB;&#x884C;&#x6253;&#x5305;&#x53D1;&#x5E03;&#x5E02;&#x573A;&#x5DE5;&#x4F5C;&#xFF0C;&#x90A3;&#x4E48;&#x6709;&#x65F6;&#x5019;&#x4E3A;&#x4E86;&#x65B9;&#x4FBF;&#x7BA1;&#x7406;&#xFF0C;&#x6211;&#x4EEC;&#x4E0D;&#x4F1A;&#x5C06;key password&#x548C;store password&#x539F;&#x6587;&#x653E;&#x5728;&#x5DE5;&#x7A0B;&#x7684;build.gradle&#x6587;&#x4EF6;&#x4E2D;&#xFF0C;&#x90A3;&#x4E48;&#x6211;&#x4EEC;&#x5728;&#x6253;&#x5305;&#x7684;&#x65F6;&#x5019;&#x53C8;&#x786E;&#x5B9E;&#x9700;&#x8981;&#x8F93;&#x5165;&#x5BC6;&#x7801;&#xFF0C;&#x90A3;&#x4E48;&#x8FD9;&#x65F6;&#x5019;&#x8981;&#x600E;&#x4E48;&#x529E;&#x5462;&#xFF1F;&#x522B;&#x7740;&#x6025;&#xFF0C;&#x4E0B;&#x9762;&#x6211;&#x6765;&#x8BB2;&#x89E3;&#x4E00;&#x4E0B;&#x4E00;&#x4E2A;&#x7B80;&#x5355;&#x7684;&#x52A8;&#x6001;&#x8F93;&#x5165;key&#x548C;store&#x5BC6;&#x7801;&#x7684;&#x65B9;&#x6CD5;&#x3002;</p>
+</blockquote>
+<h4 id="&#x6B63;&#x5E38;&#x4F7F;&#x7528;"><a href="#&#x6B63;&#x5E38;&#x4F7F;&#x7528;" class="headerlink" title="&#x6B63;&#x5E38;&#x4F7F;&#x7528;"></a>&#x6B63;&#x5E38;&#x4F7F;&#x7528;</h4><p>&#x6211;&#x4EEC;&#x6765;&#x770B;&#x4E0B;&#x901A;&#x5E38;&#x60C5;&#x51B5;&#x4E0B;&#xFF0C;&#x6211;&#x4EEC;&#x662F;&#x600E;&#x4E48;&#x914D;&#x7F6E;&#x5BC6;&#x7801;&#x7684;</p>
+<pre><code>// &#x5728;&#x5DE5;&#x7A0B;&#x7684;app module(&#x6216;&#x8005;&#x662F;&#x4F60;&#x7684;&#x5176;&#x4ED6;&#x4E3B;module)&#x4E2D;&#x7684;build.gradle
+// &#x6587;&#x4EF6;&#x4E2D;&#x914D;&#x7F6E;
+android {
+    signingConfigs {
+        release {
+            keyAlias &apos;xxx_keystore&apos;
+            keyPassword &apos;12345678&apos;
+            storeFile file(&apos;/home/eggsy/work/war/project/xxx.jks&apos;)
+            storePassword &apos;12345678&apos;
+        }
+    }
+}
+</code></pre><p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x770B;&#x5230;&#x5BC6;&#x7801;&#x5C31;&#x66B4;&#x9732;&#x51FA;&#x6765;&#x4E86;&#xFF0C;&#x5982;&#x679C;&#x56E2;&#x961F;&#x4F7F;&#x7528;git&#x6216;&#x8005;svn&#x7B49;&#x4EE3;&#x7801;&#x7BA1;&#x7406;&#x5DE5;&#x5177;&#xFF0C;&#x8FD9;&#x4E2A;&#x4E5F;&#x4E00;&#x6837;&#x4F1A;&#x63D0;&#x4EA4;&#x5230;&#x4ED3;&#x5E93;&#x91CC;&#x9762;&#xFF0C;&#x8FD9;&#x6837;&#x5BC6;&#x7801;&#x66B4;&#x9732;&#x7684;&#x98CE;&#x9669;&#x5C31;&#x5927;&#x5927;&#x63D0;&#x9AD8;&#x4E86;&#xFF0C;&#x90A3;&#x4E48;&#x6211;&#x4E48;&#x8BE5;&#x600E;&#x4E48;&#x505A;&#x5462;&#xFF1F;</p>
+<h4 id="&#x6253;&#x5305;&#x65F6;&#x52A8;&#x6001;&#x8F93;&#x5165;"><a href="#&#x6253;&#x5305;&#x65F6;&#x52A8;&#x6001;&#x8F93;&#x5165;" class="headerlink" title="&#x6253;&#x5305;&#x65F6;&#x52A8;&#x6001;&#x8F93;&#x5165;"></a>&#x6253;&#x5305;&#x65F6;&#x52A8;&#x6001;&#x8F93;&#x5165;</h4><p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x5229;&#x7528;gradle&#x7684;&#x529F;&#x80FD;&#xFF0C;&#x5728;&#x6253;&#x5305;&#x524D;&#x52A8;&#x6001;&#x7684;&#x63D2;&#x5165;&#x4E00;&#x4E2A;&#x6211;&#x4EEC;&#x7684;&#x4EFB;&#x52A1;&#xFF0C;&#x8FD9;&#x6837;&#x5B50;&#x5C31;&#x53EF;&#x4EE5;&#x83B7;&#x53D6;&#x8F93;&#x5165;&#x7684;&#x5BC6;&#x7801;&#xFF0C;&#x7136;&#x540E;&#x8BBE;&#x7F6E;&#x5230;gradle&#x4E2D;&#xFF0C;&#x63A5;&#x7740;&#x5B8C;&#x6210;&#x540E;&#x7EED;&#x7684;&#x6253;&#x5305;&#x5DE5;&#x4F5C;&#xFF0C;&#x4E3A;&#x4E86;&#x6A21;&#x5757;&#x5316;&#xFF0C;&#x6211;&#x628A;&#x8FD9;&#x4E2A;&#x529F;&#x80FD;&#x5355;&#x72EC;&#x5199;&#x5728;&#x4E00;&#x4E2A;gradle&#x6587;&#x4EF6;&#x4E2D;<br><strong>password.gradle</strong></p>
+<pre><code>import groovy.swing.SwingBuilder
+
+task getReleasePassword &lt;&lt; {
+    // &#x521D;&#x59CB;&#x5316;&#x5BC6;&#x7801;
+    def password = &apos;&apos;;
+    // &#x5DE5;&#x7A0B;&#x7684;&#x6839;&#x76EE;&#x5F55;&#x662F;&#x5426;&#x5B58;&#x5728;private.properties&#x6587;&#x4EF6;
+    if (rootProject.file(&apos;private.properties&apos;).exists()) {
+        // &#x5982;&#x679C;&#x5B58;&#x5728;&#xFF0C;&#x5219;&#x8BFB;&#x53D6;&#x5176;&#x4E2D;&#x7684;&#x5BC6;&#x7801;&#xFF0C;&#x76F4;&#x63A5;&#x4F7F;&#x7528;
+        java.util.Properties properties = new Properties();
+        properties.load(rootProject.file(&apos;private.properties&apos;).newDataInputStream());
+        password = properties.getProperty(&quot;release.password&quot;);
+    }
+    // &#x5BC6;&#x7801;&#x6587;&#x4EF6;&#x4E0D;&#x5B58;&#x5728;&#x6216;&#x8005;&#x6CA1;&#x6709;release.password&#x5C5E;&#x6027;&#x503C;
+    if (!password?.trim()) {
+        if (System.console() == null) {
+            def tempPassword = &apos;&apos;;
+            // &#x901A;&#x8FC7;swing&#x663E;&#x793A;&#x51FA;&#x4E00;&#x4E2A;&#x5BC6;&#x7801;&#x6846;
+            new SwingBuilder().edt {
+                dialog(modal: true, title: &apos;Enter password&apos;, alwaysOnTop: true, resizable: false, locationRelativeTo: null, pack: true, show: true) {
+                    vbox { // Put everything below each other
+                        label(text: &quot;Please enter store passphrase:&quot;)
+                        // &#x83B7;&#x53D6;&#x8F93;&#x5165;&#x7684;&#x5BC6;&#x7801;
+                        def input1 = passwordField()
+                        button(defaultButton: true, text: &apos;OK&apos;, actionPerformed: {
+                            tempPassword = input1.password;
+                            dispose();
+                        })
+                    }
+                }
+            }
+            if (tempPassword.size() &lt;= 0) {
+                &#x6CA1;&#x6709;&#x83B7;&#x53D6;&#x5230;&#x8F93;&#x5165;&#x7684;&#x5BC6;&#x7801;&#xFF0C;&#x629B;&#x51FA;&#x5F02;&#x5E38;
+                throw new InvalidUserDataException(&quot;You must enter the passwords to proceed.&quot;)
+            }else{
+                password = new String(tempPassword)
+            }
+        }
+    }
+    // &#x5C06;&#x5BC6;&#x7801;&#x8BBE;&#x7F6E;&#x5230;gradle&#x4E2D;&#xFF0C;&#x914D;&#x7F6E;&#x6210;store&#x548C;key&#x7684;&#x5BC6;&#x7801;
+    android.signingConfigs.release.storePassword = password
+    android.signingConfigs.release.keyPassword = password
+}
+
+// &#x8FD9;&#x91CC;&#x4E3B;&#x8981;&#x662F;&#x63D2;&#x5165;&#x4E00;&#x4E2A;&#x4EFB;&#x52A1;&#xFF0C;&#x7528;&#x4E8E;&#x5728;gradle assembleRelease&#x4EFB;&#x52A1;&#x4E4B;&#x524D;
+// &#x8C03;&#x7528;&#x6211;&#x4EEC;&#x7684;&#x52A8;&#x6001;&#x5BC6;&#x7801;&#x4EFB;&#x52A1;
+tasks.whenTaskAdded { theTask -&gt;
+    if (theTask.name.equals(&quot;packageRelease&quot;)) {
+        theTask.dependsOn getReleasePassword
+    }
+}
+</code></pre><p>&#x5728;app module&#x4E0B;&#x7684;build.gradle&#x4E2D;&#x5E94;&#x7528;password.gradle</p>
+<pre><code>apply from: &apos;password.gradle&apos;
+</code></pre><p>&#x540C;&#x65F6;&#x5C06;&#x914D;&#x7F6E;&#x6539;&#x6210;</p>
+<pre><code>    signingConfigs {
+        release {
+            keyAlias &apos;xxx_keystore&apos;
+            storeFile file(&apos;/home/eggsy/work/war/project/xxx.jks&apos;)
+        }
+    }
+</code></pre><p>keyPassword&#x548C;storePassword&#x7531;&#x7528;&#x6237;&#x5728;&#x5F39;&#x51FA;&#x5BC6;&#x7801;&#x6846;&#x4E2D;&#x624B;&#x52A8;&#x8F93;&#x5165;</p>
+<h4 id="&#x6D4B;&#x8BD5;"><a href="#&#x6D4B;&#x8BD5;" class="headerlink" title="&#x6D4B;&#x8BD5;"></a>&#x6D4B;&#x8BD5;</h4><p>&#x8FD0;&#x884C;&#x6211;&#x4EEC;&#x6253;&#x6B63;&#x5F0F;&#x7B7E;&#x540D;&#x5305;&#x7684;&#x4EFB;&#x52A1;</p>
+<pre><code>./gradlew assembleRelease
+</code></pre><p>&#x5C31;&#x4F1A;&#x8DF3;&#x51FA;&#x6211;&#x4EEC;&#x7684;&#x8F93;&#x5165;&#x6846;</p>
+<p><img src="images/popup_password_dialog.png" alt="popup_password_dialog.png"><br>&#x8F93;&#x5165;&#x4F60;&#x7684;&#x5BC6;&#x7801;&#xFF0C;&#x6253;&#x5305;&#x8FC7;&#x7A0B;&#x4F1A;&#x7EE7;&#x7EED;</p>
+<p>&#x6700;&#x540E;&#x5728;&#x4F60;&#x7684;app/build/outputs/apk&#x76EE;&#x5F55;&#x4E0B;&#x751F;&#x6210;&#x6B63;&#x5F0F;&#x7B7E;&#x540D;&#x5305;&#x7684;apk</p>
+<p>&#x597D;&#x4E86;&#xFF0C;Gradle&#x6253;&#x5305;&#x52A8;&#x6001;&#x8F93;&#x5165;&#x5BC6;&#x7801;&#x5C31;&#x8BB2;&#x5230;&#x8FD9;&#x91CC;&#xFF0C;&#x6709;&#x5199;&#x7684;&#x4E0D;&#x597D;&#x6216;&#x8005;&#x4E0D;&#x6B63;&#x786E;&#x7684;&#xFF0C;&#x6B22;&#x8FCE;&#x5927;&#x5BB6;&#x7559;&#x8A00;&#x4EA4;&#x6D41;&#xFF5E;&#xFF5E;&#xFF5E;</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Gradle/" rel="tag">#Gradle</a>
+          
+            <a href="/tags/Gradle打包/" rel="tag">#Gradle打包</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/08/基于APT的RxBus库/" rel="next" title="基于APT的RxBus库使用">
+                <i class="fa fa-chevron-left"></i> 基于APT的RxBus库使用
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/08/统计App方法数量/" rel="prev" title="统计App方法数量">
+                统计App方法数量 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2017/02/08/如何使用Gradle打apk包时动态输入密码/"
+           data-title="如何使用Gradle打apk包时动态输入密码" data-url="http://blog.eggsychan.com/2017/02/08/如何使用Gradle打apk包时动态输入密码/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="蛋西" />
+          <p class="site-author-name" itemprop="name">蛋西</p>
+          <p class="site-description motion-element" itemprop="description">我,一直在路上,从未停止攀登的步伐...</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">17</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/eggsywelsh" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/eggsy_welsh" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/3083087487" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/eggsy-78" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#正常使用"><span class="nav-text">正常使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#打包时动态输入"><span class="nav-text">打包时动态输入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试"><span class="nav-text">测试</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蛋西</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"eggsywelsh"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("1SAFUegNmFH14FSrV7XSNeuM-gzGzoHsz", "HfNLKPfowRxviJr5NkQhBgY5");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+<script type="text/javascript" src="/js/google-code-prettify/prettify.js"></script>
+<script type="text/javascript">
+$(window).load(function(){
+   $('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+   prettyPrint();
+ })	
+</script>
+
+
+</body>
+</html>
