@@ -61,7 +61,7 @@ Total fields in XXX-release-unsigned.apk:  24296 (37.07% used)
     <link href="http://blog.eggsychan.com/2017/02/08/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8Gradle%E6%89%93apk%E5%8C%85%E6%97%B6%E5%8A%A8%E6%80%81%E8%BE%93%E5%85%A5%E5%AF%86%E7%A0%81/"/>
     <id>http://blog.eggsychan.com/2017/02/08/如何使用Gradle打apk包时动态输入密码/</id>
     <published>2017-02-08T13:06:12.000Z</published>
-    <updated>2017-02-08T13:26:48.558Z</updated>
+    <updated>2017-02-08T13:49:44.559Z</updated>
     
     <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;&#x5982;&#x4F55;&#x5728;Gradle&#x6253;&#x5305;&#x65F6;&#x52A8;&#x6001;&#x8F93;&#x5165;&#x5BC6;&#x7801;<br><a id="more"></a></p>
 <blockquote>
@@ -145,7 +145,7 @@ tasks.whenTaskAdded { theTask -&gt;
 <h4 id="&#x6D4B;&#x8BD5;"><a href="#&#x6D4B;&#x8BD5;" class="headerlink" title="&#x6D4B;&#x8BD5;"></a>&#x6D4B;&#x8BD5;</h4><p>&#x8FD0;&#x884C;&#x6211;&#x4EEC;&#x6253;&#x6B63;&#x5F0F;&#x7B7E;&#x540D;&#x5305;&#x7684;&#x4EFB;&#x52A1;</p>
 <pre><code>./gradlew assembleRelease
 </code></pre><p>&#x5C31;&#x4F1A;&#x8DF3;&#x51FA;&#x6211;&#x4EEC;&#x7684;&#x8F93;&#x5165;&#x6846;</p>
-<p><img src="images/popup_password_dialog.png" alt="popup_password_dialog.png"><br>&#x8F93;&#x5165;&#x4F60;&#x7684;&#x5BC6;&#x7801;&#xFF0C;&#x6253;&#x5305;&#x8FC7;&#x7A0B;&#x4F1A;&#x7EE7;&#x7EED;</p>
+<p><img src="/images/popup_password_dialog.png" alt="popup_password_dialog.png"><br>&#x8F93;&#x5165;&#x4F60;&#x7684;&#x5BC6;&#x7801;&#xFF0C;&#x6253;&#x5305;&#x8FC7;&#x7A0B;&#x4F1A;&#x7EE7;&#x7EED;</p>
 <p>&#x6700;&#x540E;&#x5728;&#x4F60;&#x7684;app/build/outputs/apk&#x76EE;&#x5F55;&#x4E0B;&#x751F;&#x6210;&#x6B63;&#x5F0F;&#x7B7E;&#x540D;&#x5305;&#x7684;apk</p>
 <p>&#x597D;&#x4E86;&#xFF0C;Gradle&#x6253;&#x5305;&#x52A8;&#x6001;&#x8F93;&#x5165;&#x5BC6;&#x7801;&#x5C31;&#x8BB2;&#x5230;&#x8FD9;&#x91CC;&#xFF0C;&#x6709;&#x5199;&#x7684;&#x4E0D;&#x597D;&#x6216;&#x8005;&#x4E0D;&#x6B63;&#x786E;&#x7684;&#xFF0C;&#x6B22;&#x8FCE;&#x5927;&#x5BB6;&#x7559;&#x8A00;&#x4EA4;&#x6D41;&#xFF5E;&#xFF5E;&#xFF5E;</p>
 ]]></content>
@@ -301,7 +301,7 @@ public void testboolean(boolean testParam) {  // boolean&#x4E8B;&#x4EF6;
     <link href="http://blog.eggsychan.com/2017/01/24/Glide%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E4%BA%8C-%E5%A6%82%E4%BD%95%E5%8A%A8%E6%80%81%E6%B5%8B%E9%87%8F%E8%8E%B7%E5%8F%96ImageView%E5%A4%A7%E5%B0%8F/"/>
     <id>http://blog.eggsychan.com/2017/01/24/Glide源码分析-二-如何动态测量获取ImageView大小/</id>
     <published>2017-01-24T13:02:48.000Z</published>
-    <updated>2017-02-08T13:04:37.923Z</updated>
+    <updated>2017-02-08T14:04:44.402Z</updated>
     
     <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;Glide&#x5982;&#x4F55;&#x52A8;&#x6001;&#x6D4B;&#x91CF;ImageView&#x5927;&#x5C0F;<br><a id="more"></a></p>
 <blockquote>
@@ -309,7 +309,7 @@ public void testboolean(boolean testParam) {  // boolean&#x4E8B;&#x4EF6;
 </blockquote>
 <p>&#x6211;&#x4EEC;&#x5148;&#x6765;&#x7B80;&#x5355;&#x56DE;&#x987E;&#x4E00;&#x4E0B;Activity&#x4E2D;&#x52A0;&#x8F7D;&#x89C6;&#x56FE;&#x7684;&#x8FC7;&#x7A0B;&#xFF1A;<br>&#x6211;&#x4EEC;&#x5728;<code>onCreate(...)</code>&#x65B9;&#x6CD5;&#x4E2D;&#x8C03;&#x7528;&#x4E86;<code>setContentView(int layoutId)</code>&#x6765;&#x8BBE;&#x7F6E;&#x4E86;&#x5E03;&#x5C40;&#x6587;&#x4EF6;&#xFF0C;&#x5176;&#x5B9E;&#x8FD9;&#x91CC;&#x5E76;&#x6CA1;&#x6709;&#x9A6C;&#x4E0A;&#x8FDB;&#x884C;&#x89C6;&#x56FE;&#x7684;&#x6D4B;&#x91CF;&#xFF0C;&#x5E03;&#x5C40;&#xFF0C;&#x7ED8;&#x5236;&#xFF0C;&#x4E00;&#x5207;&#x90FD;&#x662F;&#x7B49;&#x5230;onResume&#x4E4B;&#x540E;&#x624D;&#x8FDB;&#x884C;&#x754C;&#x9762;&#x89C6;&#x56FE;&#x7684;&#x6E32;&#x67D3;&#x3002;&#x81F3;&#x4E8E;&#x5982;&#x4F55;&#x6E32;&#x67D3;&#xFF0C;&#x8FD9;&#x91CC;&#x6709;&#x4E24;&#x7BC7;&#x6587;&#x7AE0;&#xFF0C;&#x5982;&#x679C;&#x4F60;&#x4E0D;&#x719F;&#x6089;&#x6216;&#x8005;&#x8FD8;&#x662F;&#x5C0F;&#x767D;&#xFF0C;&#x53EF;&#x4EE5;&#x5148;&#x53C2;&#x8003;&#x4E0B;&#xFF1A;<br><a href="http://www.jianshu.com/p/5a71014e7b1b" target="_blank" rel="external">Android View&#x7684;&#x7ED8;&#x5236;&#x6D41;&#x7A0B;</a><br><a href="http://blog.csdn.net/luoshengyang/article/details/6689748" target="_blank" rel="external">Android&#x5E94;&#x7528;&#x7A0B;&#x5E8F;&#x542F;&#x52A8;&#x8FC7;&#x7A0B;&#x6E90;&#x4EE3;&#x7801;&#x5206;&#x6790;</a></p>
 <p>&#x90A3;&#x4E48;&#x5728;&#x8FD9;&#x4E2A;&#x751F;&#x547D;&#x5468;&#x671F;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x5982;&#x679C;&#x4F7F;&#x7528;&#x4E86;Glide&#x7684;&#x52A0;&#x8F7D;&#x56FE;&#x7247;&#x65B9;&#x6CD5;&#xFF0C;&#x90A3;&#x4E48;&#x5176;&#x5B9E;&#x8FD9;&#x65F6;&#x5019;&#x56FE;&#x7247;&#x662F;&#x65E0;&#x6CD5;&#x786E;&#x5B9A;&#x5927;&#x5C0F;&#x548C;&#x4F4D;&#x7F6E;&#x7684;(&#x56E0;&#x4E3A;&#x8FD9;&#x65F6;&#x5019;&#x6574;&#x4E2A;&#x9875;&#x9762;&#x89C6;&#x56FE;&#x8FD8;&#x6CA1;&#x6709;&#x8FDB;&#x884C;&#x6D4B;&#x91CF;&#x5E03;&#x5C40;&#x7ED8;&#x5236;&#xFF0C;&#x54EA;&#x6765;&#x7684;&#x786E;&#x5B9A;&#x5927;&#x5C0F;&#x548C;&#x4F4D;&#x7F6E;)&#xFF0C;&#x8FD9;&#x65F6;&#x5019;Glide&#x8BE5;&#x600E;&#x4E48;&#x529E;&#x5462;&#xFF1F;</p>
-<p>&#x8FD8;&#x662F;&#x4EE5;&#x6211;&#x4EEC;&#x4E0A;&#x6587;<a href="http://www.jianshu.com/p/c7746ffed0c7" target="_blank" rel="external">Glide&#x6E90;&#x7801;&#x5206;&#x6790;(&#x4E00;) &#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;</a>&#x4E2D;&#x7684;&#x4F8B;&#x5B50;&#x6765;&#x5206;&#x6790;&#x4E00;&#x4E0B;&#x6574;&#x4E2A;&#x8FC7;&#x7A0B;&#xFF0C;&#x91CD;&#x70B9;&#x8BB2;&#x89E3;&#x4E00;&#x4E0B;&#x52A8;&#x6001;&#x83B7;&#x53D6;ImageView&#x5927;&#x5C0F;</p>
+<p>&#x8FD8;&#x662F;&#x4EE5;&#x6211;&#x4EEC;&#x4E0A;&#x6587;<a href="http://blog.eggsychan.com/2017/01/18/Glide%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E4%B8%80-Glide%E7%9A%84%E5%9B%BE%E7%89%87%E5%8A%A0%E8%BD%BD%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">Glide&#x6E90;&#x7801;&#x5206;&#x6790;(&#x4E00;) &#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;</a>&#x4E2D;&#x7684;&#x4F8B;&#x5B50;&#x6765;&#x5206;&#x6790;&#x4E00;&#x4E0B;&#x6574;&#x4E2A;&#x8FC7;&#x7A0B;&#xFF0C;&#x91CD;&#x70B9;&#x8BB2;&#x89E3;&#x4E00;&#x4E0B;&#x52A8;&#x6001;&#x83B7;&#x53D6;ImageView&#x5927;&#x5C0F;</p>
 <h4 id="&#x4F8B;&#x5B50;"><a href="#&#x4F8B;&#x5B50;" class="headerlink" title="&#x4F8B;&#x5B50;"></a>&#x4F8B;&#x5B50;</h4><pre><code>Glide.with(StartActivity.this).load(R.mipmap.pizza).into(mIvShow);
 </code></pre><h4 id="&#x5206;&#x6790;"><a href="#&#x5206;&#x6790;" class="headerlink" title="&#x5206;&#x6790;"></a>&#x5206;&#x6790;</h4><p>&#x672C;&#x4F8B;&#x4E2D;&#xFF0C;Glide&#x524D;&#x9762;&#x7684;&#x65B9;&#x6CD5;&#x6700;&#x7EC8;&#x8981;&#x751F;&#x6210;Bitmap&#x5BF9;&#x8C61;&#x5199;&#x5165;ImageView&#x5BF9;&#x8C61;&#x4E2D;&#x663E;&#x793A;&#x51FA;&#x6765;&#xFF0C;&#x6211;&#x4EEC;&#x770B;&#x4E0B;<code>into()</code>&#x65B9;&#x6CD5;<br><strong>GenericRequestBuilder.java</strong></p>
 <pre><code>// &#x8BBE;&#x7F6E;&#x4E86;&#x5C06;&#x8981;&#x52A0;&#x8F7D;&#x56FE;&#x7247;&#x5230;&#x54EA;&#x4E2A;&#x89C6;&#x56FE;&#xFF0C;&#x53D6;&#x6D88;&#x5DF2;&#x7ECF;&#x52A0;&#x8F7D;&#x5230;ImageView&#x4E2D;&#x7684;&#x8D44;&#x6E90;&#xFF0C;&#x5E76;&#x4E14;&#x91CA;&#x653E;&#x8D44;&#x6E90;&#x7528;&#x4E8E;&#x540E;&#x9762;&#x53EF;&#x80FD;&#x7684;&#x590D;&#x7528;
@@ -709,7 +709,7 @@ with(android.support.v4.app.FragmentActivity)
     <link href="http://blog.eggsychan.com/2017/01/18/Glide%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E5%BC%80%E5%A7%8B/"/>
     <id>http://blog.eggsychan.com/2017/01/18/Glide源码分析-开始/</id>
     <published>2017-01-18T01:38:55.000Z</published>
-    <updated>2017-02-08T13:02:19.204Z</updated>
+    <updated>2017-02-08T14:00:17.555Z</updated>
     
     <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;Android&#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x5E93;Glide&#x7684;&#x6E90;&#x7801;&#x5206;&#x6790;<br><a id="more"></a></p>
 <blockquote>
@@ -720,6 +720,7 @@ with(android.support.v4.app.FragmentActivity)
 <li><a href="http://blog.qiji.tech/archives/6344" target="_blank" rel="external">Fresco &#x4E0E; Picasso &#x3001;Glide &#x7684;&#x6BD4;&#x8F83;</a> </li>
 <li><a href="http://www.jianshu.com/p/4ed015142857" target="_blank" rel="external">Glide&#x3001;Picasso&#x3001;Fresco&#x6BD4;&#x8F83;</a></li>
 </ol>
+<h4 id="&#x76EE;&#x5F55;"><a href="#&#x76EE;&#x5F55;" class="headerlink" title="&#x76EE;&#x5F55;"></a>&#x76EE;&#x5F55;</h4><p><a href="http://www.jianshu.com/p/c7746ffed0c7" target="_blank" rel="external">Glide&#x6E90;&#x7801;&#x5206;&#x6790;(&#x4E00;) &#x56FE;&#x7247;&#x52A0;&#x8F7D;&#x7684;&#x751F;&#x547D;&#x5468;&#x671F;</a><br><a href="http://www.jianshu.com/p/87a75044a174" target="_blank" rel="external">Glide&#x6E90;&#x7801;&#x5206;&#x6790;(&#x4E8C;) &#x5982;&#x4F55;&#x52A8;&#x6001;&#x6D4B;&#x91CF;&#x83B7;&#x53D6;ImageView&#x5927;&#x5C0F;</a></p>
 <h4 id="glide-version"><a href="#Glide-Version" class="headerlink" title="Glide Version"></a>Glide Version</h4><p>&#x5173;&#x4E8E;Glide&#x7684;&#x7248;&#x672C;&#xFF0C;&#x5F53;&#x524D;&#x6700;&#x65B0;&#x7248;&#x672C;&#x662F;3.7.0&#xFF0C;&#x5B98;&#x65B9;<a href="https://github.com/bumptech/glide" target="_blank" rel="external">github&#x5730;&#x5740;</a>&#xFF0C;&#x5728;gradle&#x4E2D;&#x5F15;&#x5165;</p>
 <pre><code>dependencies {
     // the newest glide version
@@ -754,7 +755,7 @@ with(android.support.v4.app.FragmentActivity)
     <link href="http://blog.eggsychan.com/2017/01/10/%E6%94%AF%E6%8C%81RxJava2%E7%9A%84RxBus%E7%AE%80%E5%8D%95%E5%B0%81%E8%A3%85/"/>
     <id>http://blog.eggsychan.com/2017/01/10/支持RxJava2的RxBus简单封装/</id>
     <published>2017-01-10T11:00:49.000Z</published>
-    <updated>2017-01-10T11:06:50.518Z</updated>
+    <updated>2017-02-08T13:58:13.361Z</updated>
     
     <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;&#x57FA;&#x4E8E;RxJava2&#x7684;RxBus&#x5C01;&#x88C5;&#x793A;&#x4F8B;<br><a id="more"></a></p>
 <blockquote>
@@ -872,7 +873,7 @@ public class RxBus {
     }
 
 }
-</code></pre><p>&#x4EE5;&#x4E0A;&#x662F;&#x5BF9;RxJava2&#x7684;RxBus&#x7684;&#x7B80;&#x5355;&#x5C01;&#x88C5;&#xFF0C;&#x5728;&#x6B64;&#x57FA;&#x7840;&#x4E0A;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;apt&#x6765;&#x5BF9;&#x7C7B;&#x8FDB;&#x884C;&#x8FDB;&#x4E00;&#x6B65;&#x7684;&#x5C01;&#x88C5;&#xFF0C;&#x8FD9;&#x5C31;&#x662F;&#x540E;&#x9762;&#x7684;&#x5DE5;&#x4F5C;&#x4E86;&#xFF0C;&#x6700;&#x540E;&#x6211;&#x4F1A;&#x5C06;&#x5B83;&#x653E;&#x5230;github&#x4E0A;&#x5E76;&#x4E14;&#x8865;&#x5145;&#x76F8;&#x5E94;&#x7684;&#x793A;&#x4F8B;&#xFF0C;&#x5199;&#x7684;&#x4E0D;&#x597D;&#x6216;&#x8005;&#x4E0D;&#x5BF9;&#x7684;&#x5730;&#x65B9;&#xFF0C;&#x6B22;&#x8FCE;&#x7559;&#x8A00;&#x8BC4;&#x8BBA;&#x4EA4;&#x6D41;&#xFF5E;&#xFF5E;&#xFF5E;</p>
+</code></pre><p>&#x4EE5;&#x4E0A;&#x662F;&#x5BF9;RxJava2&#x7684;RxBus&#x7684;&#x7B80;&#x5355;&#x5C01;&#x88C5;&#xFF0C;&#x5728;&#x6B64;&#x57FA;&#x7840;&#x4E0A;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;apt&#x6765;&#x5BF9;&#x7C7B;&#x8FDB;&#x884C;&#x8FDB;&#x4E00;&#x6B65;&#x7684;&#x5C01;&#x88C5;&#xFF0C;&#x8BF7;&#x53C2;&#x8003;&#x6211;&#x7684;&#x53E6;&#x5916;&#x4E00;&#x7BC7;&#x6587;&#x7AE0;<a href="http://blog.eggsychan.com/2017/02/08/%E5%9F%BA%E4%BA%8EAPT%E7%9A%84RxBus%E5%BA%93/">&#x57FA;&#x4E8E;APT&#x7684;RxBus&#x5E93;&#x4F7F;&#x7528;</a>&#xFF0C;&#x6700;&#x540E;&#x6211;&#x5C06;&#x5B83;&#x653E;&#x5230;<a href="https://github.com/eggsywelsh/RxBus" target="_blank" rel="external">github</a>&#x4E0A;&#x5E76;&#x4E14;&#x8865;&#x5145;&#x76F8;&#x5E94;&#x7684;&#x793A;&#x4F8B;&#xFF0C;&#x6B22;&#x8FCE;fork&#x548C;star&#x5199;&#x7684;&#x4E0D;&#x597D;&#x6216;&#x8005;&#x4E0D;&#x5BF9;&#x7684;&#x5730;&#x65B9;&#xFF0C;&#x6B22;&#x8FCE;&#x7559;&#x8A00;&#x8BC4;&#x8BBA;&#x4EA4;&#x6D41;&#xFF5E;&#xFF5E;&#xFF5E;</p>
 ]]></content>
     
     <summary type="html">
@@ -2012,9 +2013,9 @@ protected void onCreate(Bundle savedInstanceState) {
       <category term="ButterKnife" scheme="http://blog.eggsychan.com/categories/ButterKnife/"/>
     
     
-      <category term="android" scheme="http://blog.eggsychan.com/tags/android/"/>
-    
       <category term="ButterKnife详解" scheme="http://blog.eggsychan.com/tags/ButterKnife%E8%AF%A6%E8%A7%A3/"/>
+    
+      <category term="android" scheme="http://blog.eggsychan.com/tags/android/"/>
     
   </entry>
   
@@ -2495,11 +2496,11 @@ hexo generate  #&#x91CD;&#x65B0;&#x751F;&#x6210;&#x6587;&#x4EF6;
       <category term="android" scheme="http://blog.eggsychan.com/categories/android/"/>
     
     
+      <category term="ubuntu" scheme="http://blog.eggsychan.com/tags/ubuntu/"/>
+    
       <category term="android studio" scheme="http://blog.eggsychan.com/tags/android-studio/"/>
     
       <category term="shortcut" scheme="http://blog.eggsychan.com/tags/shortcut/"/>
-    
-      <category term="ubuntu" scheme="http://blog.eggsychan.com/tags/ubuntu/"/>
     
   </entry>
   
