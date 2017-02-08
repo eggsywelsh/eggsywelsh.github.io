@@ -2012,9 +2012,9 @@ protected void onCreate(Bundle savedInstanceState) {
       <category term="ButterKnife" scheme="http://blog.eggsychan.com/categories/ButterKnife/"/>
     
     
-      <category term="ButterKnife详解" scheme="http://blog.eggsychan.com/tags/ButterKnife%E8%AF%A6%E8%A7%A3/"/>
-    
       <category term="android" scheme="http://blog.eggsychan.com/tags/android/"/>
+    
+      <category term="ButterKnife详解" scheme="http://blog.eggsychan.com/tags/ButterKnife%E8%AF%A6%E8%A7%A3/"/>
     
   </entry>
   
