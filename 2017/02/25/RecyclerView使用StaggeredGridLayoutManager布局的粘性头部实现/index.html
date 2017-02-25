@@ -84,17 +84,17 @@
 
 
 
-<meta name="description" content="&amp;#x6211;&amp;#x4EEC;&amp;#x7ECF;&amp;#x5E38;&amp;#x5728;&amp;#x4F7F;&amp;#x7528;App&amp;#x7684;&amp;#x8FC7;&amp;#x7A0B;&amp;#x4E2D;&amp;#x6709;&amp;#x57CE;&amp;#x5E02;&amp;#x7684;&amp;#x5217;&amp;#x8868;&amp;#x9009;&amp;#x62E9;&amp;#xFF0C;&amp;#x6211;&amp;#x4EEC;&amp;#x4F1A;&amp;#x53D1;&amp;#x7">
+<meta name="description" content="介绍RecyclerView中使用StaggeredGridLayoutManager布局时粘性头部的实现">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RecyclerView使用StaggeredGridLayoutManager布局的粘性头部实现">
 <meta property="og:url" content="http://blog.eggsychan.com/2017/02/25/RecyclerView使用StaggeredGridLayoutManager布局的粘性头部实现/index.html">
 <meta property="og:site_name" content="蛋西的博客">
-<meta property="og:description" content="&amp;#x6211;&amp;#x4EEC;&amp;#x7ECF;&amp;#x5E38;&amp;#x5728;&amp;#x4F7F;&amp;#x7528;App&amp;#x7684;&amp;#x8FC7;&amp;#x7A0B;&amp;#x4E2D;&amp;#x6709;&amp;#x57CE;&amp;#x5E02;&amp;#x7684;&amp;#x5217;&amp;#x8868;&amp;#x9009;&amp;#x62E9;&amp;#xFF0C;&amp;#x6211;&amp;#x4EEC;&amp;#x4F1A;&amp;#x53D1;&amp;#x7">
+<meta property="og:description" content="介绍RecyclerView中使用StaggeredGridLayoutManager布局时粘性头部的实现">
 <meta property="og:image" content="http://blog.eggsychan.com/images/recylerview_staggeredGridLayoutManager_sticky_header.gif">
-<meta property="og:updated_time" content="2017-02-25T03:28:08.382Z">
+<meta property="og:updated_time" content="2017-02-25T03:55:50.870Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RecyclerView使用StaggeredGridLayoutManager布局的粘性头部实现">
-<meta name="twitter:description" content="&amp;#x6211;&amp;#x4EEC;&amp;#x7ECF;&amp;#x5E38;&amp;#x5728;&amp;#x4F7F;&amp;#x7528;App&amp;#x7684;&amp;#x8FC7;&amp;#x7A0B;&amp;#x4E2D;&amp;#x6709;&amp;#x57CE;&amp;#x5E02;&amp;#x7684;&amp;#x5217;&amp;#x8868;&amp;#x9009;&amp;#x62E9;&amp;#xFF0C;&amp;#x6211;&amp;#x4EEC;&amp;#x4F1A;&amp;#x53D1;&amp;#x7">
+<meta name="twitter:description" content="介绍RecyclerView中使用StaggeredGridLayoutManager布局时粘性头部的实现">
 <meta name="twitter:image" content="http://blog.eggsychan.com/images/recylerview_staggeredGridLayoutManager_sticky_header.gif">
 
 
@@ -379,7 +379,8 @@
       
 
       
-        <blockquote>
+        <p>&#x4ECB;&#x7ECD;RecyclerView&#x4E2D;&#x4F7F;&#x7528;StaggeredGridLayoutManager&#x5E03;&#x5C40;&#x65F6;&#x7C98;&#x6027;&#x5934;&#x90E8;&#x7684;&#x5B9E;&#x73B0;<br><a id="more"></a></p>
+<blockquote>
 <p>&#x6211;&#x4EEC;&#x7ECF;&#x5E38;&#x5728;&#x4F7F;&#x7528;App&#x7684;&#x8FC7;&#x7A0B;&#x4E2D;&#x6709;&#x57CE;&#x5E02;&#x7684;&#x5217;&#x8868;&#x9009;&#x62E9;&#xFF0C;&#x6211;&#x4EEC;&#x4F1A;&#x53D1;&#x73B0;App&#x5728;&#x6ED1;&#x52A8;&#x7684;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x4F1A;&#x6709;&#x7C98;&#x6027;&#x5934;&#x90E8;&#x4E00;&#x76F4;&#x60AC;&#x6D6E;&#x5728;&#x6700;&#x4E0A;&#x7AEF;&#xFF0C;&#x5176;&#x4E2D;&#x5B9E;&#x73B0;&#x7684;&#x65B9;&#x6CD5;&#x6709;&#x5F88;&#x591A;&#x79CD;&#xFF0C;&#x5F53;&#x7136;&#xFF0C;&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x4E0D;&#x8BA8;&#x8BBA;&#x4F7F;&#x7528;ListView&#x6216;&#x8005;GridView&#x63A7;&#x4EF6;&#xFF0C;&#x4E5F;&#x4E0D;&#x8BA8;&#x8BBA;RecyclerView&#x4F7F;&#x7528;LinearLayoutManager&#x6216;&#x8005;GridLayoutManager&#x5E03;&#x5C40;&#x65F6;&#x7684;&#x5B9E;&#x73B0;&#x65B9;&#x5F0F;&#x3002;&#x672C;&#x6587;&#x8BA8;&#x8BBA;&#x7684;&#x91CD;&#x70B9;&#x662F;&#x4F7F;&#x7528;StaggeredGridLayoutManager&#x5E03;&#x5C40;&#x65F6;&#x7684;&#x7C98;&#x6027;&#x5934;&#x90E8;&#x7684;&#x5B9E;&#x73B0;&#x65B9;&#x5F0F;&#x3002;&#x672C;&#x6587;&#x5DF2;&#x5C55;&#x793A;&#x672C;&#x5730;&#x56FE;&#x7247;&#x5E93;&#x7684;&#x56FE;&#x7247;&#x4F5C;&#x4E3A;&#x4F8B;&#x5B50;&#x6765;&#x5C55;&#x5F00;&#x3002;</p>
 </blockquote>
 <p>&#x5148;&#x4E0A;&#x4E00;&#x4E0B;&#x6548;&#x679C;&#x56FE;</p>
