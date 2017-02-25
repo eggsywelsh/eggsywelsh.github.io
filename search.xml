@@ -4,6 +4,332 @@
   
     
     <entry>
+      <title><![CDATA[RecyclerView使用StaggeredGridLayoutManager布局的粘性头部实现]]></title>
+      <url>http://blog.eggsychan.com/2017/02/25/RecyclerView%E4%BD%BF%E7%94%A8StaggeredGridLayoutManager%E5%B8%83%E5%B1%80%E7%9A%84%E7%B2%98%E6%80%A7%E5%A4%B4%E9%83%A8%E5%AE%9E%E7%8E%B0/</url>
+      <content type="html"><![CDATA[<blockquote>
+<p>&#x6211;&#x4EEC;&#x7ECF;&#x5E38;&#x5728;&#x4F7F;&#x7528;App&#x7684;&#x8FC7;&#x7A0B;&#x4E2D;&#x6709;&#x57CE;&#x5E02;&#x7684;&#x5217;&#x8868;&#x9009;&#x62E9;&#xFF0C;&#x6211;&#x4EEC;&#x4F1A;&#x53D1;&#x73B0;App&#x5728;&#x6ED1;&#x52A8;&#x7684;&#x8FC7;&#x7A0B;&#x4E2D;&#xFF0C;&#x4F1A;&#x6709;&#x7C98;&#x6027;&#x5934;&#x90E8;&#x4E00;&#x76F4;&#x60AC;&#x6D6E;&#x5728;&#x6700;&#x4E0A;&#x7AEF;&#xFF0C;&#x5176;&#x4E2D;&#x5B9E;&#x73B0;&#x7684;&#x65B9;&#x6CD5;&#x6709;&#x5F88;&#x591A;&#x79CD;&#xFF0C;&#x5F53;&#x7136;&#xFF0C;&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x4E0D;&#x8BA8;&#x8BBA;&#x4F7F;&#x7528;ListView&#x6216;&#x8005;GridView&#x63A7;&#x4EF6;&#xFF0C;&#x4E5F;&#x4E0D;&#x8BA8;&#x8BBA;RecyclerView&#x4F7F;&#x7528;LinearLayoutManager&#x6216;&#x8005;GridLayoutManager&#x5E03;&#x5C40;&#x65F6;&#x7684;&#x5B9E;&#x73B0;&#x65B9;&#x5F0F;&#x3002;&#x672C;&#x6587;&#x8BA8;&#x8BBA;&#x7684;&#x91CD;&#x70B9;&#x662F;&#x4F7F;&#x7528;StaggeredGridLayoutManager&#x5E03;&#x5C40;&#x65F6;&#x7684;&#x7C98;&#x6027;&#x5934;&#x90E8;&#x7684;&#x5B9E;&#x73B0;&#x65B9;&#x5F0F;&#x3002;&#x672C;&#x6587;&#x5DF2;&#x5C55;&#x793A;&#x672C;&#x5730;&#x56FE;&#x7247;&#x5E93;&#x7684;&#x56FE;&#x7247;&#x4F5C;&#x4E3A;&#x4F8B;&#x5B50;&#x6765;&#x5C55;&#x5F00;&#x3002;</p>
+</blockquote>
+<p>&#x5148;&#x4E0A;&#x4E00;&#x4E0B;&#x6548;&#x679C;&#x56FE;</p>
+<p><img src="/images/recylerview_staggeredGridLayoutManager_sticky_header.gif" alt="&#x7C98;&#x6027;&#x5934;&#x90E8;"></p>
+<h3 id="&#x626B;&#x63CF;&#x672C;&#x5730;&#x56FE;&#x7247;&#x5E93;"><a href="#&#x626B;&#x63CF;&#x672C;&#x5730;&#x56FE;&#x7247;&#x5E93;" class="headerlink" title="&#x626B;&#x63CF;&#x672C;&#x5730;&#x56FE;&#x7247;&#x5E93;"></a>&#x626B;&#x63CF;&#x672C;&#x5730;&#x56FE;&#x7247;&#x5E93;</h3><pre><code>public LocalPictureDateResult loadAllLocalPictures() {
+        LocalPictureDateResult result = new LocalPictureDateResult(mContext);
+        Uri mImageUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        ContentResolver mContentResolver = mContext.getContentResolver();
+        Log.i(TAG, mImageUri.getPath());
+        // query only jpeg and png image type files
+        Cursor mCursor = mContentResolver.query(mImageUri, null,
+                MediaStore.Images.Media.MIME_TYPE + &quot;=? or &quot;
+                        + MediaStore.Images.Media.MIME_TYPE + &quot;=?&quot;,
+                new String[]{&quot;image/jpeg&quot;, &quot;image/png&quot;}, MediaStore.Images.Media.DATE_MODIFIED + &quot; DESC&quot;);
+        if (mCursor != null) {
+            while (mCursor.moveToNext()) {
+                //retrive image path
+                String path = mCursor.getString(mCursor
+                        .getColumnIndex(MediaStore.Images.Media.DATA));
+                int width = mCursor.getInt(mCursor
+                        .getColumnIndex(MediaStore.Images.Media.WIDTH));
+                int height = mCursor.getInt(mCursor
+                        .getColumnIndex(MediaStore.Images.Media.HEIGHT));
+                long modifiedData = mCursor.getLong(mCursor.
+                       getColumnIndex(MediaStore.Images.Media.DATE_MODIFIED));
+                long addedData = mCursor.getLong(mCursor.
+                       getColumnIndex(MediaStore.Images.Media.DATE_ADDED));
+                if (path==null || &quot;&quot;.equals(path) || width == 0 || height == 0 || modifiedData == 0) {
+                    continue;
+                }
+                LocalPictureDetailInfo lpi = new LocalPictureDetailInfo(path, width, height, addedData * 1000, modifiedData * 1000);
+                result.add(lpi);
+            }
+            mCursor.close();
+        }
+        return result;
+    }
+</code></pre><p>&#x8FD9;&#x91CC;&#x8FD4;&#x56DE;&#x4E00;&#x4E2A;LocalPictureDateResult&#x5BF9;&#x8C61;&#xFF0C;&#x91CC;&#x9762;&#x5B58;&#x653E;&#x4E86;&#x626B;&#x63CF;&#x51FA;&#x6765;&#x7684;&#x672C;&#x5730;&#x56FE;&#x7247;&#x6587;&#x4EF6;&#x4FE1;&#x606F;&#x96C6;&#x5408;</p>
+<p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x770B;&#x4E0B;&#x4E0A;&#x9762;&#x4EE3;&#x7801;&#x4E2D;&#x7684;<code>result.add(lpi)</code>&#x65B9;&#x6CD5;</p>
+<pre><code>**LocalPictureDateResult.java** 
+
+    /**
+     * save the positions of title in the data collections
+     */
+    ArrayList mArrayTitlePos;
+
+    /**
+     * title collection
+     */
+    private HashSet&lt;String&gt; titleSet ;
+
+    /**
+     * pictures collection,include title and picture details
+     */
+    ArrayList&lt;WrapLocalPictureDetailInfo&gt; mLocalPictureInfos;
+
+   /**
+     * add local picture details
+     *
+     * @param detailInfo
+     */
+    public void add(LocalPictureDetailInfo detailInfo) {
+        String dateTimeStr = mDateParseFilter.parse(detailInfo.getModifiedDate());
+        if (!titleSet.contains(dateTimeStr)) {
+            titleSet.add(dateTimeStr);
+            // save title position
+            mArrayTitlePos.add(mLocalPictureInfos.size());
+
+            // add title object
+            WrapLocalPictureDetailInfo titleInfo = new WrapLocalPictureDetailInfo(dateTimeStr, DATA_TYPE_TITLE);
+            mLocalPictureInfos.add(titleInfo);
+            // add content object
+            WrapLocalPictureDetailInfo contentInfo = new WrapLocalPictureDetailInfo(detailInfo);
+            mLocalPictureInfos.add(contentInfo);
+        } else {
+            mLocalPictureInfos.add(new WrapLocalPictureDetailInfo(detailInfo));
+        }
+    }
+</code></pre><p>&#x4E0A;&#x9762;&#x8FD9;&#x6BB5;&#x4EE3;&#x7801;&#xFF0C;&#x628A;&#x626B;&#x63CF;&#x51FA;&#x6765;&#x7684;&#x672C;&#x5730;&#x56FE;&#x7247;&#x96C6;&#xFF0C;&#x901A;&#x8FC7;&#x56FE;&#x7247;&#x7684;&#x6700;&#x540E;&#x4FEE;&#x6539;&#x65F6;&#x95F4;&#xFF0C;&#x5206;&#x79BB;&#x51FA;&#x65F6;&#x95F4;&#x6BB5;&#x540D;&#x79F0;&#xFF0C;&#x5E76;&#x4E14;&#x628A;&#x65F6;&#x95F4;&#x6BB5;&#x540D;&#x79F0;&#x4F5C;&#x4E3A;&#x6570;&#x636E;&#x7684;&#x4E00;&#x90E8;&#x5206;&#x52A0;&#x5165;&#x5230;&#x6700;&#x540E;&#x7684;&#x56FE;&#x7247;&#x96C6;&#x5408;&#x4E2D;&#xFF0C;&#x8FD9;&#x6837;&#x56FE;&#x7247;&#x96C6;&#x5408;&#x4E2D;&#x5C31;&#x5305;&#x542B;&#x4E86;&#x56FE;&#x7247;&#x6570;&#x636E;&#x548C;&#x6807;&#x9898;&#x6570;&#x636E;&#xFF0C;&#x5E76;&#x4E14;&#x6211;&#x4EEC;&#x4E5F;&#x6709;&#x4E86;&#x6BCF;&#x4E2A;&#x6807;&#x9898;&#x5728;&#x56FE;&#x7247;&#x96C6;&#x5408;&#x4E2D;&#x7684;&#x4F4D;&#x7F6E;&#xFF0C;&#x8FD9;&#x6837;&#x6709;&#x5229;&#x4E8E;&#x6211;&#x4EEC;&#x540E;&#x9762;&#x8BA1;&#x7B97;&#x548C;&#x5BFB;&#x627E;&#x6807;&#x9898;&#x505A;&#x51C6;&#x5907;&#x3002;</p>
+<h3 id="&#x4E3B;&#x9875;&#x9762;&#x5E03;&#x5C40;"><a href="#&#x4E3B;&#x9875;&#x9762;&#x5E03;&#x5C40;" class="headerlink" title="&#x4E3B;&#x9875;&#x9762;&#x5E03;&#x5C40;"></a>&#x4E3B;&#x9875;&#x9762;&#x5E03;&#x5C40;</h3><pre><code>&lt;FrameLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;match_parent&quot;&gt;
+
+    &lt;android.support.v4.widget.SwipeRefreshLayout
+        android:id=&quot;@+id/srl_root&quot;
+        android:layout_width=&quot;match_parent&quot;
+        android:layout_height=&quot;match_parent&quot;
+        android:orientation=&quot;vertical&quot;&gt;
+
+        &lt;android.support.v7.widget.RecyclerView
+            android:id=&quot;@+id/rv_content&quot;
+            android:layout_width=&quot;match_parent&quot;
+            android:layout_height=&quot;match_parent&quot;&gt;
+
+        &lt;/android.support.v7.widget.RecyclerView&gt;
+
+    &lt;/android.support.v4.widget.SwipeRefreshLayout&gt;
+
+    &lt;LinearLayout
+        android:id=&quot;@+id/header_one&quot;
+        android:layout_width=&quot;match_parent&quot;
+        android:layout_height=&quot;wrap_content&quot;
+        android:visibility=&quot;invisible&quot;&gt;
+
+        &lt;include layout=&quot;@layout/item_title_local_picture&quot; /&gt;
+    &lt;/LinearLayout&gt;
+
+&lt;/FrameLayout&gt;
+</code></pre><p>&#x4E0A;&#x9762;&#x6211;&#x4EEC;&#x770B;&#x5230;&#x6700;&#x5916;&#x5C42;&#x7528;&#x4E86;&#x4E2A;FrameLayout&#xFF0C;&#x7528;&#x4E86;&#x4E2A;LinearLayout&#x4F5C;&#x4E3A;&#x7C98;&#x6027;&#x5934;&#x90E8;&#xFF0C;&#x5F15;&#x5165;&#x7684;&#x5934;&#x90E8;&#x5E03;&#x5C40;&#x548C;RecyclerView&#x4E2D;&#x7684;&#x5934;&#x90E8;&#x5E03;&#x5C40;&#x4E00;&#x6837;</p>
+<h3 id="recyclerview&#x7684;&#x666E;&#x901A;&#x5934;&#x90E8;&#x5236;&#x4F5C;"><a href="#RecyclerView&#x7684;&#x666E;&#x901A;&#x5934;&#x90E8;&#x5236;&#x4F5C;" class="headerlink" title="RecyclerView&#x7684;&#x666E;&#x901A;&#x5934;&#x90E8;&#x5236;&#x4F5C;"></a>RecyclerView&#x7684;&#x666E;&#x901A;&#x5934;&#x90E8;&#x5236;&#x4F5C;</h3><p>&#x5934;&#x90E8;&#x5E03;&#x5C40;&#x6587;&#x4EF6;</p>
+<pre><code>&lt;TextView xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+    android:id=&quot;@+id/tv_title&quot;
+    android:layout_width=&quot;match_parent&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:background=&quot;@android:color/holo_red_light&quot;
+    android:gravity=&quot;center_vertical&quot;
+    android:textColor=&quot;@android:color/black&quot;
+    android:textSize=&quot;20sp&quot;&gt;
+
+&lt;/TextView&gt;
+</code></pre><p>&#x8BBE;&#x7F6E;RecylerView&#x7684;adapter&#x548C;layoutmanager</p>
+<pre><code>    int mColumns = 3;
+    // 
+    mLayoutManager = new StaggeredGridLayoutManager(mColumns, StaggeredGridLayoutManager.VERTICAL);
+    mAdapter = new LocalPicturesAdapter(this, mMainPresenter.getLocalPictureDatas(), mColumns);
+    // set RecylerView&apos;s adapter and layoutmanager
+    mContentView.setLayoutManager(mLayoutManager);
+    mContentView.setAdapter(mAdapter);
+    mContentView.setHasFixedSize(true);
+</code></pre><p>LocalPicturesAdapter&#x7C7B;&#xFF0C;&#x4E3B;&#x8981;&#x6839;&#x636E;&#x6570;&#x636E;&#x4E2D;&#x7684;type&#x7C7B;&#x578B;&#x6765;&#x663E;&#x793A;&#x4E0D;&#x540C;&#x7684;</p>
+<pre><code>public class LocalPicturesAdapter extends RecyclerView.Adapter&lt;RecyclerView.ViewHolder&gt; implements View.OnClickListener {
+
+    Activity mContext;
+
+    List&lt;WrapLocalPictureDetailInfo&gt; mImagePaths;
+
+    int columnNums = 1;
+
+    private OnRecyclerViewItemClickListener mOnItemClickListener = null;
+
+    public LocalPicturesAdapter(Activity context, List&lt;WrapLocalPictureDetailInfo&gt; imagePaths, int columnNums) {
+        this.mContext = context;
+        this.mImagePaths = imagePaths;
+        this.columnNums = columnNums;
+    }
+
+    public void setImagePaths(List&lt;WrapLocalPictureDetailInfo&gt; imagePaths){
+        this.mImagePaths = imagePaths;
+    }
+
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder;
+        View view;
+        if (viewType == DATA_TYPE_TITLE) {
+            view = mContext.getLayoutInflater().inflate(R.layout.item_title_local_picture,null);
+            viewHolder = new LocalPicturesTitleHolder(view);
+        } else if (viewType == DATA_TYPE_CONTENT) {
+            view = mContext.getLayoutInflater().inflate(R.layout.item_content_local_picture,null);
+            viewHolder = new LocalPicturesContentHolder(view);
+        } else {
+            view = mContext.getLayoutInflater().inflate(R.layout.item_content_local_picture,null);
+            viewHolder = new LocalPicturesContentHolder(view);
+        }
+        if (view != null) {
+            // add listener
+            view.setOnClickListener(this);
+        }
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        if (viewHolder.getItemViewType() == DATA_TYPE_TITLE) {
+            LocalPicturesTitleHolder holder = (LocalPicturesTitleHolder) viewHolder;
+            holder.itemView.setTag(position);
+            if (holder.mTvTitle != null) {
+                WrapLocalPictureDetailInfo pictureDetailInfo = mImagePaths.get(position);
+                // set title layoutparams
+                StaggeredGridLayoutManager.LayoutParams layoutParams = new StaggeredGridLayoutManager.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                // set title full span
+                layoutParams.setFullSpan(true);
+                holder.itemView.setLayoutParams(layoutParams);
+                holder.mTvTitle.setText(pictureDetailInfo.getDataTitle());
+            }
+        } else if (viewHolder.getItemViewType() == DATA_TYPE_CONTENT) {
+            LocalPicturesContentHolder holder = (LocalPicturesContentHolder) viewHolder;
+            holder.itemView.setTag(position);
+            if (holder.mImageView != null) {
+                WrapLocalPictureDetailInfo pictureDetailInfo = mImagePaths.get(position);
+                ........
+                ........
+                ........
+                // use glide load the image into ImageView
+                Glide.with(mContext).load(new File(pictureDetailInfo.getPath())).into(holder.mImageView);
+            }
+        }
+    }
+
+    ......
+    ......
+    ......
+}
+</code></pre><p>&#x6211;&#x4EEC;&#x901A;&#x8FC7;&#x663E;&#x793A;&#x666E;&#x901A;title&#x7684;&#x65B9;&#x6CD5;&#x662F;&#x4F7F;&#x7528;&#x8BBE;&#x7F6E;itemview&#x7684;StaggeredGridLayoutManager.LayoutParams&#x6765;&#x5B9E;&#x73B0;&#x7684;&#xFF0C;&#x5E76;&#x4E14;setFUllSpan(true)&#x7528;&#x6765;&#x8BA9;title&#x663E;&#x793A;&#x4E00;&#x6574;&#x884C;</p>
+<h3 id="recylerview&#x6EDA;&#x52A8;&#x76D1;&#x542C;"><a href="#RecylerView&#x6EDA;&#x52A8;&#x76D1;&#x542C;" class="headerlink" title="RecylerView&#x6EDA;&#x52A8;&#x76D1;&#x542C;"></a>RecylerView&#x6EDA;&#x52A8;&#x76D1;&#x542C;</h3><pre><code>public RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+
+        // get the recyclerview first visable item&apos;s position,return the size same as span count
+        int mFirstVisiblePosition[] = new int[mColumns];
+        // get the recyclerview last visable item&apos;s position,return the size same as span count
+        int mLastVisiblePosition[] = new int[mColumns];
+
+        // sticky head view height
+        private int mStickyHeadHeight = 0;
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            if (dy == 0) {
+                // the first time show the recyclerview items
+                mLayoutManager.findFirstVisibleItemPositions(mFirstVisiblePosition);
+                int titlePosision = getMinVisablePosition(mFirstVisiblePosition);
+                if (titlePosision &gt;= 0) {
+                    // get the item object
+                    WrapLocalPictureDetailInfo wrapLocalPictureDetailInfo = mAdapter.getItemObject(titlePosision);
+
+                    if (wrapLocalPictureDetailInfo != null) {
+                        // set the first title view text content
+                        ((TextView) mHeaderOneView.getChildAt(0)).setText(wrapLocalPictureDetailInfo.getDataTitle());
+                        mHeaderOneView.setVisibility(View.VISIBLE);
+                        // set the current title position into view tag object
+                        mHeaderOneView.setTag(titlePosision);
+                        // retrive the title view height,and set into variable
+                        mStickyHeadHeight = mHeaderOneView.getMeasuredHeight();
+                    }
+                }
+            } else if (dy != 0) {  //  pull down the recyclerview then dy&lt;0 , pull up the recyclerview then dy&gt;0
+
+                mLayoutManager.findFirstVisibleItemPositions(mFirstVisiblePosition);
+                int minVisablePosition = getMinVisablePosition(mFirstVisiblePosition);
+
+                mLayoutManager.findLastVisibleItemPositions(mLastVisiblePosition);
+                int maxVisablePosition = getMaxVisablePosition(mLastVisiblePosition);
+
+                if (minVisablePosition &lt; 0) {
+                    return;
+                }
+                /**
+                 * get one title position before current minimum visable item position
+                 */
+                int beforeFirstItemTitlePosition = mMainPresenter.findBeforeTitlePosition(minVisablePosition);
+                /**
+                 * get the title position after current minimum visable item position
+                 */
+                int afterFirstItemTitlePosition = mMainPresenter.findAfterTitlePosition(minVisablePosition);
+
+                // when next title item position after the current minimum visable exist,and not equals current item position
+                if (afterFirstItemTitlePosition != Integer.MIN_VALUE &amp;&amp; afterFirstItemTitlePosition != minVisablePosition) {
+                    // determine whether next title item after the current minimum visable position is visable in the recyclerview
+                    if (afterFirstItemTitlePosition &lt;= maxVisablePosition) {
+                        // it means that next title item is visable in the recycleview now
+                        // find that suitable next title view
+                        View nextTitleView = findView(afterFirstItemTitlePosition);
+                        if (nextTitleView != null) {
+                            float yxis = nextTitleView.getY();
+                            // if next title view is scroll into first title view&apos;s area
+                            if (yxis &lt;= mStickyHeadHeight) {
+                                // then fix the first title scroll y
+                                mHeaderOneView.scrollTo(0, (int) (mStickyHeadHeight - yxis));
+                            } else {
+                                // others,next title away from the first title view
+                                // then fix first title view scroll y
+                                mHeaderOneView.scrollTo(0, 0);
+                            }
+                            // set visable to the header view always
+                            mHeaderOneView.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }
+
+
+                /**
+                 * Determine whether need to change the title
+                 */
+                // when title item before the current maxinum visable position exist,and position not equals the current header view&apos;s tag
+                if (beforeFirstItemTitlePosition != Integer.MIN_VALUE &amp;&amp; mHeaderOneView.getTag() != null &amp;&amp; (int) mHeaderOneView.getTag() != beforeFirstItemTitlePosition) {
+                    /**
+                     * it means that should change the title content
+                     */
+                    ((TextView) mHeaderOneView.getChildAt(0)).setText(&quot;&quot;);
+                    // always show the title item that before the current maxinum visable position
+                    WrapLocalPictureDetailInfo wpdi = mMainPresenter.getLocalPictureDatas().get(beforeFirstItemTitlePosition);
+                    // set new title content
+                    ((TextView) mHeaderOneView.getChildAt(0)).setText(wpdi.getDataTitle());
+                    if (dy &gt; 0) {
+                        // if user pull up the recyclerview,fix the scroll y.Sometimes,because of the next title item may be not visable in current recyclerview,
+                        // so,we should force set header view visable once again
+                        mHeaderOneView.setVisibility(View.VISIBLE);
+                        mHeaderOneView.scrollTo(0, 0);
+                    }
+                    // set title position in the tag
+                    mHeaderOneView.setTag(beforeFirstItemTitlePosition);
+                    // retrive the sticky head height
+                    mStickyHeadHeight = mHeaderOneView.getMeasuredHeight();
+                }
+            }
+        }
+
+        ......
+        ......
+        ......
+    };
+</code></pre><p>&#x5176;&#x4E2D;&#x6700;&#x4E3B;&#x8981;&#x7684;&#x539F;&#x7406;&#x662F;&#x5728;RecylerView&#x6EDA;&#x52A8;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x5224;&#x65AD;dy&#x7684;&#x5927;&#x5C0F;&#xFF0C;&#x67E5;&#x627E;&#x5F53;&#x524D;RecylerView&#x4E2D;&#x7528;&#x6237;&#x53EF;&#x89C6;&#x7684;&#x6700;&#x5C0F;&#x7684;item&#x4F4D;&#x7F6E;&#xFF0C;&#x901A;&#x8FC7;&#x4E4B;&#x524D;&#x6211;&#x4EEC;&#x521D;&#x59CB;&#x5316;&#x6570;&#x636E;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x5206;&#x79BB;&#x51FA;&#x7684;&#x6BCF;&#x4E2A;&#x6807;&#x9898;&#x5728;&#x6570;&#x636E;&#x96C6;&#x4E2D;&#x7684;&#x4F4D;&#x7F6E;&#xFF0C;&#x5E95;&#x5C42;&#x4F7F;&#x7528;&#x4E8C;&#x5206;&#x67E5;&#x627E;&#x65B9;&#x6CD5;&#xFF0C;&#x627E;&#x5230;&#x5F53;&#x524D;&#x53EF;&#x89C6;&#x7684;&#x6700;&#x5C0F;item&#x4F4D;&#x7F6E;&#x4E4B;&#x524D;(&#x4E0B;&#x6587;&#x79F0;item&#x4E4B;&#x524D;)&#x548C;&#x4E4B;&#x540E;(item&#x4E4B;&#x540E;)&#x7684;&#x6807;&#x9898;item&#x7684;&#x4F4D;&#x7F6E;&#x4FE1;&#x606F;&#x3002;&#x5982;&#x679C;&#x5B58;&#x5728;item&#x4E4B;&#x524D;&#x7684;&#x6807;&#x9898;&#x4FE1;&#x606F;&#xFF0C;&#x5224;&#x65AD;&#x548C;&#x5F53;&#x524D;&#x5DF2;&#x7ECF;&#x663E;&#x793A;&#x7684;&#x7C98;&#x6027;&#x5934;&#x90E8;tag&#x4E2D;&#x5B58;&#x50A8;&#x7684;&#x4F4D;&#x7F6E;&#x4E0D;&#x4E00;&#x6837;&#xFF0C;&#x90A3;&#x4E48;&#x7528;&#x65B0;&#x7684;&#x5934;&#x90E8;&#x4FE1;&#x606F;&#x66FF;&#x6362;&#x5F53;&#x524D;&#x7C98;&#x6027;&#x5934;&#x90E8;&#xFF1B;&#x5982;&#x679C;&#x5728;&#x5F53;&#x524D;&#x9875;&#x9762;&#x641C;&#x7D22;&#x5230;item&#x4E4B;&#x540E;&#x7684;&#x6807;&#x9898;&#x89C6;&#x56FE;&#xFF0C;&#x83B7;&#x53D6;&#x8BE5;&#x89C6;&#x56FE;&#x5BF9;&#x8C61;&#xFF0C;&#x5224;&#x65AD;&#x4E0E;&#x5DF2;&#x7ECF;&#x663E;&#x793A;&#x7684;&#x7C98;&#x6027;&#x5934;&#x90E8;&#x5E95;&#x90E8;&#x4F4D;&#x7F6E;&#x5224;&#x65AD;&#xFF0C;&#x5982;&#x679C;&#x8D85;&#x8FC7;&#x4E86;&#x7C98;&#x6027;&#x5934;&#x90E8;&#xFF0C;&#x5219;&#x628A;&#x7C98;&#x6027;&#x5934;&#x90E8;&#x7528;scrollTo&#x65B9;&#x6CD5;&#x8FDB;&#x884C;&#x5411;&#x4E0A;&#x6ED1;&#x52A8;&#xFF0C;&#x5C31;&#x4F1A;&#x51FA;&#x73B0;&#x7C98;&#x6027;&#x5934;&#x90E8;&#x6ED1;&#x52A8;&#x7684;&#x6548;&#x679C;&#xFF0C;&#x5982;&#x679C;&#x6CA1;&#x6709;&#x8D85;&#x8FC7;&#xFF0C;&#x90A3;&#x4E48;&#x4EC0;&#x4E48;&#x90FD;&#x4E0D;&#x505A;</p>
+<h3 id="&#x603B;&#x7ED3;"><a href="#&#x603B;&#x7ED3;" class="headerlink" title="&#x603B;&#x7ED3;"></a>&#x603B;&#x7ED3;</h3><p>&#x53EF;&#x80FD;&#x770B;&#x4EE3;&#x7801;&#x8FD8;&#x662F;&#x6709;&#x70B9;&#x62BD;&#x8C61;&#xFF0C;&#x603B;&#x7ED3;&#x8D77;&#x6765;&#x5C31;&#x662F;&#x5728;&#x521D;&#x59CB;&#x5316;&#x6570;&#x636E;&#x65F6;&#xFF0C;&#x5C06;&#x6807;&#x9898;&#x4E5F;&#x4F5C;&#x4E3A;&#x6570;&#x636E;&#x9879;&#x52A0;&#x5165;&#x5230;&#x6570;&#x636E;&#x96C6;&#x5408;&#x4E2D;&#xFF0C;&#x7136;&#x540E;&#x5728;Adapter&#x4E2D;&#x52A8;&#x6001;&#x7684;&#x5224;&#x65AD;&#x662F;&#x6807;&#x9898;&#x8FD8;&#x662F;&#x666E;&#x901A;&#x5185;&#x5BB9;&#xFF0C;&#x91C7;&#x7528;&#x4E0D;&#x540C;&#x7684;&#x5E03;&#x5C40;&#x9875;&#x9762;&#x548C;&#x5E03;&#x5C40;&#xFF0C;&#x7ED3;&#x5408;&#x6EDA;&#x52A8;&#x65F6;&#xFF0C;&#x901A;&#x8FC7;&#x5F53;&#x524D;&#x9875;&#x9762;&#x6700;&#x5C0F;&#x4F4D;&#x7F6E;&#x7684;&#x5224;&#x65AD;&#x4E4B;&#x524D;&#x548C;&#x4E4B;&#x540E;&#x6807;&#x9898;item&#x7684;&#x4F4D;&#x7F6E;&#xFF0C;&#x6765;&#x63A7;&#x5236;&#x6ED1;&#x52A8;&#x6216;&#x8005;&#x5207;&#x6362;&#x7C98;&#x6027;&#x5934;&#x90E8;&#xFF0C;&#x6211;&#x628A;&#x793A;&#x4F8B;&#x5DE5;&#x7A0B;&#x653E;&#x5728;&#x4E86;github&#x4E0A;<a href="https://github.com/eggsywelsh/RecyclerStaggeredStickyHeaderView" target="_blank" rel="external">RecyclerStaggeredStickyHeaderView</a>&#xFF0C;&#x6B22;&#x8FCE;fork&#x6216;&#x8005;start&#x3002;&#x6700;&#x540E;&#x5982;&#x679C;&#x53D1;&#x73B0;&#x6587;&#x7AE0;&#x6709;&#x4EC0;&#x4E48;&#x95EE;&#x9898;&#x6216;&#x8005;&#x5199;&#x7684;&#x4E0D;&#x597D;&#x7684;&#xFF0C;&#x6B22;&#x8FCE;&#x7559;&#x8A00;&#x4EA4;&#x6D41;&#xFF0C;&#x5F53;&#x7136;&#xFF0C;&#x4E5F;&#x6B22;&#x8FCE;&#x70B9;&#x8D5E;&#xFF5E;&#xFF5E;&#xFF5E;</p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[统计App方法数量]]></title>
       <url>http://blog.eggsychan.com/2017/02/08/%E7%BB%9F%E8%AE%A1App%E6%96%B9%E6%B3%95%E6%95%B0%E9%87%8F/</url>
       <content type="html"><![CDATA[<p>&#x4ECB;&#x7ECD;&#x5982;&#x4F55;&#x7EDF;&#x8BA1;App&#x4E2D;&#x7684;&#x65B9;&#x6CD5;&#x6570;<br><a id="more"></a></p>
